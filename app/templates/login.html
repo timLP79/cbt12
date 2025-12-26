@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Login - CBT 12-Step Assessment{% endblock %}
+
+{% block content %}
+<h2>Participant Login</h2>
+<p>Please enter your prison ID and password to access your assessments.</p>
+
+<form method="POST" action="{{ url_for('main.login') }}">
+    <label for="prison_id">Prison ID:</label>
+    <input type="text" id="prison_id" name="prison_id" required autofocus>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - CBT 12-Step Assessment{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</h2>
+
+<div class="step-info">
+    <h3>Current Step: {{ current_step.step_number }}</h3>
+    <h4>{{ current_step.step_title }}</h4>
+    <p>{{ current_step.step_description }}</p>
+</div>
+
+<p>You are currently working on Step {{ current_step.step_number }} of 12.</p>
+
+<button onclick="location.href='{{ url_for('main.dashboard') }}'">Start Assessment</button>
+
+<hr style="margin: 2rem 0;">
+
+<h3>Your Progress</h3>
+<p>Steps completed: {{ current_user.current_step - 1 }} of 12</p>
+{% endblock %}
