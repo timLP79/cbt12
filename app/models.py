@@ -1,3 +1,5 @@
+from sqlalchemy.orm import backref
+
 from app import db, login_manager
 from flask_login import UserMixin
 from datetime import datetime
@@ -49,6 +51,47 @@ class Assessment(db.Model):
 
     # Relationship to questions
     questions = db.relationship('Question', backref='assessment', lazy=True)
+
+
+class AssessmentAttempt(db.Model):
+    """Tracks each attempt at an assessment and its review status"""
+    __tablename__ = 'assessment_attempts'
+
+    attempt_id = db.Column(db.Integer, primary_key=True)
+    prison_id = db.Column(db.String(50), db.ForeignKey('users.prison_id'), nullable=False)
+    assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.assessment_id'), nullable=False)
+    attempt_number = db.Column(db.Integer, default=1, nullable=False)
+    started_at = db.Column(db.DateTime, nullable=True)
+    submitted_at = db.Column(db.DateTime, nullable=True)
+    status = db.Column(db.String(20), default='in_progress', nullable=False)
+    reviewed_by = db.Column(db.String(50), db.ForeignKey('clinicians.clinician_id'),nullable=True)
+    reviewed_at = db.Column(db.DateTime, nullable=True)
+    clinician_notes = db.Column(db.Text, nullable=True)
+    score = db.Column(db.Integer, nullable=True)
+
+    # Relationships
+    user = db.relationship('User', backref='attempts', lazy=True)
+    assessment = db.relationship('Assessment', backref='attempts', lazy=True)
+    responses = db.relationship('Response', backref='attempt', lazy=True)
+
+class Clinician(db.Model, UserMixin):
+    """Clinical staff who review assessments"""
+    __tablename__ = 'clinicians'
+
+    clinician_id = db.Column(db.String(50), primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(200), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    role = db.Column(db.String(20), default='clinician', nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    reviewed_attempts = db.relationship('AssessmentAttempt', backref='reviewer', lazy=True)
+
+    def get_id(self):
+        return self.clinician_id
 
 
 class Question(db.Model):
