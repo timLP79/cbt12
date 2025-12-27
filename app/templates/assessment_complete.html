@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment Complete - CBT 12-Step{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 2rem 0;">
+    <h2 style="color: #28a745;">✓ Assessment Complete!</h2>
+
+    <div class="step-info" style="margin: 2rem 0;">
+        <p style="font-size: 1.1rem;">
+            Congratulations! You have successfully completed this assessment.
+        </p>
+        {% if current_user.current_step <= 12 %}
+        <p style="margin-top: 1rem;">
+            You are now ready to begin Step {{ current_user.current_step }}.
+        </p>
+        {% else %}
+        <p style="margin-top: 1rem; font-weight: bold;">
+            You have completed all 12 steps!
+        </p>
+        {% endif %}
+    </div>
+
+    <button onclick="location.href='{{ url_for('main.dashboard') }}'">
+        Return to Dashboard
+    </button>
+</div>
+{% endblock %}

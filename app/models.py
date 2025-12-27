@@ -45,6 +45,7 @@ class Assessment(db.Model):
     step_id = db.Column(db.Integer, db.ForeignKey('steps.step_id'), nullable=False)
     assessment_title = db.Column(db.String(200), nullable=False)
     instructions = db.Column(db.Text)
+    randomize_questions = db.Column(db.Boolean, default=False)
 
     # Relationship to questions
     questions = db.relationship('Question', backref='assessment', lazy=True)

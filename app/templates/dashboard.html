@@ -13,7 +13,9 @@
 
 <p>You are currently working on Step {{ current_step.step_number }} of 12.</p>
 
-<button onclick="location.href='{{ url_for('main.dashboard') }}'">Start Assessment</button>
+<form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
+    <button type="submit">Start Assessment</button>
+</form>
 
 <hr style="margin: 2rem 0;">
 
