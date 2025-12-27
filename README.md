@@ -24,18 +24,24 @@ This application combines evidence-based Cognitive Behavioral Therapy principles
 ```
 cbt-assessment/
 ├── app/
-│   ├── __init__.py          # Flask app factory
-│   ├── models.py            # Database models
-│   ├── routes.py            # URL endpoints (coming next)
-│   └── templates/           # HTML templates (coming next)
+│   ├── __init__.py              # Flask app factory
+│   ├── models.py                # Database models
+│   ├── routes.py                # URL endpoints and authentication
+│   └── templates/               # HTML templates
+│       ├── base.html            # Base template with common layout
+│       ├── login.html           # User login page
+│       ├── dashboard.html       # User progress dashboard
+│       ├── question.html        # Assessment question display
+│       └── assessment_complete.html  # Completion confirmation
 ├── instance/
-│   └── cbt_assessment.db    # SQLite database (not in git)
-├── static/                  # CSS, JavaScript, images
-├── venv/                    # Virtual environment (not in git)
-├── config.py                # Configuration settings
-├── init_db.py               # Database initialization script
-├── run.py                   # Application entry point
-├── requirements.txt         # Python dependencies
+│   └── cbt_assessment.db        # SQLite database (not in git)
+├── venv/                        # Virtual environment (not in git)
+├── config.py                    # Configuration settings
+├── init_db.py                   # Database initialization script
+├── create_test_user.py          # Development test user script
+├── add_sample_assessment.py     # Sample Step 1 assessment script
+├── run.py                       # Application entry point
+├── requirements.txt             # Python dependencies
 └── .gitignore
 ```
 
@@ -50,25 +56,49 @@ cbt-assessment/
 - **MultipleChoiceOptions**: Answer choices for MC questions
 - **Responses**: User answers with timestamps
 
-## Features (Planned)
+## Features
 
-### Current Implementation
-- ✅ Database models and relationships
-- ✅ 12-step data seeding
-- ✅ Configuration management
-- ✅ Development environment setup
+### ✅ Implemented
+- **Database Foundation**
+  - Complete SQLAlchemy models (User, Step, Assessment, Question, Response)
+  - 12-step data seeding with titles and descriptions
+  - Development and production configurations
 
-### In Development
-- ⏳ User authentication system
-- ⏳ Question-by-question assessment interface
-- ⏳ Sequential step progression
-- ⏳ Admin dashboard for reviewing responses
+- **Authentication & User Management**
+  - Flask-Login based authentication
+  - Prison ID and password login system
+  - Session management
+  - Protected routes with login requirement
 
-### Future Enhancements
-- 📋 Progress tracking and visualization
-- 📋 Offline capability for institutional tablets
-- 📋 Data export for treatment records
-- 📋 Multi-therapist support
+- **Assessment System**
+  - Question-by-question interface
+  - Multiple choice questions with radio button selection
+  - Written response questions with text area
+  - Sequential question flow with progress tracking
+  - Session-based question order persistence
+  - Support for randomized or ordered questions
+  - Automatic response recording to database
+
+- **User Experience**
+  - Dashboard showing current step and progress
+  - Clear visual progress indicators during assessments
+  - Assessment completion page
+  - Automatic advancement to next step upon completion
+  - Sequential step enforcement (must complete in order)
+
+- **Development Tools**
+  - Database initialization script (`init_db.py`)
+  - Test user creation script (`create_test_user.py`)
+  - Sample assessment generator for Step 1 (`add_sample_assessment.py`)
+
+### 📋 To Be Implemented
+- Admin dashboard for reviewing user responses
+- Static CSS styling (currently using inline styles)
+- Assessments for Steps 2-12 (only Step 1 has sample assessment)
+- Progress visualization and analytics
+- Data export functionality for treatment records
+- Offline capability for institutional tablets
+- Multi-therapist/administrator support
 
 ## Setup Instructions
 
@@ -99,13 +129,28 @@ cbt-assessment/
 
 4. **Initialize the database**
 ```bash
-   python init_db.py
+python init_db.py
 ```
 
-5. **Run the application** (when ready)
+5. **Create a test user** (for development)
 ```bash
-   python run.py
+python create_test_user.py
 ```
+   This creates a test user with:
+   - Prison ID: `TEST001`
+   - Password: `password123`
+
+6. **Add sample assessment** (optional, for Step 1)
+```bash
+python add_sample_assessment.py
+```
+   This creates a 5-question sample assessment for Step 1.
+
+7. **Run the application**
+```bash
+python run.py
+```
+   Navigate to `http://localhost:5000` and log in with the test credentials.
 
 ## Development Environment
 
@@ -147,4 +192,8 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: 🚧 Active Development - Database and models complete, building user interface next
+**Project Status**: 🚧 Active Development
+
+**Current Milestone**: Core assessment system complete! Users can log in, view their progress, and complete Step 1 assessment with both multiple-choice and written questions.
+
+**Next Steps**: Admin dashboard, remaining step assessments (2-12), and enhanced styling.
