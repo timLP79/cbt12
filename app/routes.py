@@ -3,6 +3,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from app.models import User, Step, Assessment, Question, Response
+import random
+from flask import session
+
 
 # Create a blueprint for routes
 main = Blueprint('main', __name__)
@@ -67,14 +70,12 @@ def start_assessment(step_number):
 
     # Get questions (randomized or ordered)
     if assessment.randomize_questions:
-        import random
         questions = list(assessment.questions)
         random.shuffle(questions)
     else:
         questions = sorted(assessment.questions, key=lambda q: q.question_order)
 
     # Store question order in session for consistency
-    from flask import session
     session['question_order'] = [q.question_id for q in questions]
     session['current_question_index'] = 0
 
@@ -86,8 +87,6 @@ def start_assessment(step_number):
 @login_required
 def show_question(question_id):
     """Display single question"""
-    from flask import session
-
     question = Question.query.get(question_id)
     if not question:
         flash('Question not found.')
@@ -142,8 +141,6 @@ def show_question(question_id):
 @login_required
 def assessment_complete():
     """Assessment completion page"""
-    from flask import session
-
     # Advance user to next step
     if current_user.current_step < 12:
         current_user.current_step += 1
