@@ -1,5 +1,9 @@
 from app import create_app, db
 from app.models import Step
+import os
+
+os.makedirs('instance', exist_ok=True)
+
 
 def init_database():
     """Initialize the database with tables and seed data"""
