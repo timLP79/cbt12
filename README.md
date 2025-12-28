@@ -38,7 +38,7 @@ cbt-assessment/
 ├── venv/                        # Virtual environment (not in git)
 ├── config.py                    # Configuration settings
 ├── init_db.py                   # Database initialization script
-├── create_test_user.py          # Development test user script
+├── create_test_data.py          # Create test users and clinicians
 ├── add_sample_assessment.py     # Sample Step 1 assessment script
 ├── run.py                       # Application entry point
 ├── requirements.txt             # Python dependencies
@@ -49,19 +49,29 @@ cbt-assessment/
 
 ### Core Tables
 
-- **Users**: Participant information (prison_id, name, current_step)
+- **Users**: Participant information (prison_id, name, current_step, assigned clinician)
+- **Clinicians**: Clinical staff who review assessments (with roles: clinician/supervisor/admin)
+- **AssessmentAttempts**: Tracks each attempt at an assessment with review status
 - **Steps**: The 12 recovery steps with descriptions
 - **Assessments**: One assessment per step
 - **Questions**: Individual questions (multiple choice or written)
 - **MultipleChoiceOptions**: Answer choices for MC questions
-- **Responses**: User answers with timestamps
+- **Responses**: User answers linked to attempts, with clinician feedback support
+
+### Workflow
+The application implements a **clinician review workflow** where participants complete assessments, clinicians review submissions, and participants advance only after approval. This supports the Option D "Hybrid Approach" - flexible review with approval, revision, or supervisor referral options.
 
 ## Features
 
 ### ✅ Implemented
-- **Database Foundation**
-  - Complete SQLAlchemy models (User, Step, Assessment, Question, Response)
+
+- **Database Foundation (Phase 1: Complete)**
+  - 8 SQLAlchemy models with relationships:
+    - Core: User, Clinician, AssessmentAttempt, Step, Assessment
+    - Supporting: Question, MultipleChoiceOption, Response
+  - Clinician review workflow support (attempt tracking, status management)
   - 12-step data seeding with titles and descriptions
+  - Test data creation (2 participants, 2 clinicians)
   - Development and production configurations
 
 - **Authentication & User Management**
@@ -132,13 +142,13 @@ cbt-assessment/
 python init_db.py
 ```
 
-5. **Create a test user** (for development)
+5. **Create test data** (users and clinicians for development)
 ```bash
-python create_test_user.py
+python create_test_data.py
 ```
-   This creates a test user with:
-   - Prison ID: `TEST001`
-   - Password: `password123`
+   This creates:
+   - **Participants**: TEST001 (password123), TEST002 (password456)
+   - **Clinicians**: CLIN001 (clinician123), CLIN002 (clinician456)
 
 6. **Add sample assessment** (optional, for Step 1)
 ```bash
@@ -192,8 +202,12 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: 🚧 Active Development
+**Project Status**: 🚧 Active Development - Phase 1 Complete
 
-**Current Milestone**: Core assessment system complete! Users can log in, view their progress, and complete Step 1 assessment with both multiple-choice and written questions.
+**Current Milestone**: **Phase 1 (Database & Core Models) Complete!**
+- ✅ Clinician review workflow database schema implemented
+- ✅ AssessmentAttempt and Clinician models created
+- ✅ Response and User models updated for attempt tracking
+- ✅ Test data scripts for development ready
 
-**Next Steps**: Admin dashboard, remaining step assessments (2-12), and enhanced styling.
+**Next Steps (Phase 2)**: Modify participant flow to use new attempt tracking, stop auto-advancement, implement status-based progression, build clinician portal.

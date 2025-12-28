@@ -1,5 +1,14 @@
 # CBT Assessment - Technical Debt & Improvements
 
+**Last Updated:** 2025-12-27
+
+## ✅ Recently Completed (2025-12-27)
+- **Phase 1: Database & Core Models** - Complete review workflow schema implemented
+- **Instance folder creation** - Fixed in init_db.py (creates folder automatically)
+- **Test data script** - Created create_test_data.py for users and clinicians
+
+---
+
 ## 🔴 CRITICAL - Fix Before Next Session (5-10 minutes)
 
 ### 1. Login Manager Bug
@@ -23,10 +32,10 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 import random
 ```
 
-### 3. Create Instance Folder Programmatically
-**File:** `init_db.py` or `run.py`
-**Issue:** App crashes on fresh install if `instance/` doesn't exist
-**Fix:** Add before database operations:
+### 3. ✅ Create Instance Folder Programmatically (FIXED)
+**File:** `init_db.py`
+**Status:** Fixed on 2025-12-27
+**Fix Applied:**
 ```python
 import os
 os.makedirs('instance', exist_ok=True)
@@ -73,6 +82,7 @@ except Exception as e:
 ### 7. Prevent Duplicate Responses
 **File:** `app/models.py` - Response class
 **Issue:** User can submit same question multiple times
+**Note:** Schema changed in Phase 1 - now use attempt_id instead of prison_id
 **Fix:** Add unique constraint:
 ```python
 class Response(db.Model):
@@ -80,8 +90,8 @@ class Response(db.Model):
     # ... existing columns ...
 
     __table_args__ = (
-        db.UniqueConstraint('prison_id', 'question_id',
-                          name='unique_user_question_response'),
+        db.UniqueConstraint('attempt_id', 'question_id',
+                          name='unique_attempt_question_response'),
     )
 ```
 
@@ -206,3 +216,17 @@ step_id = db.Column(db.Integer, db.ForeignKey('steps.step_id'),
 - Address other issues when working in related code
 - Don't let technical debt block feature development
 - Revisit this list before any production deployment
+
+---
+
+## 🎯 Phase 2 Tasks (Next Session)
+
+**Goal:** Implement clinician review workflow in application routes
+
+**High Priority:**
+1. Modify routes.py to create AssessmentAttempt when user starts assessment
+2. Remove auto-advancement code from completion route
+3. Update dashboard to show attempt status
+4. Prevent starting next step if current not approved
+
+**Reference:** See WORKFLOW_DESIGN.md Phase 2 for detailed implementation plan

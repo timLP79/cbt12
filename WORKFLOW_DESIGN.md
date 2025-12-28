@@ -1,8 +1,9 @@
 # CBT Assessment - Clinician Review Workflow Design
 
 **Date Created:** 2025-12-26
-**Status:** 🟡 Under Review - Awaiting Decisions
-**Purpose:** Design the assessment review and approval workflow before implementation
+**Last Updated:** 2025-12-27
+**Status:** 🟢 In Progress - Phase 1 Complete
+**Purpose:** Design and implement the assessment review and approval workflow
 
 ---
 
@@ -488,17 +489,20 @@ class User(db.Model, UserMixin):
 
 ## Implementation Phases
 
-### Phase 1: Database & Core Models (Week 1)
+### Phase 1: Database & Core Models ✅ COMPLETE
 **Goal:** Get the data structure right
 
 **Tasks:**
-- [ ] Create new models (AssessmentAttempt, Clinician)
-- [ ] Modify existing models (Response, User)
-- [ ] Write migration/fresh db script
-- [ ] Create test data script (participants + clinicians)
-- [ ] Test relationships work correctly
+- [x] Create new models (AssessmentAttempt, Clinician)
+- [x] Modify existing models (Response, User)
+- [x] Write migration/fresh db script
+- [x] Create test data script (participants + clinicians)
+- [x] Test relationships work correctly
 
 **Deliverable:** Database schema that supports review workflow
+
+**Completed:** 2025-12-27
+**Notes:** All models created and tested. Database includes 8 tables with proper relationships. Test data script creates 2 participants and 2 clinicians.
 
 ---
 
@@ -597,12 +601,18 @@ class User(db.Model, UserMixin):
 **Instructions:** Fill this out as decisions are made. Date each decision.
 
 ### Workflow Choice
-**Date:** __________
-**Decision:** Option ___ (A, B, C, or D)
+**Date:** 2025-12-27
+**Decision:** Option D (Hybrid Approach)
 **Rationale:**
+- Most flexible for different situations
+- Supports learning without being punitive (revision capability)
+- Audit trail for accountability
+- Room for program to evolve based on real-world needs
 
-
-**Consulted with:**
+**Implementation Details:**
+- Clinician can Approve, Request Revision, or Refer to Supervisor
+- Optional informal rating/scoring for progress tracking
+- All decisions logged with timestamp and clinician ID
 
 
 ---
@@ -666,25 +676,26 @@ class User(db.Model, UserMixin):
 
 ## Next Steps
 
-### Before Tomorrow's Session
+### ✅ Completed (2025-12-27)
+- [x] Chose Option D (Hybrid Approach) for workflow
+- [x] Designed complete database schema
+- [x] Implemented Phase 1 (Database & Core Models)
+- [x] Created AssessmentAttempt and Clinician models
+- [x] Modified Response and User models
+- [x] Built test data creation scripts
 
-**Action items for you:**
-- [ ] Read through this entire document
-- [ ] Think about which workflow (A, B, C, D) makes most sense
-- [ ] **Reach out to ex-colleague** if possible - ask about:
-  - What happens when assessment isn't satisfactory
-  - Whether there's scoring or just approval
-  - How many clinicians will use the system
-  - Timeline expectations for review
-- [ ] Mark any questions you're uncertain about
-- [ ] Add any new questions that come up
+### For Next Session (Phase 2: Modified Participant Flow)
 
-**What we'll do tomorrow:**
-1. Review your answers to the questions above
-2. Make final decisions on workflow
-3. Design the exact database schema
-4. Fix the 3 critical bugs from TODO.md
-5. Start implementing Phase 1 (database changes)
+**Tasks:**
+1. Modify `app/routes.py` to create AssessmentAttempt when user starts assessment
+2. Remove auto-advancement code from assessment completion
+3. Update dashboard template to show attempt status (Pending/Approved/Needs Revision)
+4. Prevent users from starting next step until current is approved
+5. Test participant flow with new workflow
+
+**Goal:** Participants can complete assessments but cannot auto-advance. Status tracking in place.
+
+**Estimated Time:** 30-45 minutes of guided implementation
 
 ---
 
