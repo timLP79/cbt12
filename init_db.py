@@ -1,8 +1,13 @@
 from app import create_app, db
-from app.models import Step
+from app.models import User, Step, Assessment, AssessmentAttempt, Clinician, Question, MultipleChoiceOption, Response
+
 import os
 
 os.makedirs('instance', exist_ok=True)
+db_path = 'instance/cbt_assessment.db'
+if os.path.exists(db_path):
+    os.remove(db_path)
+    print(f"Deleted old database: {db_path}")
 
 
 def init_database():

@@ -17,10 +17,13 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(100), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     date_enrolled = db.Column(db.DateTime, default=datetime.utcnow)
-    current_step = db.Column(db.Integer, default=1)
 
-    # Relationship responses
-    responses = db.relationship('Response', backref='user', lazy=True)
+    # Program tracking
+    current_step = db.Column(db.Integer, default=1)
+    assigned_clinician_id = db.Column(db.String(50), db.ForeignKey('clinicians.clinician_id'), nullable=True)
+
+    # Relationships
+    assigned_clinician = db.relationship('Clinician', backref='assigned_participants', lazy=True)
 
     def get_id(self):
         return self.prison_id
@@ -124,8 +127,10 @@ class Response(db.Model):
     __tablename__ = 'responses'
 
     response_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    prison_id = db.Column(db.String(50), db.ForeignKey('users.prison_id'), nullable=False)
+    attempt_id = db.Column(db.Integer, db.ForeignKey('assessment_attempts.attempt_id'), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.question_id'), nullable=False)
     response_text = db.Column(db.Text)  # For written responses
     selected_option_id = db.Column(db.Integer, db.ForeignKey('multiple_choice_options.option_id'))  # For MC
+    clinician_comment = db.Column(db.Text, nullable=True)
+    needs_revision = db.Column(db.Boolean, default=False, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
