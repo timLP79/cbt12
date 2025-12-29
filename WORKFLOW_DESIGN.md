@@ -2,7 +2,7 @@
 
 **Date Created:** 2025-12-26
 **Last Updated:** 2025-12-28
-**Status:** 🟢 In Progress - Phase 2 Complete
+**Status:** 🟢 Phase 3 Complete - Security Hardening Next
 **Purpose:** Design and implement the assessment review and approval workflow
 
 ---
@@ -524,51 +524,75 @@ class User(db.Model, UserMixin):
 
 ---
 
-### Phase 3: Clinician Login & Authentication (Week 2)
-**Goal:** Separate login for clinical staff
+### Phase 3: Admin Portal (Authentication, Dashboard, Review & Approval) ✅ COMPLETE
+**Goal:** Complete admin portal for reviewing and approving assessments
 
 **Tasks:**
-- [ ] Create clinician login page (separate from participant)
-- [ ] Add user_loader for clinician accounts
-- [ ] Create clinician registration/management (admin only)
-- [ ] Add role-based access control
-- [ ] Test clinician can log in separately
+- [x] Create admin login page (separate from participant)
+- [x] Add user_loader for dual user types (participant/admin)
+- [x] Session-based user type tracking
+- [x] Create admin dashboard page
+- [x] List all pending assessments (table view)
+- [x] Click to view assessment details
+- [x] Show all responses for one assessment
+- [x] Display participant info safely (privacy)
+- [x] Add "Approve" button on review page
+- [x] Add "Request Revision" with comment field
+- [x] Update AssessmentAttempt status in database
+- [x] Log reviewer, timestamp, notes
+- [x] Test approval unlocks next step for participant
 
-**Deliverable:** Clinicians can log into separate portal
+**Deliverable:** Complete admin review workflow functional
+
+**Completed:** 2025-12-28
+
+**Notes:** Admin authentication implemented with separate login portal at /admin/login. Dashboard lists pending assessments with review interface showing all participant responses. Approval/revision workflow fully functional with feedback notes. Participants advance to next step only after admin approval. Tested end-to-end workflow successfully.
 
 ---
 
-### Phase 4: Clinician Review Dashboard (Week 2-3)
-**Goal:** Let clinicians see and review assessments
+### Major Refactoring ✅ COMPLETE
+**Goal:** Make application more general-purpose
 
 **Tasks:**
-- [ ] Create clinician dashboard page
-- [ ] List all pending assessments (table view)
-- [ ] Filter by status, date, participant
-- [ ] Click to view assessment details
-- [ ] Show all responses for one assessment
-- [ ] Display participant info safely (privacy)
+- [x] Rename `Clinician` model → `Admin` model
+- [x] Rename `prison_id` → `state_id` throughout application
+- [x] Update all routes (15+ changes)
+- [x] Update all templates (5 files)
+- [x] Update database scripts
+- [x] Recreate database with new schema
+- [x] Update test data with new IDs (ADMIN001/ADMIN002)
+- [x] Keep "clinician" in user-facing text for clarity
 
-**Deliverable:** Clinicians can view pending work
+**Completed:** 2025-12-28
+
+**Notes:** Systematic refactoring to remove prison-specific terminology. All code, routes, templates, and database updated. Testing verified no regressions. Application now more suitable for various treatment settings.
 
 ---
 
-### Phase 5: Review & Approval Actions (Week 3)
-**Goal:** Let clinicians approve/reject assessments
+### Phase 4: Security Hardening 🔄 IN PROGRESS
+**Goal:** Fix critical security issues before deployment
 
-**Tasks:**
-- [ ] Add "Approve" button on review page
-- [ ] Add "Request Revision" with comment field
-- [ ] (Optional) Add "Reject" option
-- [ ] Update AssessmentAttempt status in database
-- [ ] Log reviewer, timestamp, notes
-- [ ] Test approval unlocks next step for participant
+**Priority Tasks:**
+- [ ] Add CSRF protection to all forms
+- [ ] Implement @admin_required decorator for authorization
+- [ ] Fix secret key handling for production
+- [ ] Regenerate sessions on login (prevent session fixation)
+- [ ] Add authorization checks to prevent IDOR
+- [ ] Add input validation throughout
+- [ ] Implement rate limiting on login routes
+- [ ] Add database indexes for performance
+- [ ] Fix N+1 query problems with eager loading
+- [ ] Add transaction rollback handling
 
-**Deliverable:** Basic review workflow complete
+**Deliverable:** Application ready for secure deployment
+
+**Target Completion:** Next session
+
+**Notes:** Comprehensive code review completed on 2025-12-28 identified 25 issues (5 critical, 5 high priority). Will address critical and high priority issues in teaching mode before deployment to Render.com.
 
 ---
 
-### Phase 6: Revision Workflow (Week 3-4)
+### Phase 5: Revision Workflow (Future)
 **Goal:** Let participants revise based on feedback
 
 **Tasks:**
@@ -679,28 +703,39 @@ class User(db.Model, UserMixin):
 
 ## Next Steps
 
-### ✅ Completed (2025-12-27)
+### ✅ Completed (2025-12-27 - 2025-12-28)
 - [x] Chose Option D (Hybrid Approach) for workflow
 - [x] Designed complete database schema
 - [x] Implemented Phase 1 (Database & Core Models)
+- [x] Implemented Phase 2 (Modified Participant Flow)
+- [x] Implemented Phase 3 (Admin Portal)
+- [x] Completed major refactoring (Clinician → Admin, prison_id → state_id)
+- [x] Comprehensive code review completed (25 issues identified)
 - [x] Created AssessmentAttempt and Clinician models
 - [x] Modified Response and User models
 - [x] Built test data creation scripts
 
-### For Next Session (Phase 3: Clinician Portal)
+### For Next Session (Phase 4: Security Hardening)
 
-**Tasks:**
-1. Create `/clinician/login` route and template for separate clinician authentication
-2. Build `/clinician/dashboard` to display pending assessments
-3. Create `/clinician/review/<attempt_id>` interface to view participant responses
-4. Implement approval actions (approve, request revision, refer to supervisor)
-5. Test complete workflow: participant → clinician → approval → advancement
+**Critical Security Fixes (Teaching Mode):**
+1. Add CSRF protection to all forms
+2. Implement @admin_required decorator for authorization checks
+3. Fix secret key handling for production
+4. Regenerate sessions on login to prevent session fixation
+5. Add authorization checks to prevent IDOR vulnerabilities
+6. Add input validation throughout application
+7. Implement rate limiting on login routes
+8. Add database indexes for performance
+9. Fix N+1 query problems with eager loading
+10. Add transaction rollback handling
 
-**Goal:** Clinicians can log in, view pending assessments, review responses, and approve/reject work.
+**Goal:** Fix all critical and high-priority security issues before deployment
 
-**Estimated Time:** 90 minutes total (can split into two 45-minute sessions)
+**Approach:** Step-by-step teaching with explanations and understanding checks
 
-**Then:** Deploy complete system to Render.com for colleague testing
+**Estimated Time:** 3-4 hours total across multiple sessions
+
+**Then:** Deploy secure system to Render.com for colleague testing
 
 ---
 

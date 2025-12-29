@@ -1,6 +1,6 @@
 # CBT 12-Step Assessment Application
 
-A web-based cognitive behavioral therapy (CBT) assessment tool integrated with the 12-step recovery program, designed for use in correctional facilities.
+A web-based cognitive behavioral therapy (CBT) assessment tool integrated with the 12-step recovery program, designed for use in treatment facilities and correctional programs.
 
 ## Project Overview
 
@@ -49,8 +49,8 @@ cbt-assessment/
 
 ### Core Tables
 
-- **Users**: Participant information (prison_id, name, current_step, assigned clinician)
-- **Clinicians**: Clinical staff who review assessments (with roles: clinician/supervisor/admin)
+- **Users**: Participant information (state_id, name, current_step, assigned admin)
+- **Admins**: Administrative staff who review assessments (with roles: clinician/supervisor)
 - **AssessmentAttempts**: Tracks each attempt at an assessment with review status
 - **Steps**: The 12 recovery steps with descriptions
 - **Assessments**: One assessment per step
@@ -59,7 +59,7 @@ cbt-assessment/
 - **Responses**: User answers linked to attempts, with clinician feedback support
 
 ### Workflow
-The application implements a **clinician review workflow** where participants complete assessments, clinicians review submissions, and participants advance only after approval. This supports the Option D "Hybrid Approach" - flexible review with approval, revision, or supervisor referral options.
+The application implements a **clinician review workflow** where participants complete assessments, administrative staff (clinicians/supervisors) review submissions, and participants advance only after approval. This supports a flexible review approach with approval, revision, or supervisor referral options.
 
 ## Features
 
@@ -67,17 +67,18 @@ The application implements a **clinician review workflow** where participants co
 
 - **Database Foundation (Phase 1: Complete)**
   - 8 SQLAlchemy models with relationships:
-    - Core: User, Clinician, AssessmentAttempt, Step, Assessment
+    - Core: User, Admin, AssessmentAttempt, Step, Assessment
     - Supporting: Question, MultipleChoiceOption, Response
-  - Clinician review workflow support (attempt tracking, status management)
+  - Admin review workflow support (attempt tracking, status management)
   - 12-step data seeding with titles and descriptions
-  - Test data creation (2 participants, 2 clinicians)
+  - Test data creation (2 participants, 2 admins)
   - Development and production configurations
 
-- **Authentication & User Management**
-  - Flask-Login based authentication
-  - Prison ID and password login system
-  - Session management
+- **Authentication & User Management (Dual Login System)**
+  - Flask-Login based authentication with role-based access
+  - Participant login (State ID and password)
+  - Admin login (Admin ID and password)
+  - Session management with user type tracking
   - Protected routes with login requirement
 
 - **Assessment System**
@@ -89,26 +90,33 @@ The application implements a **clinician review workflow** where participants co
   - Support for randomized or ordered questions
   - Automatic response recording to database
 
-- **User Experience**
+- **Participant Experience (Phase 2: Complete)**
   - Dashboard showing current step and progress
+  - Dynamic status display (Pending Review, Approved, Needs Revision)
   - Clear visual progress indicators during assessments
-  - Assessment completion page
-  - Automatic advancement to next step upon completion
+  - Assessment completion page with pending review messaging
   - Sequential step enforcement (must complete in order)
+  - No auto-advancement - requires admin approval
+
+- **Admin Portal (Phase 3: Complete)**
+  - Admin dashboard showing pending assessments
+  - Review interface displaying all participant responses
+  - Approval/revision workflow with feedback notes
+  - Participant advancement upon approval
+  - Separate admin login portal
 
 - **Development Tools**
   - Database initialization script (`init_db.py`)
-  - Test user creation script (`create_test_user.py`)
+  - Test user creation script (`create_test_data.py`)
   - Sample assessment generator for Step 1 (`add_sample_assessment.py`)
 
 ### 📋 To Be Implemented
-- Admin dashboard for reviewing user responses
+- **Security hardening** (CSRF protection, authorization checks, rate limiting, input validation)
 - Static CSS styling (currently using inline styles)
 - Assessments for Steps 2-12 (only Step 1 has sample assessment)
 - Progress visualization and analytics
 - Data export functionality for treatment records
 - Offline capability for institutional tablets
-- Multi-therapist/administrator support
 
 ## Setup Instructions
 
@@ -142,13 +150,13 @@ The application implements a **clinician review workflow** where participants co
 python init_db.py
 ```
 
-5. **Create test data** (users and clinicians for development)
+5. **Create test data** (users and admins for development)
 ```bash
 python create_test_data.py
 ```
    This creates:
    - **Participants**: TEST001 (password123), TEST002 (password456)
-   - **Clinicians**: CLIN001 (clinician123), CLIN002 (clinician456)
+   - **Admins**: ADMIN001 (admin123), ADMIN002 (admin456)
 
 6. **Add sample assessment** (optional, for Step 1)
 ```bash
@@ -202,17 +210,31 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: 🚧 Active Development - Phase 2 Complete
+**Project Status**: 🚧 Active Development - Phase 3 Complete, Security Hardening In Progress
 
-**Current Milestone**: **Phase 2 (Participant Flow) Complete!**
-- ✅ Phase 1: Database schema with clinician review workflow
+**Current Milestone**: **Phase 3 (Admin Portal) Complete + Major Refactoring!**
+- ✅ Phase 1: Database schema with admin review workflow
 - ✅ Phase 2: Participant flow with attempt tracking and status display
   - AssessmentAttempt created on start, linked to all responses
-  - Removed auto-advancement - users wait for clinician approval
+  - Removed auto-advancement - users wait for admin approval
   - Dynamic dashboard showing attempt status (Pending/Approved/Needs Revision)
   - Updated completion page with "Pending Review" messaging
-  - Tested and verified working end-to-end
+- ✅ Phase 3: Admin portal with review and approval workflow
+  - Admin authentication with separate login portal
+  - Admin dashboard listing pending assessments
+  - Review interface displaying all participant responses
+  - Approval/revision actions with feedback notes
+  - Automatic participant advancement on approval
+- ✅ Major Refactoring (Dec 2025):
+  - Renamed `Clinician` model → `Admin` for broader applicability
+  - Changed `prison_id` → `state_id` for more general use
+  - Updated all routes, templates, and database references
+  - Dual login system (participants vs admins)
 
-**Next Steps (Phase 3)**: Build clinician portal - login, dashboard, review interface, and approval actions. Then deploy to Render.com.
+**Next Steps (Phase 4)**: Security hardening before deployment
+- Add CSRF protection
+- Implement authorization checks
+- Add rate limiting and input validation
+- Then deploy to Render.com
 
-**Progress**: ~60% complete (participant side done, clinician side pending)
+**Progress**: ~75% complete (core functionality done, security fixes and deployment pending)
