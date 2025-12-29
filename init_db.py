@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Step, Assessment, AssessmentAttempt, Clinician, Question, MultipleChoiceOption, Response
+from app.models import User, Step, Assessment, AssessmentAttempt, Admin, Question, MultipleChoiceOption, Response
 
 import os
 

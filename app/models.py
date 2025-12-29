@@ -9,7 +9,7 @@ class User(db.Model, UserMixin):
     """Participant taking assessment"""
     __tablename__ = 'users'
 
-    prison_id = db.Column(db.String(50), primary_key=True)
+    state_id = db.Column(db.String(50), primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
@@ -17,13 +17,13 @@ class User(db.Model, UserMixin):
 
     # Program tracking
     current_step = db.Column(db.Integer, default=1)
-    assigned_clinician_id = db.Column(db.String(50), db.ForeignKey('clinicians.clinician_id'), nullable=True)
+    assigned_admin_id = db.Column(db.String(50), db.ForeignKey('admins.admin_id'), nullable=True)
 
     # Relationships
-    assigned_clinician = db.relationship('Clinician', backref='assigned_participants', lazy=True)
+    assigned_admin = db.relationship('Admin', backref='assigned_participants', lazy=True)
 
     def get_id(self):
-        return self.prison_id
+        return self.state_id
 
 
 class Step(db.Model):
@@ -58,13 +58,13 @@ class AssessmentAttempt(db.Model):
     __tablename__ = 'assessment_attempts'
 
     attempt_id = db.Column(db.Integer, primary_key=True)
-    prison_id = db.Column(db.String(50), db.ForeignKey('users.prison_id'), nullable=False)
+    state_id = db.Column(db.String(50), db.ForeignKey('users.state_id'), nullable=False)
     assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.assessment_id'), nullable=False)
     attempt_number = db.Column(db.Integer, default=1, nullable=False)
     started_at = db.Column(db.DateTime, nullable=True)
     submitted_at = db.Column(db.DateTime, nullable=True)
     status = db.Column(db.String(20), default='in_progress', nullable=False)
-    reviewed_by = db.Column(db.String(50), db.ForeignKey('clinicians.clinician_id'), nullable=True)
+    reviewed_by = db.Column(db.String(50), db.ForeignKey('admins.admin_id'), nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)
     clinician_notes = db.Column(db.Text, nullable=True)
     score = db.Column(db.Integer, nullable=True)
@@ -75,11 +75,11 @@ class AssessmentAttempt(db.Model):
     responses = db.relationship('Response', backref='attempt', lazy=True)
 
 
-class Clinician(db.Model, UserMixin):
-    """Clinical staff who review assessments"""
-    __tablename__ = 'clinicians'
+class Admin(db.Model, UserMixin):
+    """Administrative staff who review assessments"""
+    __tablename__ = 'admins'
 
-    clinician_id = db.Column(db.String(50), primary_key=True)
+    admin_id = db.Column(db.String(50), primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(200), unique=True, nullable=False)
@@ -92,7 +92,7 @@ class Clinician(db.Model, UserMixin):
     reviewed_attempts = db.relationship('AssessmentAttempt', backref='reviewer', lazy=True)
 
     def get_id(self):
-        return self.clinician_id
+        return self.admin_id
 
 
 class Question(db.Model):

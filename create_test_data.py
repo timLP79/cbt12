@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Clinician
+from app.models import User, Admin
 from werkzeug.security import generate_password_hash
 
 
@@ -24,7 +24,7 @@ def create_test_data():
             current_step=1
         )
 
-        clinician1 = Clinician(
+        clinician1 = Admin(
             clinician_id='CLIN001',
             first_name='Tim',
             last_name='Palacios',
@@ -33,7 +33,7 @@ def create_test_data():
             role='supervisor'
         )
 
-        clinician2 = Clinician(
+        clinician2 = Admin(
             clinician_id='CLIN002',
             first_name='Sandra',
             last_name='Riggs',

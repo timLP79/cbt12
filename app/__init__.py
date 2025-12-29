@@ -11,14 +11,14 @@ login_manager = LoginManager()
 def load_user(user_id):
     """
     Load user from session.
-    Checks user_type in session to determine if loading a User or Clinician.
+    Checks user_type in session to determine if loading a User or Admin.
     """
-    from app.models import User, Clinician
+    from app.models import User, Admin
 
     user_type = session.get('user_type', 'participant')
 
-    if user_type == 'clinician':
-        return Clinician.query.get(user_id)
+    if user_type == 'admin':
+        return Admin.query.get(user_id)
     else:
         return User.query.get(user_id)
 

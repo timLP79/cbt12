@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
-from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt, Clinician
+from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt, Admin
 import random
 from flask import session
 from datetime import datetime
@@ -23,53 +23,53 @@ def index():
 def login():
     """Login page"""
     if request.method == 'POST':
-        prison_id = request.form.get('prison_id')
+        state_id = request.form.get('state_id')
         password = request.form.get('password')
 
-        user = User.query.get(prison_id)
+        user = User.query.get(state_id)
 
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             session['user_type'] = 'participant'
             return redirect(url_for('main.dashboard'))
         else:
-            flash('Invalid prison ID or password')
+            flash('Invalid state ID or password')
 
     return render_template('login.html')
 
 
-@main.route('/clinician/login', methods=['GET', 'POST'])
-def clinician_login():
-    """Clinician login page"""
+@main.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """Admin login page"""
     if request.method == 'POST':
-        clinician_id = request.form.get('clinician_id')
+        admin_id = request.form.get('admin_id')
         password = request.form.get('password')
 
-        clinician = Clinician.query.get(clinician_id)
+        admin = Admin.query.get(admin_id)
 
-        if clinician and check_password_hash(clinician.password_hash, password):
-            login_user(clinician)
-            session['user_type'] = 'clinician'
-            return redirect(url_for('main.clinician_dashboard'))
+        if admin and check_password_hash(admin.password_hash, password):
+            login_user(admin)
+            session['user_type'] = 'admin'
+            return redirect(url_for('main.admin_dashboard'))
         else:
-            flash('Invalid clinician ID or password')
+            flash('Invalid admin ID or password')
 
-    return render_template('clinician_login.html')
+    return render_template('admin_login.html')
 
 
-@main.route('/clinician/dashboard')
+@main.route('/admin/dashboard')
 @login_required
-def clinician_dashboard():
-    """Clinician dashboard showing pending assessments"""
+def admin_dashboard():
+    """Admin dashboard showing pending assessments"""
     # Get all submitted attempts that need review (status = 'submitted')
     pending_attempts = AssessmentAttempt.query.filter_by(
         status='submitted'
     ).order_by(AssessmentAttempt.submitted_at.desc()).all()
 
-    return render_template('clinician_dashboard.html', pending_attempts=pending_attempts)
+    return render_template('admin_dashboard.html', pending_attempts=pending_attempts)
 
 
-@main.route('/clinician/review/<int:attempt_id>', methods=['GET', 'POST'])
+@main.route('/admin/review/<int:attempt_id>', methods=['GET', 'POST'])
 @login_required
 def review_attempt(attempt_id):
     """Review a participant's assessment attempt"""
@@ -80,7 +80,7 @@ def review_attempt(attempt_id):
     responses = Response.query.filter_by(attempt_id=attempt_id).all()
 
     # Organize responses by question for template access
-    response_by_question = {response.question_id: response for response in responses}
+    responses_by_question = {response.question_id: response for response in responses}
 
     # Get all questions for this assessment
     questions = Question.query.filter_by(
@@ -90,10 +90,10 @@ def review_attempt(attempt_id):
     return render_template('review_attempt.html',
                            attempt=attempt,
                            questions=questions,
-                           responses_by_question=response_by_question)
+                           responses_by_question=responses_by_question)
 
 
-@main.route('/clinician/review/<int:attempt_id>/submit', methods=['POST'])
+@main.route('/admin/review/<int:attempt_id>/submit', methods=['POST'])
 @login_required
 def submit_review(attempt_id):
     # Get the attempt
@@ -108,7 +108,7 @@ def submit_review(attempt_id):
         attempt.status = 'approved'
 
         # Advance the user to the next step
-        user = User.query.get(attempt.prison_id)
+        user = User.query.get(attempt.state_id)
         user.current_step += 1
 
         flash('Assessment approved! Participant can proceed to the next step', 'success')
@@ -118,14 +118,14 @@ def submit_review(attempt_id):
         flash('Participant notified that revision is needed.', 'warning')
 
     # Set review metadata
-    attempt.reviewed_by = current_user.clinician_id
+    attempt.reviewed_by = current_user.admin_id
     attempt.reviewed_at = datetime.utcnow()
     attempt.clinician_notes = clinician_notes
 
     # Save changes
     db.session.commit()
 
-    return redirect(url_for('main.clinician_dashboard'))
+    return redirect(url_for('main.admin_dashboard'))
 
 
 @main.route('/logout')
@@ -150,7 +150,7 @@ def dashboard():
     current_attempt = None
     if assessment:
         current_attempt = AssessmentAttempt.query.filter_by(
-            prison_id=current_user.prison_id,
+            state_id=current_user.state_id,
             assessment_id=assessment.assessment_id
         ).order_by(AssessmentAttempt.attempt_number.desc()).first()
 
@@ -192,13 +192,13 @@ def start_assessment(step_number):
 
     # Count previous attempts for this assessment
     previous_attempts = AssessmentAttempt.query.filter_by(
-        prison_id=current_user.prison_id,
+        state_id=current_user.state_id,
         assessment_id=assessment.assessment_id
     ).count()
 
     # Create new attempt
     attempt = AssessmentAttempt(
-        prison_id=current_user.prison_id,
+        state_id=current_user.state_id,
         assessment_id=assessment.assessment_id,
         attempt_number=previous_attempts + 1,
         status='in_progress',
