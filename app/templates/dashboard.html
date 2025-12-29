@@ -11,11 +11,57 @@
     <p>{{ current_step.step_description }}</p>
 </div>
 
-<p>You are currently working on Step {{ current_step.step_number }} of 12.</p>
+{# Assessment Status Section #}
+  {% if current_attempt %}
+      {% if current_attempt.status == 'submitted' %}
+          <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; border-left: 4px solid #ffc107;">
+              <h3>📋 Status: Pending Clinician Review</h3>
+              <p>Your assessment was submitted on {{ current_attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}.</p>
+              <p><strong>You cannot proceed to the next step until a clinician reviews and approves your work.</strong></p>
+              <p>Please check back later or contact your counselor for updates.</p>
+          </div>
 
-<form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
-    <button type="submit">Start Assessment</button>
-</form>
+      {% elif current_attempt.status == 'in_progress' %}
+          <div style="background: #d1ecf1; padding: 1rem; border-radius: 5px; border-left: 4px solid #17a2b8;">
+              <h3>⏸ Assessment In Progress</h3>
+              <p>You started this assessment but haven't finished yet.</p>
+              <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
+                  <button type="submit">Resume Assessment</button>
+              </form>
+          </div>
+
+      {% elif current_attempt.status == 'approved' %}
+          <div style="background: #d4edda; padding: 1rem; border-radius: 5px; border-left: 4px solid #28a745;">
+              <h3>✅ Assessment Approved!</h3>
+              <p>Your work has been reviewed and approved by {{ current_attempt.reviewer.first_name }} {{ current_attempt.reviewer.last_name }}.</p>
+              <p>You may now proceed to Step {{ current_step.step_number + 1 }}.</p>
+              <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number + 1) }}" method="GET">
+                  <button type="submit">Start Step {{ current_step.step_number + 1 }}</button>
+              </form>
+          </div>
+
+      {% elif current_attempt.status == 'needs_revision' %}
+          <div style="background: #f8d7da; padding: 1rem; border-radius: 5px; border-left: 4px solid #dc3545;">
+              <h3>📝 Revision Requested</h3>
+              <p><strong>Feedback from {{ current_attempt.reviewer.first_name }} {{ current_attempt.reviewer.last_name }}:</strong></p>
+              <blockquote>{{ current_attempt.clinician_notes }}</blockquote>
+              <p>Please revise your work based on the feedback above.</p>
+              <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
+                  <button type="submit">Revise Your Work</button>
+              </form>
+          </div>
+      {% endif %}
+
+  {% else %}
+      {# No attempt yet - show start button #}
+      <div style="background: #e7f3ff; padding: 1rem; border-radius: 5px; border-left: 4px solid #007bff;">
+          <h3>Ready to Begin</h3>
+          <p>You haven't started this assessment yet. Click below to begin.</p>
+          <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
+              <button type="submit">Start Assessment</button>
+          </form>
+      </div>
+  {% endif %}
 
 <hr style="margin: 2rem 0;">
 
