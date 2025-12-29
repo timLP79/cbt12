@@ -1,11 +1,21 @@
 # CBT Assessment - Technical Debt & Improvements
 
-**Last Updated:** 2025-12-27
+**Last Updated:** 2025-12-28
 
-## ✅ Recently Completed (2025-12-27)
-- **Phase 1: Database & Core Models** - Complete review workflow schema implemented
-- **Instance folder creation** - Fixed in init_db.py (creates folder automatically)
-- **Test data script** - Created create_test_data.py for users and clinicians
+## ✅ Recently Completed (2025-12-28)
+
+### Phase 2: Participant Flow - COMPLETE
+- **Modified routes.py** - Create AssessmentAttempt on start, link responses to attempts
+- **Removed auto-advancement** - Users stay on current step until approved
+- **Updated dashboard.html** - Dynamic status display (Pending/Approved/Needs Revision)
+- **Updated assessment_complete.html** - "Pending Review" messaging
+- **End-to-end testing** - Verified attempt tracking and status flow
+- **Git commit** - Phase 2 committed and pushed to GitHub
+
+### Phase 1: Database & Core Models - COMPLETE
+- Database schema with clinician review workflow
+- Instance folder creation fixed in init_db.py
+- Test data script (create_test_data.py) for users and clinicians
 
 ---
 
@@ -219,14 +229,33 @@ step_id = db.Column(db.Integer, db.ForeignKey('steps.step_id'),
 
 ---
 
-## 🎯 Phase 2 Tasks (Next Session)
+## 🎯 Phase 3 Tasks (Next Session)
 
-**Goal:** Implement clinician review workflow in application routes
+**Goal:** Build clinician portal for reviewing and approving assessments
 
 **High Priority:**
-1. Modify routes.py to create AssessmentAttempt when user starts assessment
-2. Remove auto-advancement code from completion route
-3. Update dashboard to show attempt status
-4. Prevent starting next step if current not approved
+1. **Clinician Authentication** (20 min)
+   - Create /clinician/login route and template
+   - User type detection and routing
+   - Test login as CLIN001
 
-**Reference:** See WORKFLOW_DESIGN.md Phase 2 for detailed implementation plan
+2. **Clinician Dashboard** (20 min)
+   - Create /clinician/dashboard route
+   - Query and display pending assessments
+   - Show participant info, submission time
+   - Filter and sort options
+
+3. **Review Interface** (20 min)
+   - Create /clinician/review/<attempt_id> route
+   - Display all questions and user responses
+   - Create review template with feedback form
+
+4. **Approval Actions** (30 min)
+   - Implement approve, request revision, refer actions
+   - Update attempt status and add clinician notes
+   - Advance user's current_step on approval
+   - Test complete workflow
+
+**Estimated Time:** 90 minutes total (can split into 2 sessions)
+
+**Reference:** See WORKFLOW_DESIGN.md Phase 3 for detailed implementation plan

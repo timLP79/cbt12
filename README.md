@@ -202,12 +202,17 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: 🚧 Active Development - Phase 1 Complete
+**Project Status**: 🚧 Active Development - Phase 2 Complete
 
-**Current Milestone**: **Phase 1 (Database & Core Models) Complete!**
-- ✅ Clinician review workflow database schema implemented
-- ✅ AssessmentAttempt and Clinician models created
-- ✅ Response and User models updated for attempt tracking
-- ✅ Test data scripts for development ready
+**Current Milestone**: **Phase 2 (Participant Flow) Complete!**
+- ✅ Phase 1: Database schema with clinician review workflow
+- ✅ Phase 2: Participant flow with attempt tracking and status display
+  - AssessmentAttempt created on start, linked to all responses
+  - Removed auto-advancement - users wait for clinician approval
+  - Dynamic dashboard showing attempt status (Pending/Approved/Needs Revision)
+  - Updated completion page with "Pending Review" messaging
+  - Tested and verified working end-to-end
 
-**Next Steps (Phase 2)**: Modify participant flow to use new attempt tracking, stop auto-advancement, implement status-based progression, build clinician portal.
+**Next Steps (Phase 3)**: Build clinician portal - login, dashboard, review interface, and approval actions. Then deploy to Render.com.
+
+**Progress**: ~60% complete (participant side done, clinician side pending)

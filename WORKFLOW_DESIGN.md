@@ -1,8 +1,8 @@
 # CBT Assessment - Clinician Review Workflow Design
 
 **Date Created:** 2025-12-26
-**Last Updated:** 2025-12-27
-**Status:** 🟢 In Progress - Phase 1 Complete
+**Last Updated:** 2025-12-28
+**Status:** 🟢 In Progress - Phase 2 Complete
 **Purpose:** Design and implement the assessment review and approval workflow
 
 ---
@@ -506,18 +506,21 @@ class User(db.Model, UserMixin):
 
 ---
 
-### Phase 2: Modified Participant Flow (Week 1-2)
+### Phase 2: Modified Participant Flow ✅ COMPLETE
 **Goal:** Stop auto-advancement, add status tracking
 
 **Tasks:**
-- [ ] Modify `assessment_complete()` route - remove auto-advancement
-- [ ] Create AssessmentAttempt when user starts assessment
-- [ ] Link responses to attempt_id
-- [ ] Update dashboard to show attempt status
-- [ ] Add "Pending Review" / "Approved" / "Needs Revision" states
-- [ ] Prevent starting next step if current not approved
+- [x] Modify `assessment_complete()` route - remove auto-advancement
+- [x] Create AssessmentAttempt when user starts assessment
+- [x] Link responses to attempt_id
+- [x] Update dashboard to show attempt status
+- [x] Add "Pending Review" / "Approved" / "Needs Revision" states
+- [x] Prevent starting next step if current not approved
 
 **Deliverable:** Participants can complete but not auto-advance
+
+**Completed:** 2025-12-28
+**Notes:** Participant workflow fully functional. Routes modified to create attempts, link responses, and display status. Dashboard shows color-coded status boxes. Completion page shows "Pending Review" messaging. Tested with multiple users and verified in database.
 
 ---
 
@@ -684,18 +687,20 @@ class User(db.Model, UserMixin):
 - [x] Modified Response and User models
 - [x] Built test data creation scripts
 
-### For Next Session (Phase 2: Modified Participant Flow)
+### For Next Session (Phase 3: Clinician Portal)
 
 **Tasks:**
-1. Modify `app/routes.py` to create AssessmentAttempt when user starts assessment
-2. Remove auto-advancement code from assessment completion
-3. Update dashboard template to show attempt status (Pending/Approved/Needs Revision)
-4. Prevent users from starting next step until current is approved
-5. Test participant flow with new workflow
+1. Create `/clinician/login` route and template for separate clinician authentication
+2. Build `/clinician/dashboard` to display pending assessments
+3. Create `/clinician/review/<attempt_id>` interface to view participant responses
+4. Implement approval actions (approve, request revision, refer to supervisor)
+5. Test complete workflow: participant → clinician → approval → advancement
 
-**Goal:** Participants can complete assessments but cannot auto-advance. Status tracking in place.
+**Goal:** Clinicians can log in, view pending assessments, review responses, and approve/reject work.
 
-**Estimated Time:** 30-45 minutes of guided implementation
+**Estimated Time:** 90 minutes total (can split into two 45-minute sessions)
+
+**Then:** Deploy complete system to Render.com for colleague testing
 
 ---
 
