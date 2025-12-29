@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Clinician Dashboard - CBT 12-Step Assessment{% endblock %}
+{% block title %}Admin Dashboard - CBT 12-Step Assessment{% endblock %}
 
 {% block content %}
-<h2>Clinician Dashboard</h2>
+<h2>Admin Dashboard</h2>
 <p>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</p>
 
 <hr>
@@ -15,7 +15,7 @@
     <thead>
     <tr style="background: #f4f4f4; text-align: left;">
         <th style="padding: 0.75rem; border: 1px solid #ddd;">Participant</th>
-        <th style="padding: 0.75rem; border: 1px solid #ddd;">Prison ID</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd;">State ID</th>
         <th style="padding: 0.75rem; border: 1px solid #ddd;">Step</th>
         <th style="padding: 0.75rem; border: 1px solid #ddd;">Submitted</th>
         <th style="padding: 0.75rem; border: 1px solid #ddd;">Action</th>
@@ -28,7 +28,7 @@
             {{ attempt.user.first_name }} {{ attempt.user.last_name }}
         </td>
         <td style="padding: 0.75rem; border: 1px solid #ddd;">
-            {{ attempt.prison_id }}
+            {{ attempt.state_id }}
         </td>
         <td style="padding: 0.75rem; border: 1px solid #ddd;">
             Step {{ attempt.assessment.step.step_number }}

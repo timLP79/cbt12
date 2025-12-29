@@ -5,17 +5,17 @@
 {% block content %}
 
 <div style="text-align: right; margin-bottom: 2rem;">
-    <a href="{{ url_for('main.clinician_login') }}" style="color: #007bff; text-decoration: none; font-weight: bold;">
+    <a href="{{ url_for('main.admin_login') }}" style="color: #007bff; text-decoration: none; font-weight: bold;">
         Admin Login
     </a>
 </div>
 
 <h2>Participant Login</h2>
-<p>Please enter your prison ID and password to access your assessments.</p>
+<p>Please enter your state ID and password to access your assessments.</p>
 
 <form method="POST" action="{{ url_for('main.login') }}">
-    <label for="prison_id">Prison ID:</label>
-    <input type="text" id="prison_id" name="prison_id" required autofocus>
+    <label for="state_id">State ID:</label>
+    <input type="text" id="state_id" name="state_id" required autofocus>
 
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required>

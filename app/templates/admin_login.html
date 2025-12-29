@@ -10,12 +10,12 @@
     </a>
 </div>
 
-<h2>Clinician Login</h2>
-<p>Please enter your clinician ID and password to access the review portal.</p>
+<h2>Admin Login</h2>
+<p>Please enter your admin ID and password to access the review portal.</p>
 
-<form method="POST" action="{{ url_for('main.clinician_login') }}">
-    <label for="clinician_id">Clinician ID:</label>
-    <input type="text" id="clinician_id" name="clinician_id" required autofocus>
+<form method="POST" action="{{ url_for('main.admin_login') }}">
+    <label for="admin_id">Admin ID:</label>
+    <input type="text" id="admin_id" name="admin_id" required autofocus>
 
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required>

@@ -9,7 +9,7 @@
 <div style="background: #f4f4f4; padding: 1rem; border-radius: 5px; margin-bottom: 2rem;">
     <h3>Participant Information</h3>
     <p><strong>Name:</strong> {{ attempt.user.first_name }} {{ attempt.user.last_name }}</p>
-    <p><strong>Prison ID:</strong> {{ attempt.prison_id }}</p>
+    <p><strong>State ID:</strong> {{ attempt.state_id }}</p>
     <p><strong>Step:</strong> {{ attempt.assessment.step.step_number }} - {{ attempt.assessment.step.step_title }}</p>
     <p><strong>Submitted:</strong> {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
     <p><strong>Attempt Number:</strong> {{ attempt.attempt_number }}</p>
@@ -87,7 +87,7 @@
         Submit Review
     </button>
 
-    <button type="button" onclick="location.href='{{ url_for('main.clinician_dashboard') }}'"
+    <button type="button" onclick="location.href='{{ url_for('main.admin_dashboard') }}'"
             style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; margin-left: 1rem;">
         Cancel
     </button>
