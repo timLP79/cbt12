@@ -1,6 +1,7 @@
 from app import create_app, db
 from app.models import Assessment, Question, MultipleChoiceOption
 
+
 def add_sample_assessment():
     """Add a sample assessment for Step 1"""
     app = create_app()
@@ -12,7 +13,7 @@ def add_sample_assessment():
             print("Assessment for Step 1 already exists")
             return
 
-        #Create assessment for step 1
+        # Create assessment for step 1
         assessment = Assessment(
             step_id=1,
             assessment_title="Step 1: Powerless and Unmanageability Assessment",
@@ -20,7 +21,7 @@ def add_sample_assessment():
             randomize_questions=False
         )
         db.session.add(assessment)
-        db.session.flush() # Get assessment_id
+        db.session.flush()  # Get assessment_id
 
         # Question 1 - Multiple choice
         q1 = Question(
@@ -126,6 +127,7 @@ def add_sample_assessment():
         print("- 5 questions total")
         print("- 3 multiple choice questions")
         print("- 2 written response questions")
+
 
 if __name__ == '__main__':
     add_sample_assessment()

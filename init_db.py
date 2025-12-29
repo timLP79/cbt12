@@ -57,5 +57,6 @@ def init_database():
         else:
             print("Steps already exist in database")
 
+
 if __name__ == '__main__':
     init_database()

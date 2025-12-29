@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Review Assessment - CBT 12-Step{% endblock %}
+
+{% block content %}
+<h2>Review Assessment</h2>
+
+<!-- Participant Info -->
+<div style="background: #f4f4f4; padding: 1rem; border-radius: 5px; margin-bottom: 2rem;">
+    <h3>Participant Information</h3>
+    <p><strong>Name:</strong> {{ attempt.user.first_name }} {{ attempt.user.last_name }}</p>
+    <p><strong>Prison ID:</strong> {{ attempt.prison_id }}</p>
+    <p><strong>Step:</strong> {{ attempt.assessment.step.step_number }} - {{ attempt.assessment.step.step_title }}</p>
+    <p><strong>Submitted:</strong> {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+    <p><strong>Attempt Number:</strong> {{ attempt.attempt_number }}</p>
+</div>
+
+<hr>
+
+<!-- Questions and Responses -->
+<h3>Assessment Responses</h3>
+
+{% for question in questions %}
+<div style="background: #fff; border: 1px solid #ddd; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 5px;">
+    <!-- Question -->
+    <h4 style="color: #333; margin-bottom: 1rem;">
+        Question {{ loop.index }}: {{ question.question_text }}
+    </h4>
+
+    <!-- Participant's Response -->
+    {% set response = responses_by_question.get(question.question_id) %}
+
+    {% if response %}
+    <div style="background: #e7f3ff; padding: 1rem; border-left: 4px solid #007bff; margin-bottom: 1rem;">
+        <strong>Participant's Answer:</strong><br>
+
+        {% if question.question_type == 'multiple_choice' %}
+        <!-- Show selected option -->
+        <p style="margin-top: 0.5rem;">{{ response.selected_option.option_text }}</p>
+        {% else %}
+        <!-- Show text response -->
+        <p style="margin-top: 0.5rem; white-space: pre-wrap;">{{ response.response_text }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Clinician feedback for this response (if exists) -->
+    {% if response.clinician_comment %}
+    <div style="background: #fff3cd; padding: 1rem; border-left: 4px solid #ffc107;">
+        <strong>Previous Feedback:</strong><br>
+        <p style="margin-top: 0.5rem;">{{ response.clinician_comment }}</p>
+    </div>
+    {% endif %}
+    {% else %}
+    <p style="color: #999; font-style: italic;">No response provided</p>
+    {% endif %}
+</div>
+{% endfor %}
+
+<hr style="margin: 2rem 0;">
+
+<!-- Review Action Form -->
+<h3>Review Decision</h3>
+
+<form method="POST" action="{{ url_for('main.submit_review', attempt_id=attempt.attempt_id) }}">
+    <div style="margin-bottom: 1rem;">
+        <label for="clinician_notes"><strong>Clinician Notes:</strong></label>
+        <textarea id="clinician_notes" name="clinician_notes" rows="5"
+                  style="width: 100%; padding: 0.5rem; font-family: inherit;"
+                  placeholder="Add any notes or feedback for the participant..."></textarea>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+        <label><strong>Review Decision:</strong></label><br>
+        <div style="margin-top: 0.5rem; display: flex; align-items: center;">
+            <input type="radio" id="approve" name="decision" value="approve" required style="margin-right: 0.5rem;">
+            <label for="approve" style="margin: 0; margin-right: 2rem; cursor: pointer;">Approve (Advance to next
+                step)</label>
+        </div>
+        <div style="margin-top: 0.5rem; display: flex; align-items: center;">
+            <input type="radio" id="needs_revision" name="decision" value="needs_revision" required
+                   style="margin-right: 0.5rem;">
+            <label for="needs_revision" style="margin: 0; cursor: pointer;">Needs Revision (Request changes)</label>
+        </div>
+    </div>
+
+    <button type="submit" style="background: #28a745; color: white; padding: 0.75rem 1.5rem;">
+        Submit Review
+    </button>
+
+    <button type="button" onclick="location.href='{{ url_for('main.clinician_dashboard') }}'"
+            style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; margin-left: 1rem;">
+        Cancel
+    </button>
+</form>
+
+{% endblock %}

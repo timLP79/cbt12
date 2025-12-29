@@ -2,11 +2,10 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
-from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt
+from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt, Clinician
 import random
 from flask import session
 from datetime import datetime
-
 
 # Create a blueprint for routes
 main = Blueprint('main', __name__)
@@ -31,11 +30,102 @@ def login():
 
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
+            session['user_type'] = 'participant'
             return redirect(url_for('main.dashboard'))
         else:
             flash('Invalid prison ID or password')
 
     return render_template('login.html')
+
+
+@main.route('/clinician/login', methods=['GET', 'POST'])
+def clinician_login():
+    """Clinician login page"""
+    if request.method == 'POST':
+        clinician_id = request.form.get('clinician_id')
+        password = request.form.get('password')
+
+        clinician = Clinician.query.get(clinician_id)
+
+        if clinician and check_password_hash(clinician.password_hash, password):
+            login_user(clinician)
+            session['user_type'] = 'clinician'
+            return redirect(url_for('main.clinician_dashboard'))
+        else:
+            flash('Invalid clinician ID or password')
+
+    return render_template('clinician_login.html')
+
+
+@main.route('/clinician/dashboard')
+@login_required
+def clinician_dashboard():
+    """Clinician dashboard showing pending assessments"""
+    # Get all submitted attempts that need review (status = 'submitted')
+    pending_attempts = AssessmentAttempt.query.filter_by(
+        status='submitted'
+    ).order_by(AssessmentAttempt.submitted_at.desc()).all()
+
+    return render_template('clinician_dashboard.html', pending_attempts=pending_attempts)
+
+
+@main.route('/clinician/review/<int:attempt_id>', methods=['GET', 'POST'])
+@login_required
+def review_attempt(attempt_id):
+    """Review a participant's assessment attempt"""
+    # Get the attempt
+    attempt = AssessmentAttempt.query.get_or_404(attempt_id)
+
+    # Get all responses for this attempt
+    responses = Response.query.filter_by(attempt_id=attempt_id).all()
+
+    # Organize responses by question for template access
+    response_by_question = {response.question_id: response for response in responses}
+
+    # Get all questions for this assessment
+    questions = Question.query.filter_by(
+        assessment_id=attempt.assessment_id
+    ).order_by(Question.question_order).all()
+
+    return render_template('review_attempt.html',
+                           attempt=attempt,
+                           questions=questions,
+                           responses_by_question=response_by_question)
+
+
+@main.route('/clinician/review/<int:attempt_id>/submit', methods=['POST'])
+@login_required
+def submit_review(attempt_id):
+    # Get the attempt
+    attempt = AssessmentAttempt.query.get_or_404(attempt_id)
+
+    # Get form data
+    decision = request.form.get('decision')
+    clinician_notes = request.form.get('clinician_notes')
+
+    # Update the attempt based on decision
+    if decision == 'approve':
+        attempt.status = 'approved'
+
+        # Advance the user to the next step
+        user = User.query.get(attempt.prison_id)
+        user.current_step += 1
+
+        flash('Assessment approved! Participant can proceed to the next step', 'success')
+
+    elif decision == 'needs_revision':
+        attempt.status = 'needs_revision'
+        flash('Participant notified that revision is needed.', 'warning')
+
+    # Set review metadata
+    attempt.reviewed_by = current_user.clinician_id
+    attempt.reviewed_at = datetime.utcnow()
+    attempt.clinician_notes = clinician_notes
+
+    # Save changes
+    db.session.commit()
+
+    return redirect(url_for('main.clinician_dashboard'))
 
 
 @main.route('/logout')
@@ -176,7 +266,7 @@ def show_question(question_id):
 
     # Calculate progress
     total_questions = len(question_order)
-    progress = f"Question {current_index +1} of {total_questions}"
+    progress = f"Question {current_index + 1} of {total_questions}"
 
     return render_template('question.html',
                            question=question,

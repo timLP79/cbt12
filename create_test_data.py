@@ -2,6 +2,7 @@ from app import create_app, db
 from app.models import User, Clinician
 from werkzeug.security import generate_password_hash
 
+
 def create_test_data():
     """Create test users and clinicians for development"""
     app = create_app()

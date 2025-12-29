@@ -14,29 +14,30 @@
 
 <form method="POST">
     {% if question.question_type == 'multiple_choice' %}
-        <!-- Multiple Choice Question -->
-        {% for option in question.options %}
-        <div style="margin-bottom: 1rem;">
-            <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="radio" name="selected_option" value="{{ option.option_id }}" required style="margin-right: 0.5rem;">
-                <span>{{ option.option_text }}</span>
-            </label>
-        </div>
-        {% endfor %}
+    <!-- Multiple Choice Question -->
+    {% for option in question.options %}
+    <div style="margin-bottom: 1rem;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="radio" name="selected_option" value="{{ option.option_id }}" required
+                   style="margin-right: 0.5rem;">
+            <span>{{ option.option_text }}</span>
+        </label>
+    </div>
+    {% endfor %}
     {% else %}
-        <!-- Written Response Question -->
-        <label for="response_text">Your response:</label>
-        <textarea id="response_text" name="response_text" rows="6" required
-                  style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px; font-size: 1rem; font-family: Arial, sans-serif;">
+    <!-- Written Response Question -->
+    <label for="response_text">Your response:</label>
+    <textarea id="response_text" name="response_text" rows="6" required
+              style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px; font-size: 1rem; font-family: Arial, sans-serif;">
         </textarea>
     {% endif %}
 
     <div style="margin-top: 2rem;">
         <button type="submit">
             {% if current_index + 1 < total_questions %}
-                Next Question →
+            Next Question →
             {% else %}
-                Complete Assessment
+            Complete Assessment
             {% endif %}
         </button>
     </div>

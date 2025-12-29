@@ -50,7 +50,7 @@
             background: #fff;
             padding: 2rem;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .flash-messages {
@@ -110,29 +110,29 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>CBT 12-Step Assessment</h1>
-        {% if current_user.is_authenticated %}
-        <nav>
-            <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('main.logout') }}">Logout</a>
-            <span style="float: right;">Welcome, {{ current_user.first_name }}</span>
-        </nav>
-        {% endif %}
-    </header>
+<header>
+    <h1>CBT 12-Step Assessment</h1>
+    {% if current_user.is_authenticated %}
+    <nav>
+        <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('main.logout') }}">Logout</a>
+        <span style="float: right;">Welcome, {{ current_user.first_name }}</span>
+    </nav>
+    {% endif %}
+</header>
 
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="flash-messages">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flash-messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
 
-        {% block content %}{% endblock %}
-    </div>
+    {% block content %}{% endblock %}
+</div>
 </body>
 </html>

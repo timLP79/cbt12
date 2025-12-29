@@ -2,6 +2,7 @@ from app import create_app, db
 from app.models import User
 from werkzeug.security import generate_password_hash
 
+
 def create_test_user():
     """Create a test user for development"""
     app = create_app()
@@ -29,6 +30,7 @@ def create_test_user():
         print("Prison ID: TEST001")
         print("Password: password123")
         print("Current Step: 1")
+
 
 if __name__ == '__main__':
     create_test_user()

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Clinician Login - CBT 12-Step Assessment{% endblock %}
+
+{% block content %}
+
+<div style="text-align: right; margin-bottom: 2rem;">
+    <a href="{{ url_for('main.login') }}" style="color: #007bff; text-decoration: none; font-weight: bold;">
+        Participant Login
+    </a>
+</div>
+
+<h2>Clinician Login</h2>
+<p>Please enter your clinician ID and password to access the review portal.</p>
+
+<form method="POST" action="{{ url_for('main.clinician_login') }}">
+    <label for="clinician_id">Clinician ID:</label>
+    <input type="text" id="clinician_id" name="clinician_id" required autofocus>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+{% endblock %}

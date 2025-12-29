@@ -1,38 +1,39 @@
 {% extends "base.html" %}
 
-  {% block title %}Assessment Submitted - CBT 12-Step{% endblock %}
+{% block title %}Assessment Submitted - CBT 12-Step{% endblock %}
 
-  {% block content %}
-  <div style="text-align: center; padding: 2rem 0;">
-      <h2 style="color: #ffc107;">📋 Assessment Submitted!</h2>
+{% block content %}
+<div style="text-align: center; padding: 2rem 0;">
+    <h2 style="color: #ffc107;">📋 Assessment Submitted!</h2>
 
-      <div class="step-info" style="margin: 2rem 0; background: #fff3cd; padding: 2rem; border-radius: 8px; border-left: 4px solid #ffc107;">
-          <p style="font-size: 1.2rem; margin-bottom: 1rem;">
-              <strong>Thank you for completing Step {{ current_user.current_step }}.</strong>
-          </p>
+    <div class="step-info"
+         style="margin: 2rem 0; background: #fff3cd; padding: 2rem; border-radius: 8px; border-left: 4px solid #ffc107;">
+        <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+            <strong>Thank you for completing Step {{ current_user.current_step }}.</strong>
+        </p>
 
-          <p style="font-size: 1rem; line-height: 1.6;">
-              Your assessment has been submitted and is now <strong>pending clinician review</strong>.
-          </p>
+        <p style="font-size: 1rem; line-height: 1.6;">
+            Your assessment has been submitted and is now <strong>pending clinician review</strong>.
+        </p>
 
-          <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #ccc;">
+        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #ccc;">
 
-          <h3 style="color: #856404; margin-bottom: 1rem;">What Happens Next?</h3>
+        <h3 style="color: #856404; margin-bottom: 1rem;">What Happens Next?</h3>
 
-          <ul style="text-align: left; max-width: 500px; margin: 0 auto; line-height: 1.8;">
-              <li>A clinician will review your responses</li>
-              <li>You will be notified when the review is complete</li>
-              <li>If approved, you can proceed to Step {{ current_user.current_step + 1 }}</li>
-              <li>If revision is needed, you'll receive feedback</li>
-          </ul>
+        <ul style="text-align: left; max-width: 500px; margin: 0 auto; line-height: 1.8;">
+            <li>A clinician will review your responses</li>
+            <li>You will be notified when the review is complete</li>
+            <li>If approved, you can proceed to Step {{ current_user.current_step + 1 }}</li>
+            <li>If revision is needed, you'll receive feedback</li>
+        </ul>
 
-          <p style="margin-top: 1.5rem; font-style: italic; color: #666;">
-              Please check your dashboard regularly for updates, or contact your counselor.
-          </p>
-      </div>
+        <p style="margin-top: 1.5rem; font-style: italic; color: #666;">
+            Please check your dashboard regularly for updates, or contact your counselor.
+        </p>
+    </div>
 
-      <button onclick="location.href='{{ url_for('main.dashboard') }}'">
-          Return to Dashboard
-      </button>
-  </div>
-  {% endblock %}
+    <button onclick="location.href='{{ url_for('main.dashboard') }}'">
+        Return to Dashboard
+    </button>
+</div>
+{% endblock %}

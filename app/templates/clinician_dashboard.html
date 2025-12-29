@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Clinician Dashboard - CBT 12-Step Assessment{% endblock %}
+
+{% block content %}
+<h2>Clinician Dashboard</h2>
+<p>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</p>
+
+<hr>
+
+<h3>Pending Assessments ({{ pending_attempts|length }})</h3>
+
+{% if pending_attempts %}
+<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+    <thead>
+    <tr style="background: #f4f4f4; text-align: left;">
+        <th style="padding: 0.75rem; border: 1px solid #ddd;">Participant</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd;">Prison ID</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd;">Step</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd;">Submitted</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for attempt in pending_attempts %}
+    <tr>
+        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+            {{ attempt.user.first_name }} {{ attempt.user.last_name }}
+        </td>
+        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+            {{ attempt.prison_id }}
+        </td>
+        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+            Step {{ attempt.assessment.step.step_number }}
+        </td>
+        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+            {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}
+        </td>
+        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+            <button onclick="location.href='{{ url_for('main.review_attempt', attempt_id=attempt.attempt_id) }}'">
+                Review
+            </button>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666; font-style: italic;">No pending assessments at this time.</p>
+{% endif %}
+
+<hr style="margin-top: 2rem;">
+
+<button onclick="location.href='{{ url_for('main.logout') }}'">Logout</button>
+{% endblock %}

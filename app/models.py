@@ -1,12 +1,9 @@
 from sqlalchemy.orm import backref
 
-from app import db, login_manager
+from app import db
 from flask_login import UserMixin
 from datetime import datetime
 
-@login_manager.user_loader
-def load_user(prison_id):
-    return User.query.get(prison_id)
 
 class User(db.Model, UserMixin):
     """Participant taking assessment"""
@@ -67,7 +64,7 @@ class AssessmentAttempt(db.Model):
     started_at = db.Column(db.DateTime, nullable=True)
     submitted_at = db.Column(db.DateTime, nullable=True)
     status = db.Column(db.String(20), default='in_progress', nullable=False)
-    reviewed_by = db.Column(db.String(50), db.ForeignKey('clinicians.clinician_id'),nullable=True)
+    reviewed_by = db.Column(db.String(50), db.ForeignKey('clinicians.clinician_id'), nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)
     clinician_notes = db.Column(db.Text, nullable=True)
     score = db.Column(db.Integer, nullable=True)
@@ -76,6 +73,7 @@ class AssessmentAttempt(db.Model):
     user = db.relationship('User', backref='attempts', lazy=True)
     assessment = db.relationship('Assessment', backref='attempts', lazy=True)
     responses = db.relationship('Response', backref='attempt', lazy=True)
+
 
 class Clinician(db.Model, UserMixin):
     """Clinical staff who review assessments"""
@@ -134,3 +132,6 @@ class Response(db.Model):
     clinician_comment = db.Column(db.Text, nullable=True)
     needs_revision = db.Column(db.Boolean, default=False, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    selected_option = db.relationship('MultipleChoiceOption', backref='responses', lazy=True)
