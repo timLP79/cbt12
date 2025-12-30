@@ -13,6 +13,8 @@
 </div>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
     {% if question.question_type == 'multiple_choice' %}
     <!-- Multiple Choice Question -->
     {% for option in question.options %}

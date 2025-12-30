@@ -62,6 +62,8 @@
 <h3>Review Decision</h3>
 
 <form method="POST" action="{{ url_for('main.submit_review', attempt_id=attempt.attempt_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
     <div style="margin-bottom: 1rem;">
         <label for="clinician_notes"><strong>Clinician Notes:</strong></label>
         <textarea id="clinician_notes" name="clinician_notes" rows="5"

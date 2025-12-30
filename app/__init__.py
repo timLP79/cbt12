@@ -1,10 +1,19 @@
 from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 # Initialize extensions
 db = SQLAlchemy()
 login_manager = LoginManager()
+csrf = CSRFProtect()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 
 @login_manager.user_loader
@@ -33,7 +42,9 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'
-
+    csrf.init_app(app)
+    limiter.init_app(app)
+    
     # Register blueprints
     from app.routes import main
     app.register_blueprint(main)
