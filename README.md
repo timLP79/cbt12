@@ -18,6 +18,7 @@ This application combines evidence-based Cognitive Behavioral Therapy principles
 - **Database**: SQLite (development), upgradeable to PostgreSQL
 - **ORM**: SQLAlchemy
 - **Authentication**: Flask-Login
+- **Security**: Flask-WTF (CSRF), Flask-Limiter (Rate Limiting)
 - **Development Environment**: Distrobox (Fedora 43) + PyCharm Professional
 
 ## Project Structure
@@ -111,11 +112,12 @@ The application implements a **clinician review workflow** where participants co
   - Sample assessment generator for Step 1 (`add_sample_assessment.py`)
 
 ### 📋 To Be Implemented
-- **Security hardening** (CSRF protection, authorization checks, rate limiting, input validation)
+- **Performance optimization** (database indexes, N+1 query fixes, transaction rollback)
 - Static CSS styling (currently using inline styles)
 - Assessments for Steps 2-12 (only Step 1 has sample assessment)
 - Progress visualization and analytics
 - Data export functionality for treatment records
+- Custom error pages (404, 403, 500)
 - Offline capability for institutional tablets
 
 ## Setup Instructions
@@ -210,31 +212,27 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: 🚧 Active Development - Phase 3 Complete, Security Hardening In Progress
+**Project Status**: 🚧 Active Development - Phase 4 Security Hardening ~90% Complete
 
-**Current Milestone**: **Phase 3 (Admin Portal) Complete + Major Refactoring!**
+**Current Milestone**: **Phase 4 (Security Hardening) Nearly Complete!**
 - ✅ Phase 1: Database schema with admin review workflow
 - ✅ Phase 2: Participant flow with attempt tracking and status display
-  - AssessmentAttempt created on start, linked to all responses
-  - Removed auto-advancement - users wait for admin approval
-  - Dynamic dashboard showing attempt status (Pending/Approved/Needs Revision)
-  - Updated completion page with "Pending Review" messaging
 - ✅ Phase 3: Admin portal with review and approval workflow
-  - Admin authentication with separate login portal
-  - Admin dashboard listing pending assessments
-  - Review interface displaying all participant responses
-  - Approval/revision actions with feedback notes
-  - Automatic participant advancement on approval
-- ✅ Major Refactoring (Dec 2025):
-  - Renamed `Clinician` model → `Admin` for broader applicability
-  - Changed `prison_id` → `state_id` for more general use
-  - Updated all routes, templates, and database references
-  - Dual login system (participants vs admins)
+- ✅ Major Refactoring (Dec 2025): Clinician → Admin, prison_id → state_id
+- ✅ Phase 4 Security (Critical & High Priority - Dec 2025):
+  - **CSRF Protection** - Flask-WTF tokens in all forms
+  - **Authorization** - @admin_required decorator on admin routes
+  - **Session Security** - Session regeneration on login
+  - **Input Validation** - Custom validators for all user inputs
+  - **Rate Limiting** - Flask-Limiter on login routes (5/min)
+  - **Secret Key** - Production validation in config
+  - **IDOR Protection** - Verified secure with get_or_404()
 
-**Next Steps (Phase 4)**: Security hardening before deployment
-- Add CSRF protection
-- Implement authorization checks
-- Add rate limiting and input validation
-- Then deploy to Render.com
+**Remaining Phase 4 Tasks**: Performance optimization (database indexes, N+1 queries, transaction rollback)
 
-**Progress**: ~75% complete (core functionality done, security fixes and deployment pending)
+**Next Steps**:
+- Complete remaining 3 performance tasks
+- End-to-end security testing
+- Deploy to Render.com for testing
+
+**Progress**: ~85% complete (core functionality + security hardening done, performance optimization and deployment pending)
