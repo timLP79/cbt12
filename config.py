@@ -19,4 +19,12 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     """Production configuration"""
+    def __init__(self):
+        # Secret key is required in production to start normally
+        if not os.environ.get('SECRET_KEY'):
+            raise ValueError(
+                "SECRET_KEY must be set in production! "
+                "Generate one with: python -c 'import secrets; print(secrets.token_hex(32))'"
+            )
+
     DEBUG = False
