@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from app import db
+from app import db, limiter
 from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt, Admin
 import random
 from flask import session
@@ -45,6 +45,7 @@ def index():
 
 
 @main.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     """Login page"""
     if request.method == 'POST':
@@ -69,6 +70,7 @@ def login():
 
 
 @main.route('/admin/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def admin_login():
     """Admin login page"""
     if request.method == 'POST':
@@ -93,6 +95,7 @@ def admin_login():
 
 @main.route('/admin/dashboard')
 @login_required
+@admin_required
 def admin_dashboard():
     """Admin dashboard showing pending assessments"""
     # Get all submitted attempts that need review (status = 'submitted')
@@ -105,6 +108,7 @@ def admin_dashboard():
 
 @main.route('/admin/review/<int:attempt_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def review_attempt(attempt_id):
     """Review a participant's assessment attempt"""
     # Get the attempt
@@ -129,6 +133,7 @@ def review_attempt(attempt_id):
 
 @main.route('/admin/review/<int:attempt_id>/submit', methods=['POST'])
 @login_required
+@admin_required
 def submit_review(attempt_id):
     try:
         # Get the attempt
@@ -178,6 +183,10 @@ def logout():
 @login_required
 def dashboard():
     """User dashboard showing progress"""
+    # Redirect to the admin dashboard if the user is an admin
+    if isinstance(current_user, Admin):
+        return redirect(url_for('main.admin_dashboard'))
+
     # Get current step
     current_step = Step.query.filter_by(step_number=current_user.current_step).first()
 
