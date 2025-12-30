@@ -6,6 +6,31 @@ from app.models import User, Step, Assessment, Question, Response, AssessmentAtt
 import random
 from flask import session
 from datetime import datetime
+from functools import wraps
+from flask import abort
+from app.validators import (
+    ValidationError,
+    validate_state_id,
+    validate_admin_id,
+    validate_password,
+    validate_decision,
+    validate_integer_id,
+    validate_text_response
+)
+
+
+def admin_required(f):
+    """Used to restrict access to certain routes to admin only"""
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if the current user is an admin
+        if not isinstance(current_user, Admin):
+            abort(403)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 
 # Create a blueprint for routes
 main = Blueprint('main', __name__)
@@ -23,17 +48,22 @@ def index():
 def login():
     """Login page"""
     if request.method == 'POST':
-        state_id = request.form.get('state_id')
-        password = request.form.get('password')
+        try:
+            # Validate inputs
+            state_id = validate_state_id(request.form.get('state_id'))
+            password = validate_password(request.form.get('password'))
 
-        user = User.query.get(state_id)
+            user = User.query.get(state_id)
 
-        if user and check_password_hash(user.password_hash, password):
-            login_user(user)
-            session['user_type'] = 'participant'
-            return redirect(url_for('main.dashboard'))
-        else:
-            flash('Invalid state ID or password')
+            if user and check_password_hash(user.password_hash, password):
+                session.clear()
+                login_user(user)
+                session['user_type'] = 'participant'
+                return redirect(url_for('main.dashboard'))
+            else:
+                flash('Invalid state ID or password')
+        except ValidationError as e:
+            flash(str(e))
 
     return render_template('login.html')
 
@@ -42,17 +72,21 @@ def login():
 def admin_login():
     """Admin login page"""
     if request.method == 'POST':
-        admin_id = request.form.get('admin_id')
-        password = request.form.get('password')
+        try:
+            admin_id = validate_admin_id(request.form.get('admin_id'))
+            password = validate_password(request.form.get('password'))
 
-        admin = Admin.query.get(admin_id)
+            admin = Admin.query.get(admin_id)
 
-        if admin and check_password_hash(admin.password_hash, password):
-            login_user(admin)
-            session['user_type'] = 'admin'
-            return redirect(url_for('main.admin_dashboard'))
-        else:
-            flash('Invalid admin ID or password')
+            if admin and check_password_hash(admin.password_hash, password):
+                session.clear()
+                login_user(admin)
+                session['user_type'] = 'admin'
+                return redirect(url_for('main.admin_dashboard'))
+            else:
+                flash('Invalid admin ID or password')
+        except ValidationError as e:
+            flash(str(e))
 
     return render_template('admin_login.html')
 
@@ -96,34 +130,38 @@ def review_attempt(attempt_id):
 @main.route('/admin/review/<int:attempt_id>/submit', methods=['POST'])
 @login_required
 def submit_review(attempt_id):
-    # Get the attempt
-    attempt = AssessmentAttempt.query.get_or_404(attempt_id)
+    try:
+        # Get the attempt
+        attempt = AssessmentAttempt.query.get_or_404(attempt_id)
 
-    # Get form data
-    decision = request.form.get('decision')
-    clinician_notes = request.form.get('clinician_notes')
+        # Get form data
+        decision = validate_decision(request.form.get('decision'))
+        clinician_notes = validate_text_response(request.form.get('clinician_notes'), "Clinician note", max_length=5000)
 
-    # Update the attempt based on decision
-    if decision == 'approve':
-        attempt.status = 'approved'
+        # Update the attempt based on decision
+        if decision == 'approve':
+            attempt.status = 'approved'
 
-        # Advance the user to the next step
-        user = User.query.get(attempt.state_id)
-        user.current_step += 1
+            # Advance the user to the next step
+            user = User.query.get(attempt.state_id)
+            user.current_step += 1
 
-        flash('Assessment approved! Participant can proceed to the next step', 'success')
+            flash('Assessment approved! Participant can proceed to the next step', 'success')
 
-    elif decision == 'needs_revision':
-        attempt.status = 'needs_revision'
-        flash('Participant notified that revision is needed.', 'warning')
+        elif decision == 'needs_revision':
+            attempt.status = 'needs_revision'
+            flash('Participant notified that revision is needed.', 'warning')
 
-    # Set review metadata
-    attempt.reviewed_by = current_user.admin_id
-    attempt.reviewed_at = datetime.utcnow()
-    attempt.clinician_notes = clinician_notes
+        # Set review metadata
+        attempt.reviewed_by = current_user.admin_id
+        attempt.reviewed_at = datetime.utcnow()
+        attempt.clinician_notes = clinician_notes
 
-    # Save changes
-    db.session.commit()
+        # Save changes
+        db.session.commit()
+    except ValidationError as e:
+        flash(str(e))
+        return redirect(url_for('main.review_attempt', attempt_id=attempt_id))
 
     return redirect(url_for('main.admin_dashboard'))
 
@@ -235,34 +273,38 @@ def show_question(question_id):
     current_index = session.get('current_question_index', 0)
 
     if request.method == 'POST':
-        # Save the response
-        if question.question_type == 'multiple_choice':
-            selected_option_id = request.form.get('selected_option')
-            response = Response(
-                attempt_id=session['current_attempt_id'],
-                question_id=question_id,
-                selected_option_id=selected_option_id
-            )
-        else:
-            response_text = request.form.get('response_text')
-            response = Response(
-                attempt_id=session['current_attempt_id'],
-                question_id=question_id,
-                response_text=response_text
-            )
+        try:
+            # Save the response
+            if question.question_type == 'multiple_choice':
+                selected_option_id = validate_integer_id(request.form.get('selected_option'))
+                response = Response(
+                    attempt_id=session['current_attempt_id'],
+                    question_id=question_id,
+                    selected_option_id=selected_option_id
+                )
+            else:
+                response_text = validate_text_response(request.form.get('response_text'), "Response")
+                response = Response(
+                    attempt_id=session['current_attempt_id'],
+                    question_id=question_id,
+                    response_text=response_text
+                )
 
-        db.session.add(response)
-        db.session.commit()
+            db.session.add(response)
+            db.session.commit()
 
-        # Move to next question or finish
-        next_index = current_index + 1
-        if next_index < len(question_order):
-            session['current_question_index'] = next_index
-            next_question_id = question_order[next_index]
-            return redirect(url_for('main.show_question', question_id=next_question_id))
-        else:
-            # Assessment complete
-            return redirect(url_for('main.assessment_complete'))
+            # Move to next question or finish
+            next_index = current_index + 1
+            if next_index < len(question_order):
+                session['current_question_index'] = next_index
+                next_question_id = question_order[next_index]
+                return redirect(url_for('main.show_question', question_id=next_question_id))
+            else:
+                # Assessment complete
+                return redirect(url_for('main.assessment_complete'))
+
+        except ValidationError as e:
+            flash(str(e))
 
     # Calculate progress
     total_questions = len(question_order)
