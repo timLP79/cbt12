@@ -12,7 +12,7 @@ def create_test_data():
             state_id='TEST001',
             first_name='David',
             last_name='Fisher',
-            password_hash=generate_password_hash('password123'),
+            password_hash=generate_password_hash('Test123!'),
             current_step=1
         )
 
@@ -20,7 +20,7 @@ def create_test_data():
             state_id='TEST002',
             first_name='John',
             last_name='Doe',
-            password_hash=generate_password_hash('password456'),
+            password_hash=generate_password_hash('Test456!'),
             current_step=1
         )
 
@@ -29,7 +29,7 @@ def create_test_data():
             first_name='Tim',
             last_name='Palacios',
             email='timlpalacios@gmail.com',
-            password_hash=generate_password_hash('admin123'),
+            password_hash=generate_password_hash('Admin123!'),
             role='supervisor'
         )
 
@@ -38,7 +38,7 @@ def create_test_data():
             first_name='Sandra',
             last_name='Riggs',
             email='test@email.com',
-            password_hash=generate_password_hash('admin456'),
+            password_hash=generate_password_hash('Admin456!'),
             role='clinician'
         )
 
