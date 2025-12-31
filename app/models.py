@@ -1,5 +1,3 @@
-from sqlalchemy.orm import backref
-
 from app import db
 from flask_login import UserMixin
 from datetime import datetime
@@ -44,7 +42,7 @@ class Assessment(db.Model):
     __tablename__ = 'assessments'
 
     assessment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    step_id = db.Column(db.Integer, db.ForeignKey('steps.step_id'), nullable=False)
+    step_id = db.Column(db.Integer, db.ForeignKey('steps.step_id'), nullable=False, index=True)
     assessment_title = db.Column(db.String(200), nullable=False)
     instructions = db.Column(db.Text)
     randomize_questions = db.Column(db.Boolean, default=False)
@@ -62,8 +60,8 @@ class AssessmentAttempt(db.Model):
     assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.assessment_id'), nullable=False)
     attempt_number = db.Column(db.Integer, default=1, nullable=False)
     started_at = db.Column(db.DateTime, nullable=True)
-    submitted_at = db.Column(db.DateTime, nullable=True)
-    status = db.Column(db.String(20), default='in_progress', nullable=False)
+    submitted_at = db.Column(db.DateTime, nullable=True, index=True)
+    status = db.Column(db.String(20), default='in_progress', nullable=False, index=True)
     reviewed_by = db.Column(db.String(50), db.ForeignKey('admins.admin_id'), nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)
     clinician_notes = db.Column(db.Text, nullable=True)
@@ -73,6 +71,11 @@ class AssessmentAttempt(db.Model):
     user = db.relationship('User', backref='attempts', lazy=True)
     assessment = db.relationship('Assessment', backref='attempts', lazy=True)
     responses = db.relationship('Response', backref='attempt', lazy=True)
+
+    #Table-level index
+    __table_args__ = (
+        db.Index('idx_state_assessment', 'state_id', 'assessment_id'),
+    )
 
 
 class Admin(db.Model, UserMixin):
@@ -100,7 +103,7 @@ class Question(db.Model):
     __tablename__ = 'questions'
 
     question_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.assessment_id'), nullable=False)
+    assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.assessment_id'), nullable=False, index=True)
     question_text = db.Column(db.Text, nullable=False)
     question_type = db.Column(db.String(20), nullable=False)  # 'multiple_choice' or 'written'
     question_order = db.Column(db.Integer, nullable=False)
@@ -109,6 +112,10 @@ class Question(db.Model):
     options = db.relationship('MultipleChoiceOption', backref='question', lazy=True)
     responses = db.relationship('Response', backref='question', lazy=True)
 
+    # Table-level index
+    __table_args__ = (
+        db.Index('idx_assessment_order', 'assessment_id', 'question_order'),
+    )
 
 class MultipleChoiceOption(db.Model):
     """Answer options for multiple choice questions"""
@@ -125,7 +132,7 @@ class Response(db.Model):
     __tablename__ = 'responses'
 
     response_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    attempt_id = db.Column(db.Integer, db.ForeignKey('assessment_attempts.attempt_id'), nullable=False)
+    attempt_id = db.Column(db.Integer, db.ForeignKey('assessment_attempts.attempt_id'), nullable=False, index=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.question_id'), nullable=False)
     response_text = db.Column(db.Text)  # For written responses
     selected_option_id = db.Column(db.Integer, db.ForeignKey('multiple_choice_options.option_id'))  # For MC

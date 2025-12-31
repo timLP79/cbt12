@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.security import check_password_hash
 from app import db, limiter
 from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt, Admin
 import random
@@ -8,6 +9,7 @@ from flask import session
 from datetime import datetime
 from functools import wraps
 from flask import abort
+from sqlalchemy.orm import joinedload
 from app.validators import (
     ValidationError,
     validate_state_id,
@@ -101,6 +103,9 @@ def admin_dashboard():
     # Get all submitted attempts that need review (status = 'submitted')
     pending_attempts = AssessmentAttempt.query.filter_by(
         status='submitted'
+    ).options(
+        joinedload(AssessmentAttempt.user),
+        joinedload(AssessmentAttempt.assessment).joinedload(Assessment.step)
     ).order_by(AssessmentAttempt.submitted_at.desc()).all()
 
     return render_template('admin_dashboard.html', pending_attempts=pending_attempts)
@@ -166,6 +171,10 @@ def submit_review(attempt_id):
         db.session.commit()
     except ValidationError as e:
         flash(str(e))
+        return redirect(url_for('main.review_attempt', attempt_id=attempt_id))
+    except SQLAlchemyError:
+        db.session.rollback()
+        flash('An error occurred while saving the review. Please try again.')
         return redirect(url_for('main.review_attempt', attempt_id=attempt_id))
 
     return redirect(url_for('main.admin_dashboard'))
