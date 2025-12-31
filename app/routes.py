@@ -47,7 +47,7 @@ def index():
 
 
 @main.route('/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("20 per minute")
 def login():
     """Login page"""
     if request.method == 'POST':
@@ -72,7 +72,7 @@ def login():
 
 
 @main.route('/admin/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("20 per minute")
 def admin_login():
     """Admin login page"""
     if request.method == 'POST':
