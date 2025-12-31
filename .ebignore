@@ -1,0 +1,30 @@
+# Development files
+venv/
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Local DB
+instance/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Tests
+tests/
+test_*.py
+
+# Development Scripts
+init_db.py
+create_test_data.py
+add_sample_assessment.py
+
+# Documentation
+README.md
+TODO.md
+WORKFLOW_DESIGN.md
