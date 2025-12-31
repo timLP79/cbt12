@@ -112,12 +112,12 @@ The application implements a **clinician review workflow** where participants co
   - Sample assessment generator for Step 1 (`add_sample_assessment.py`)
 
 ### 📋 To Be Implemented
-- **Performance optimization** (database indexes, N+1 query fixes, transaction rollback)
 - Static CSS styling (currently using inline styles)
 - Assessments for Steps 2-12 (only Step 1 has sample assessment)
 - Progress visualization and analytics
 - Data export functionality for treatment records
 - Custom error pages (404, 403, 500)
+- Logging and audit trail
 - Offline capability for institutional tablets
 
 ## Setup Instructions
@@ -212,27 +212,33 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: 🚧 Active Development - Phase 4 Security Hardening ~90% Complete
+**Project Status**: ✅ Core Development Complete - Ready for Deployment Testing
 
-**Current Milestone**: **Phase 4 (Security Hardening) Nearly Complete!**
+**Current Milestone**: **Phase 4 (Security & Performance) COMPLETE!** 🎉
 - ✅ Phase 1: Database schema with admin review workflow
 - ✅ Phase 2: Participant flow with attempt tracking and status display
 - ✅ Phase 3: Admin portal with review and approval workflow
 - ✅ Major Refactoring (Dec 2025): Clinician → Admin, prison_id → state_id
-- ✅ Phase 4 Security (Critical & High Priority - Dec 2025):
+- ✅ Phase 4: Security Hardening & Performance Optimization (Dec 2025)
+
+**Security Implementations:**
   - **CSRF Protection** - Flask-WTF tokens in all forms
   - **Authorization** - @admin_required decorator on admin routes
   - **Session Security** - Session regeneration on login
   - **Input Validation** - Custom validators for all user inputs
-  - **Rate Limiting** - Flask-Limiter on login routes (5/min)
+  - **Rate Limiting** - Flask-Limiter on login routes
   - **Secret Key** - Production validation in config
   - **IDOR Protection** - Verified secure with get_or_404()
 
-**Remaining Phase 4 Tasks**: Performance optimization (database indexes, N+1 queries, transaction rollback)
+**Performance Optimizations:**
+  - **Database Indexes** - Added to all frequently queried columns
+  - **N+1 Query Fix** - Eager loading with joinedload()
+  - **Transaction Rollback** - Error handling with db.session.rollback()
 
 **Next Steps**:
-- Complete remaining 3 performance tasks
-- End-to-end security testing
-- Deploy to Render.com for testing
+- Deploy to Render.com for production testing
+- Set up production environment (PostgreSQL, environment variables)
+- End-to-end testing in production environment
+- Continue with medium/low priority enhancements
 
-**Progress**: ~85% complete (core functionality + security hardening done, performance optimization and deployment pending)
+**Progress**: ~92% complete (core functionality, security, and performance complete; deployment and polish remaining)
