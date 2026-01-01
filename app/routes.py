@@ -360,3 +360,9 @@ def assessment_complete():
     session.pop('current_attempt_id', None)
 
     return render_template('assessment_complete.html')
+
+# Error Handlers
+@main.app_errorhandler(404)
+def page_not_found(error):
+    """Handle 404 errors with a custom page"""
+    return render_template('404.html'), 404
