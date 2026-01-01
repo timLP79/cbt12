@@ -15,10 +15,14 @@ This application combines evidence-based Cognitive Behavioral Therapy principles
 ## Technology Stack
 
 - **Backend**: Python 3.14, Flask
-- **Database**: SQLite (development), upgradeable to PostgreSQL
+- **Database**: SQLite (development), PostgreSQL (production)
 - **ORM**: SQLAlchemy
 - **Authentication**: Flask-Login
 - **Security**: Flask-WTF (CSRF), Flask-Limiter (Rate Limiting)
+- **Production Server**: Gunicorn
+- **Cloud Platform**: AWS Elastic Beanstalk
+- **Database (Production)**: AWS RDS PostgreSQL
+- **CI/CD**: GitHub Actions
 - **Development Environment**: Distrobox (Fedora 43) + PyCharm Professional
 
 ## Project Structure
@@ -28,21 +32,34 @@ cbt-assessment/
 │   ├── __init__.py              # Flask app factory
 │   ├── models.py                # Database models
 │   ├── routes.py                # URL endpoints and authentication
+│   ├── validators.py            # Input validation functions
 │   └── templates/               # HTML templates
 │       ├── base.html            # Base template with common layout
 │       ├── login.html           # User login page
+│       ├── admin_login.html     # Admin login page
 │       ├── dashboard.html       # User progress dashboard
+│       ├── admin_dashboard.html # Admin review dashboard
 │       ├── question.html        # Assessment question display
+│       ├── review_attempt.html  # Admin review interface
 │       └── assessment_complete.html  # Completion confirmation
+├── .ebextensions/
+│   └── python.config            # AWS Elastic Beanstalk Python configuration
+├── .github/
+│   └── workflows/
+│       └── deploy.yml           # GitHub Actions deployment workflow
 ├── instance/
 │   └── cbt_assessment.db        # SQLite database (not in git)
 ├── venv/                        # Virtual environment (not in git)
 ├── config.py                    # Configuration settings
 ├── init_db.py                   # Database initialization script
-├── create_test_data.py          # Create test users and clinicians
+├── create_test_data.py          # Create test users and admins
 ├── add_sample_assessment.py     # Sample Step 1 assessment script
 ├── run.py                       # Application entry point
 ├── requirements.txt             # Python dependencies
+├── Procfile                     # AWS Elastic Beanstalk process configuration
+├── .ebignore                    # Files to exclude from AWS deployment
+├── DEPLOYMENT.md                # Comprehensive deployment guide
+├── TODO.md                      # Technical debt and improvements
 └── .gitignore
 ```
 
@@ -212,14 +229,27 @@ This is currently a personal learning project. Feedback and suggestions are welc
 
 ---
 
-**Project Status**: ✅ Core Development Complete - Ready for Deployment Testing
+**Project Status**: 🚀 **DEPLOYED TO AWS!** - Database Initialization Pending
 
-**Current Milestone**: **Phase 4 (Security & Performance) COMPLETE!** 🎉
+**Current Milestone**: **Phase 5 (AWS Deployment with CI/CD) - IN PROGRESS** 🎉
+
+**Completed Phases:**
 - ✅ Phase 1: Database schema with admin review workflow
 - ✅ Phase 2: Participant flow with attempt tracking and status display
 - ✅ Phase 3: Admin portal with review and approval workflow
 - ✅ Major Refactoring (Dec 2025): Clinician → Admin, prison_id → state_id
 - ✅ Phase 4: Security Hardening & Performance Optimization (Dec 2025)
+- ⏳ Phase 5: AWS Deployment with CI/CD (Dec 2025-Jan 2026)
+
+**Deployment Status:**
+- ✅ **AWS Elastic Beanstalk** - Application deployed and running
+- ✅ **RDS PostgreSQL** - Production database configured
+- ✅ **GitHub Actions CI/CD** - Automatic deployment on push to main
+- ✅ **Environment Variables** - DATABASE_URL, SECRET_KEY configured
+- ⏳ **Database Initialization** - Pending for 2026-01-01
+- ⏳ **Production Testing** - Pending after database setup
+
+**Production URL:** http://cbt12-env.eba-hfvqnv3s.us-east-1.elasticbeanstalk.com/
 
 **Security Implementations:**
   - **CSRF Protection** - Flask-WTF tokens in all forms
@@ -235,10 +265,10 @@ This is currently a personal learning project. Feedback and suggestions are welc
   - **N+1 Query Fix** - Eager loading with joinedload()
   - **Transaction Rollback** - Error handling with db.session.rollback()
 
-**Next Steps**:
-- Deploy to Render.com for production testing
-- Set up production environment (PostgreSQL, environment variables)
+**Next Steps (2026-01-01)**:
+- Initialize AWS production database (init_db.py, create_test_data.py, add_sample_assessment.py)
 - End-to-end testing in production environment
+- Verify complete workflow (participant → assessment → admin review → approval)
 - Continue with medium/low priority enhancements
 
-**Progress**: ~92% complete (core functionality, security, and performance complete; deployment and polish remaining)
+**Progress**: ~95% complete (core functionality, security, performance, and deployment infrastructure complete; database initialization and final testing remaining)

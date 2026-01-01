@@ -1,8 +1,30 @@
 # CBT Assessment - Technical Debt & Improvements
 
-**Last Updated:** 2025-12-30
+**Last Updated:** 2025-12-31
 
 ## ✅ Recently Completed
+
+### Phase 5: AWS Deployment with CI/CD - IN PROGRESS (2025-12-31)
+
+**Deployment Infrastructure:**
+- ✅ **AWS Elastic Beanstalk Setup** - Created CBT12 application with Python 3.12 platform
+- ✅ **RDS PostgreSQL Database** - Configured db.t3.micro instance with 20GB storage
+- ✅ **Environment Configuration** - Set up DATABASE_URL, SECRET_KEY, PYTHONPATH, FLASK_ENV
+- ✅ **IAM Configuration** - Created service role, EC2 instance profile, and GitHub Actions user
+- ✅ **Configuration Files** - Created Procfile, .ebextensions/python.config, .ebignore
+- ✅ **GitHub Actions Workflow** - Automated deployment pipeline on push to main
+- ✅ **Deployment Fixes** - Fixed Procfile syntax error and YAML indentation issues
+- ✅ **Successful Deployment** - Application live at http://cbt12-env.eba-hfvqnv3s.us-east-1.elasticbeanstalk.com/
+- ⏳ **Database Initialization** - PENDING: Need to run init_db.py, create_test_data.py, add_sample_assessment.py
+- ⏳ **Production Testing** - PENDING: End-to-end workflow testing on AWS
+
+**CI/CD Pipeline:**
+- Automatic deployment on git push to main branch
+- GitHub Actions builds and deploys to Elastic Beanstalk
+- Version tracking with git commit SHA
+- Environment health monitoring
+
+**Status:** Deployment infrastructure complete, database initialization pending for 2026-01-01
 
 ### Phase 4: Security Hardening & Performance Optimization - COMPLETE (2025-12-30)
 
@@ -270,13 +292,21 @@ session['user_type'] = 'participant'
 
 ---
 
-## 🎯 Next Phase - Deployment & Polish
+## 🎯 Next Phase - Complete AWS Deployment
 
-**Deployment Preparation:**
-- Deploy to Render.com for testing
-- Set up environment variables (SECRET_KEY, DATABASE_URL)
-- Configure production database (PostgreSQL)
-- End-to-end testing in production environment
+**Immediate Tasks (2026-01-01):**
+- ⏳ Initialize AWS production database
+  - SSH into EB instance via EB CLI or Session Manager
+  - Run init_db.py to create tables
+  - Run create_test_data.py to add test users/admins
+  - Run add_sample_assessment.py to add Step 1 questions
+- ⏳ Test complete workflow on AWS
+  - Participant login and assessment completion
+  - Admin review and approval
+  - Verify step advancement
+- ⏳ Documentation updates
+  - Update README with AWS deployment status
+  - Verify all deployment docs are current
 
 **Future Enhancements (Medium/Low Priority):**
 - Custom error pages (404, 403, 500)
@@ -284,6 +314,7 @@ session['user_type'] = 'participant'
 - Email validation for admins
 - Database connection pooling
 - Additional UI polish
+- Consider custom domain and HTTPS (AWS Certificate Manager)
 
 ---
 
