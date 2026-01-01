@@ -1,10 +1,10 @@
 # CBT Assessment - Technical Debt & Improvements
 
-**Last Updated:** 2025-12-31
+**Last Updated:** 2026-01-01
 
 ## ✅ Recently Completed
 
-### Phase 5: AWS Deployment with CI/CD - IN PROGRESS (2025-12-31)
+### Phase 5: AWS Deployment with CI/CD - COMPLETE (2026-01-01)
 
 **Deployment Infrastructure:**
 - ✅ **AWS Elastic Beanstalk Setup** - Created CBT12 application with Python 3.12 platform
@@ -12,19 +12,33 @@
 - ✅ **Environment Configuration** - Set up DATABASE_URL, SECRET_KEY, PYTHONPATH, FLASK_ENV
 - ✅ **IAM Configuration** - Created service role, EC2 instance profile, and GitHub Actions user
 - ✅ **Configuration Files** - Created Procfile, .ebextensions/python.config, .ebignore
-- ✅ **GitHub Actions Workflow** - Automated deployment pipeline on push to main
+- ✅ **GitHub Actions Workflow** - Automated deployment pipeline on push to main (excludes .md files)
 - ✅ **Deployment Fixes** - Fixed Procfile syntax error and YAML indentation issues
+- ✅ **SSH Access Setup** - Configured SSH access via EB CLI for database initialization
 - ✅ **Successful Deployment** - Application live at http://cbt12-env.eba-hfvqnv3s.us-east-1.elasticbeanstalk.com/
-- ⏳ **Database Initialization** - PENDING: Need to run init_db.py, create_test_data.py, add_sample_assessment.py
-- ⏳ **Production Testing** - PENDING: End-to-end workflow testing on AWS
+- ✅ **Database Initialization** - Successfully ran init_db.py, create_test_data.py, add_sample_assessment.py
+- ✅ **Production Testing** - Complete end-to-end workflow verified on AWS
 
 **CI/CD Pipeline:**
-- Automatic deployment on git push to main branch
+- Automatic deployment on git push to main branch (code changes only)
 - GitHub Actions builds and deploys to Elastic Beanstalk
 - Version tracking with git commit SHA
 - Environment health monitoring
+- Documentation changes (*.md files) excluded from deployment triggers
 
-**Status:** Deployment infrastructure complete, database initialization pending for 2026-01-01
+**Production Testing Results:**
+- ✅ Participant login and authentication working
+- ✅ Assessment completion and submission successful
+- ✅ Admin review dashboard functional
+- ✅ Assessment approval workflow verified
+- ✅ Participant step advancement confirmed
+
+**Important Notes:**
+- DATABASE_URL environment variable is available to the application but not in SSH sessions
+- Required manual export: `export DATABASE_URL="..."` before running initialization scripts via SSH
+- Used `sudo -E` flag to preserve environment variables when running Python scripts
+
+**Status:** Phase 5 COMPLETE! Application fully deployed and tested on AWS.
 
 ### Phase 4: Security Hardening & Performance Optimization - COMPLETE (2025-12-30)
 
@@ -292,29 +306,36 @@ session['user_type'] = 'participant'
 
 ---
 
-## 🎯 Next Phase - Complete AWS Deployment
+## 🎯 Next Phase - Polish & Feature Expansion
 
-**Immediate Tasks (2026-01-01):**
-- ⏳ Initialize AWS production database
-  - SSH into EB instance via EB CLI or Session Manager
-  - Run init_db.py to create tables
-  - Run create_test_data.py to add test users/admins
-  - Run add_sample_assessment.py to add Step 1 questions
-- ⏳ Test complete workflow on AWS
-  - Participant login and assessment completion
-  - Admin review and approval
-  - Verify step advancement
-- ⏳ Documentation updates
-  - Update README with AWS deployment status
-  - Verify all deployment docs are current
+**Immediate Tasks:**
+- 🐛 **Fix text field cursor indentation** - Minor CSS fix for textarea in question.html
+- 📝 **Add assessments for Steps 2-12** - Currently only Step 1 has questions
 
-**Future Enhancements (Medium/Low Priority):**
+**UI/UX Improvements:**
 - Custom error pages (404, 403, 500)
-- Logging and audit trail
+- Improve CSS styling and mobile responsiveness
+- Better visual progress indicators
+- Admin dashboard enhancements
+
+**Backend Enhancements:**
+- Logging and audit trail (track admin actions, login attempts)
 - Email validation for admins
-- Database connection pooling
-- Additional UI polish
-- Consider custom domain and HTTPS (AWS Certificate Manager)
+- Database connection pooling for production
+- Export functionality for assessment data
+
+**Advanced Features:**
+- Custom domain + HTTPS (AWS Certificate Manager + Route 53)
+- Email notifications (admin for pending, participant for approvals)
+- Analytics dashboard for treatment progress
+- Multi-language support
+- Offline capability for institutional tablets
+
+**Infrastructure Optimization:**
+- Consider AWS Auto Scaling for high traffic
+- CloudWatch monitoring and alerts
+- Automated database backups
+- Staging environment for testing
 
 ---
 

@@ -719,6 +719,22 @@ web: gunicorn run:app --bind :8000 --workers 3 --threads 2
 
 ---
 
+#### Issue: DATABASE_URL Not Available in SSH Session
+
+**Error:** `relation "users" does not exist` after running init scripts
+
+**Cause:** Environment variables set in EB console are available to the application but not to SSH sessions
+
+**Solution:**
+1. Get DATABASE_URL: `eb printenv` (from local terminal)
+2. SSH into instance: `eb ssh CBT12-env`
+3. Export manually: `export DATABASE_URL="postgresql://..."`
+4. Run scripts with `-E` flag: `sudo -E /var/app/venv/staging-*/bin/python init_db.py`
+
+The `-E` flag preserves environment variables when using sudo.
+
+---
+
 ### Render.com Issues
 
 #### Issue: Build Failed
@@ -979,12 +995,12 @@ render restart cbt-assessment
 - [x] Environment health: Ok (green)
 
 **Post-deployment:**
-- [ ] Database initialized (init_db.py run remotely) - **PENDING**
-- [ ] Test users created - **PENDING**
-- [ ] Sample assessment added - **PENDING**
-- [ ] Participant flow tested - **PENDING**
-- [ ] Admin flow tested - **PENDING**
-- [ ] Complete workflow verified - **PENDING**
+- [x] Database initialized (init_db.py run remotely) - **COMPLETE**
+- [x] Test users created - **COMPLETE**
+- [x] Sample assessment added - **COMPLETE**
+- [x] Participant flow tested - **COMPLETE**
+- [x] Admin flow tested - **COMPLETE**
+- [x] Complete workflow verified - **COMPLETE**
 
 ---
 
@@ -1016,6 +1032,8 @@ render restart cbt-assessment
 
 ---
 
-**Current Status:** AWS Elastic Beanstalk deployment is live! Database initialization pending for tomorrow.
+**Current Status:** ✅ AWS Elastic Beanstalk deployment COMPLETE! Application fully operational with production database initialized and tested.
+
+**Production URL:** http://cbt12-env.eba-hfvqnv3s.us-east-1.elasticbeanstalk.com/
 
 **Questions?** Refer to AWS or Render.com documentation, or check the troubleshooting section above.
