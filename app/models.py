@@ -1,6 +1,10 @@
 from app import db
 from flask_login import UserMixin
 from datetime import datetime
+from sqlalchemy.orm import validates
+import re
+
+from app.validators import ValidationError
 
 
 class User(db.Model, UserMixin):
@@ -90,6 +94,15 @@ class Admin(db.Model, UserMixin):
     role = db.Column(db.String(20), default='clinician', nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @validates('email')
+    def validate_email(self, key, email):
+        """Validate email format"""
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if re.match(pattern, email) is None:
+            raise ValidationError("Not a valid email format")
+
+        return email
 
     # Relationships
     reviewed_attempts = db.relationship('AssessmentAttempt', backref='reviewer', lazy=True)
