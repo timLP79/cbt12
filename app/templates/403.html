@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="text-align: center; margin-top: 50px;">
+    <h1>403 - Forbidden</h1>
+
+    <p style="font-size: 18px; margin: 20px 0;">
+        Whoops! This area is off-limits. Sorry about that! It looks like you’ve stumbled into a restricted zone.
+        If you think this is a mistake, try logging out and back in. Otherwise, let’s get you back to where you started.
+    </p>
+
+    <div style="margin-top: 30px;">
+        <p>Where would you like to go instead?</p>
+
+        <div style="margin: 20px 0;">
+            <a href="{{ url_for('main.login') }}" style="margin: 0 10px;">Participant Login</a>
+            <span>|</span>
+            <a href="{{ url_for('main.admin_login') }}" style="margin: 0 10px;">Admin Login</a>
+            <span>|</span>
+            <a href="{{ url_for('main.index') }}" style="margin: 0 10px;">Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

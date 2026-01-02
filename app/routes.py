@@ -366,3 +366,9 @@ def assessment_complete():
 def page_not_found(error):
     """Handle 404 errors with a custom page"""
     return render_template('404.html'), 404
+
+
+@main.app_errorhandler(403)
+def page_forbidden(error):
+    """Handle 403 errors with a custom page"""
+    return render_template('403.html'), 403
