@@ -2,7 +2,6 @@
 Input validation functions for the CBT Application
 """
 import re
-from flask import flash
 
 
 class ValidationError(Exception):
@@ -141,3 +140,62 @@ def validate_integer_id(value, field_name="ID"):
         raise ValidationError(f"{field_name} must be a positive number.")
 
     return int_value
+
+
+def validate_name(name, field_name="Name"):
+    """
+    Validate first/last name fields
+    - Strip whitepace
+    - Min 1 char, max 100 chars
+    - Only letters, spaces, hyphens, apostrophes
+    """
+    if not name:
+        raise ValidationError(f"{field_name} is required")
+
+    name = name.strip()
+
+    if len(name) < 1 or len(name) > 100:
+        raise ValidationError(f"{field_name} must be between 1 and 100 characters")
+
+    if not re.match(r"^[a-zA-Z\s\-']+$", name):
+        raise ValidationError(f"{field_name} can only contain letters, spaces, hyphens, and apostrophes")
+
+    return name
+
+
+def validate_unique_state_id(state_id, exclude_id=None):
+    """
+    Check if state_id already exists in the database
+
+    Args:
+        state_id: The State ID to check
+        exclude_id: Optional state_id to exclude (for editing existing users)
+    """
+    from app.models import User
+
+    query = User.query.filter_by(state_id=state_id)
+
+    if exclude_id:
+        query = query.filter(User.state_id != exclude_id)
+
+    if query.first():
+        raise ValidationError(f"State ID '{state_id}' already exists")
+
+
+def validate_unique_email(email, exclude_id=None):
+    """
+    Check if email already exists in database
+
+    Args:
+        email: The email to check
+        exclude_id: Optional admin_id to exclude (for editing existing admin)
+    """
+    from app.models import Admin
+
+    query = Admin.query.filter_by(email=email)
+
+    if exclude_id:
+        query = query.filter(Admin.admin_id != exclude_id)
+
+    if query.first():
+        raise ValidationError(f"Email '{email}' already exists")

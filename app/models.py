@@ -21,6 +21,8 @@ class User(db.Model, UserMixin):
     current_step = db.Column(db.Integer, default=1)
     assigned_admin_id = db.Column(db.String(50), db.ForeignKey('admins.admin_id'), nullable=True)
 
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
     # Relationships
     assigned_admin = db.relationship('Admin', backref='assigned_participants', lazy=True)
 

@@ -6,6 +6,17 @@
 <h2>Admin Dashboard</h2>
 <p>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</p>
 
+{% if current_user.role == 'supervisor' %}
+<div style="margin-bottom: 1.5rem; padding: 1rem; background: #e7f3ff; border-left: 4px solid #007bff; border-radius: 3px;">
+    <h3 style="margin: 0 0 0.5rem 0;">Management</h3>
+    <p style="margin: 0 0 1rem 0; color: #495057;">Manage users, admins, and assessments</p>
+    <a href="{{ url_for('manage.list_users') }}"
+       style="background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block;">
+        Manage Users
+    </a>
+</div>
+{% endif %}
+
 <hr>
 
 <h3>Pending Assessments ({{ pending_attempts|length }})</h3>
