@@ -37,7 +37,7 @@
             {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}
         </td>
         <td style="padding: 0.75rem; border: 1px solid #ddd;">
-            <button onclick="location.href='{{ url_for('main.review_attempt', attempt_id=attempt.attempt_id) }}'">
+            <button onclick="location.href='{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}'">
                 Review
             </button>
         </td>

@@ -5,6 +5,34 @@
 {% block content %}
 <h2>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</h2>
 
+{# Unviewed Approval Banner #}
+{% if unviewed_approval %}
+<div style="background: #d4edda; padding: 1rem; border-radius: 5px; border-left: 4px solid #28a745; margin-bottom: 1.5rem; position: relative;">
+    <button onclick="this.parentElement.style.display='none'"
+            style="position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #28a745;">
+        &times;
+    </button>
+    <h3>Step {{ unviewed_approval.step.step_number }} Approved!</h3>
+    <p><strong>Great work!</strong> Your Step {{ unviewed_approval.step.step_number }} assessment was reviewed and
+        approved by {{ unviewed_approval.attempt.reviewer.first_name }} {{ unviewed_approval.attempt.reviewer.last_name
+        }}.</p>
+    {% if unviewed_approval.attempt.clinician_notes %}
+    <p><strong>Clinician Notes:</strong></p>
+    <blockquote style="background: #fff; padding: 0.5rem; border-left: 3px solid #28a745; margin: 0.5rem 0;">{{
+        unviewed_approval.attempt.clinician_notes }}
+    </blockquote>
+    {% endif %}
+    <p>You can now proceed to Step {{ current_step.step_number }}.</p>
+    <form action="{{ url_for('main.dismiss_approval', attempt_id=unviewed_approval.attempt.attempt_id) }}" method="POST"
+          style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <button type="submit" style="background: #28a745; color: white; padding: 0.5rem 1rem; margin-top: 0.5rem;">Got
+            it, thanks!
+        </button>
+    </form>
+</div>
+{% endif %}
+
 <div class="step-info">
     <h3>Current Step: {{ current_step.step_number }}</h3>
     <h4>{{ current_step.step_title }}</h4>
@@ -32,7 +60,7 @@
 
 {% elif current_attempt.status == 'approved' %}
 <div style="background: #d4edda; padding: 1rem; border-radius: 5px; border-left: 4px solid #28a745;">
-    <h3>✅ Assessment Approved!</h3>
+    <h3>Assessment Approved!</h3>
     <p>Your work has been reviewed and approved by {{ current_attempt.reviewer.first_name }} {{
         current_attempt.reviewer.last_name }}.</p>
     <p>You may now proceed to Step {{ current_step.step_number + 1 }}.</p>
@@ -43,7 +71,7 @@
 
 {% elif current_attempt.status == 'needs_revision' %}
 <div style="background: #f8d7da; padding: 1rem; border-radius: 5px; border-left: 4px solid #dc3545;">
-    <h3>📝 Revision Requested</h3>
+    <h3>Revision Requested</h3>
     <p><strong>Feedback from {{ current_attempt.reviewer.first_name }} {{ current_attempt.reviewer.last_name
         }}:</strong></p>
     <blockquote>{{ current_attempt.clinician_notes }}</blockquote>
@@ -69,4 +97,35 @@
 
 <h3>Your Progress</h3>
 <p>Steps completed: {{ current_user.current_step - 1 }} of 12</p>
+
+{# Assessment History Section #}
+{% if previous_attempts %}
+<hr style="margin: 2rem 0;">
+<h3>Assessment History</h3>
+<div style="margin-top: 1rem;">
+    {% for prev in previous_attempts %}
+    <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1rem; border-left: 4px solid {% if prev.attempt.status == 'approved' %}#28a745{% else %}#ffc107{% endif %};">
+        <h4 style="margin: 0 0 0.5rem 0;">Step {{ prev.step.step_number }}: {{ prev.step.step_title }}</h4>
+        <p style="margin: 0.25rem 0;"><strong>Status:</strong>
+            {% if prev.attempt.status == 'approved' %}
+            <span style="color: #28a745;">✓ Approved</span>
+            {% elif prev.attempt.status == 'needs_revision' %}
+            <span style="color: #ffc107;">⚠ Needs Revision</span>
+            {% endif %}
+        </p>
+        <p style="margin: 0.25rem 0;"><strong>Reviewed by:</strong> {{ prev.attempt.reviewer.first_name }} {{
+            prev.attempt.reviewer.last_name }}</p>
+        <p style="margin: 0.25rem 0;"><strong>Reviewed on:</strong> {{ prev.attempt.reviewed_at.strftime('%B %d, %Y') }}
+        </p>
+        {% if prev.attempt.clinician_notes %}
+        <p style="margin: 0.5rem 0 0 0;"><strong>Notes:</strong></p>
+        <blockquote style="background: #fff; padding: 0.5rem; border-left: 3px solid #6c757d; margin: 0.5rem 0 0 0;">{{
+            prev.attempt.clinician_notes }}
+        </blockquote>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% endblock %}

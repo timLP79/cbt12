@@ -13,7 +13,7 @@
 <h2>Admin Login</h2>
 <p>Please enter your admin ID and password to access the review portal.</p>
 
-<form method="POST" action="{{ url_for('main.admin_login') }}">
+<form method="POST" action="{{ url_for('admin.admin_login') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
     <label for="admin_id">Admin ID:</label>

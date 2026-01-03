@@ -61,7 +61,7 @@
 <!-- Review Action Form -->
 <h3>Review Decision</h3>
 
-<form method="POST" action="{{ url_for('main.submit_review', attempt_id=attempt.attempt_id) }}">
+<form method="POST" action="{{ url_for('admin.submit_review', attempt_id=attempt.attempt_id) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
     <div style="margin-bottom: 1rem;">
@@ -89,7 +89,7 @@
         Submit Review
     </button>
 
-    <button type="button" onclick="location.href='{{ url_for('main.admin_dashboard') }}'"
+    <button type="button" onclick="location.href='{{ url_for('admin.admin_dashboard') }}'"
             style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; margin-left: 1rem;">
         Cancel
     </button>

@@ -69,6 +69,7 @@ class AssessmentAttempt(db.Model):
     reviewed_by = db.Column(db.String(50), db.ForeignKey('admins.admin_id'), nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)
     clinician_notes = db.Column(db.Text, nullable=True)
+    approval_viewed = db.Column(db.Boolean, default=False, nullable=False)
     score = db.Column(db.Integer, nullable=True)
 
     # Relationships
@@ -76,7 +77,7 @@ class AssessmentAttempt(db.Model):
     assessment = db.relationship('Assessment', backref='attempts', lazy=True)
     responses = db.relationship('Response', backref='attempt', lazy=True)
 
-    #Table-level index
+    # Table-level index
     __table_args__ = (
         db.Index('idx_state_assessment', 'state_id', 'assessment_id'),
     )
@@ -129,6 +130,7 @@ class Question(db.Model):
     __table_args__ = (
         db.Index('idx_assessment_order', 'assessment_id', 'question_order'),
     )
+
 
 class MultipleChoiceOption(db.Model):
     """Answer options for multiple choice questions"""
