@@ -1,8 +1,24 @@
 # CBT Assessment - Technical Debt & Improvements
 
-**Last Updated:** 2026-01-01
+**Last Updated:** 2026-01-04
 
 ## ✅ Recently Completed
+
+### Phase 6: Admin Dashboard Expansion & Polish - COMPLETE (2026-01-04)
+
+**Feature Enhancements:**
+- ✅ **User Management CRUD** - Full system to Create, Read, Update, and Deactivate participants
+- ✅ **Admin Management CRUD** - Supervisor-only system to Create, Read, Update, and Deactivate admins
+- ✅ **Blueprints Refactoring** - Reorganized application into modular blueprints (`main`, `admin`, `manage`)
+- ✅ **Assessment History** - Added view for participants to see previous approved/reviewed attempts
+- ✅ **Approval Notifications** - System to notify participants of approved steps (`approval_viewed` flag)
+- ✅ **Email Validation** - Implemented regex validation for Admin email addresses (Fixed Issue #14)
+- ✅ **Custom Error Pages** - Added branded 404 and 403 error templates (Fixed Issue #19)
+- ✅ **UI Fixes** - Fixed textarea cursor indentation in question forms
+
+**Code Structure:**
+- Split `routes.py` into `routes/main.py`, `routes/admin.py`, and `routes/manage.py`
+- Created `manage_users_list.html` and `manage_users_form.html`
 
 ### Phase 5: AWS Deployment with CI/CD - COMPLETE (2026-01-01)
 
@@ -91,124 +107,7 @@
 
 ---
 
-## 🔴 CRITICAL - Security Issues ✅ ALL FIXED (2025-12-29)
-
-**Note:** These issues were identified during comprehensive code review on 2025-12-28 and fixed on 2025-12-29.
-
-### 1. ✅ Missing CSRF Protection - FIXED
-**Severity:** CRITICAL
-**Impact:** All forms vulnerable to cross-site request forgery attacks
-**Files:** All templates with forms
-**Solution Implemented:**
-```bash
-pip install Flask-WTF
-```
-```python
-# In app/__init__.py
-from flask_wtf.csrf import CSRFProtect
-csrf = CSRFProtect()
-csrf.init_app(app)
-
-# In all templates with forms
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-```
-
-### 2. Missing Authorization Checks on Admin Routes
-**Severity:** CRITICAL
-**Impact:** Participants could access admin review routes by manipulating URLs
-**Files:** `app/routes.py` - admin_dashboard, review_attempt, submit_review
-**Fix:** Create `@admin_required` decorator:
-```python
-from functools import wraps
-from flask import abort
-
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not isinstance(current_user, Admin):
-            abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
-
-# Apply to all admin routes:
-@main.route('/admin/dashboard')
-@login_required
-@admin_required
-def admin_dashboard():
-    # ...
-```
-
-### 3. Weak Secret Key Handling
-**Severity:** CRITICAL
-**Impact:** Production could use weak default secret key
-**File:** `config.py`
-**Fix:**
-```python
-class ProductionConfig(Config):
-    DEBUG = False
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-
-    def __init__(self):
-        if not self.SECRET_KEY:
-            raise ValueError("SECRET_KEY must be set in production")
-```
-
-### 4. Session Fixation Vulnerability
-**Severity:** HIGH
-**Impact:** Session ID not regenerated after login
-**File:** `app/routes.py` - login routes
-**Fix:**
-```python
-# After successful login, before redirect:
-session.clear()
-login_user(user)
-session.regenerate()
-session['user_type'] = 'participant'
-```
-
-### 5. Insecure Direct Object Reference (IDOR)
-**Severity:** HIGH
-**Impact:** Users could access other users' assessment attempts
-**File:** `app/routes.py` - review_attempt
-**Fix:** Add authorization check in review_attempt route
-
----
-
-## 🟡 HIGH PRIORITY - Fix Before Deployment
-
-### 6. ✅ No Input Validation - FIXED
-**Severity:** HIGH
-**Impact:** User inputs not validated for length, format, or content
-**Files:** All routes accepting form data
-**Status:** COMPLETE - Created validators.py with 6 validation functions, applied to all user inputs
-
-### 7. ✅ No Rate Limiting - FIXED
-**Severity:** HIGH
-**Impact:** No protection against brute force attacks on login
-**Files:** Login routes
-**Status:** COMPLETE - Added Flask-Limiter with 20 attempts/minute on login routes
-
-### 8. ✅ Missing Database Indexes - FIXED
-**Severity:** HIGH
-**Impact:** Poor query performance at scale
-**File:** `app/models.py`
-**Status:** COMPLETE - Added indexes to AssessmentAttempt, Assessment, Question, and Response models
-
-### 9. ✅ N+1 Query Problem - FIXED
-**Severity:** HIGH
-**Impact:** Inefficient database queries in admin dashboard
-**File:** `app/routes.py` - admin_dashboard
-**Status:** COMPLETE - Implemented eager loading with joinedload()
-
-### 10. ✅ Transaction Rollback Handling - FIXED
-**Severity:** HIGH
-**Impact:** Database could be left in inconsistent state on errors
-**File:** `app/routes.py` - submit_review
-**Status:** COMPLETE - Added SQLAlchemyError exception handling with db.session.rollback()
-
----
-
-## 🟢 MEDIUM PRIORITY - Improve Code Quality
+## 🟡 MEDIUM PRIORITY - Improve Code Quality
 
 ### 11. Duplicate Response Prevention
 **Issue:** No check to prevent multiple responses for same question
@@ -221,10 +120,6 @@ session['user_type'] = 'participant'
 ### 13. Missing Null Checks in Templates
 **Issue:** Accessing `attempt.reviewer` without checking if exists
 **Fix:** Add `{% if attempt.reviewer %}` checks
-
-### 14. No Email Validation
-**Issue:** Admin email field has no validation
-**Fix:** Add email regex validation in Admin model
 
 ### 15. Missing Transaction Management
 **Issue:** Multiple DB operations without rollback handling
@@ -245,10 +140,6 @@ session['user_type'] = 'participant'
 ### 18. Inefficient Question Ordering
 **Issue:** Using Python sorted() instead of DB ORDER BY
 **Fix:** Use database-level ordering
-
-### 19. No Error Templates
-**Issue:** No custom 404, 403, 500 error pages
-**Fix:** Create error handler functions and templates
 
 ### 20. No Database Connection Pooling
 **Issue:** No SQLAlchemy pool configuration for production
@@ -276,51 +167,19 @@ session['user_type'] = 'participant'
 
 ---
 
-## 📊 Security Review Summary
-
-**Critical Security Issues:** 5 ✅ ALL FIXED
-**High Priority Issues:** 5 ✅ ALL FIXED
-**Medium Priority Issues:** 7 (Improve as you go)
-**Low Priority Issues:** 8 (Nice to have)
-
-**Total Issues:** 25 (10 fixed, 15 remaining for future enhancements)
-
----
-
-## 🎯 Phase 4 - COMPLETE! ✅ (2025-12-30)
-
-**All 10 critical and high-priority items completed:**
-
-✅ 1. CSRF protection with Flask-WTF
-✅ 2. @admin_required decorator
-✅ 3. Secret key validation
-✅ 4. Session regeneration on login
-✅ 5. Authorization checks (IDOR prevention)
-✅ 6. Input validation framework
-✅ 7. Rate limiting on login routes
-✅ 8. Database indexes
-✅ 9. N+1 query optimization
-✅ 10. Transaction rollback handling
-
-**Application is now secure and optimized for deployment!**
-
----
-
-## 🎯 Next Phase - Polish & Feature Expansion
+## 🎯 Next Phase - Feature Expansion
 
 **Immediate Tasks:**
-- 🐛 **Fix text field cursor indentation** - Minor CSS fix for textarea in question.html
-- 📝 **Add assessments for Steps 2-12** - Currently only Step 1 has questions
+- 📝 **Add assessments for Steps 2-12** - Currently only Step 1 has questions (Issue #21)
+- 👤 **Participant Profile & History** - View detailed user history and past assessments (Issue #22)
 
 **UI/UX Improvements:**
-- Custom error pages (404, 403, 500)
 - Improve CSS styling and mobile responsiveness
 - Better visual progress indicators
 - Admin dashboard enhancements
 
 **Backend Enhancements:**
 - Logging and audit trail (track admin actions, login attempts)
-- Email validation for admins
 - Database connection pooling for production
 - Export functionality for assessment data
 

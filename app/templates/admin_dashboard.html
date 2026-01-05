@@ -10,9 +10,15 @@
 <div style="margin-bottom: 1.5rem; padding: 1rem; background: #e7f3ff; border-left: 4px solid #007bff; border-radius: 3px;">
     <h3 style="margin: 0 0 0.5rem 0;">Management</h3>
     <p style="margin: 0 0 1rem 0; color: #495057;">Manage users, admins, and assessments</p>
+
     <a href="{{ url_for('manage.list_users') }}"
-       style="background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block;">
+       style="background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block; margin-right: 0.5rem;">
         Manage Users
+    </a>
+
+    <a href="{{ url_for('manage.list_admins') }}"
+       style="background: #6c757d; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block;">
+        Manage Admins
     </a>
 </div>
 {% endif %}
