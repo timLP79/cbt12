@@ -161,22 +161,32 @@ def start_assessment(step_number):
     session['question_order'] = [q.question_id for q in questions]
     session['current_question_index'] = 0
 
-    # Count previous attempts for this assessment
-    previous_attempts = AssessmentAttempt.query.filter_by(
-        state_id=current_user.state_id,
-        assessment_id=assessment.assessment_id
-    ).count()
-
-    # Create new attempt
-    attempt = AssessmentAttempt(
+    # Check for existing in progress
+    existing_attempt = AssessmentAttempt.query.filter_by(
         state_id=current_user.state_id,
         assessment_id=assessment.assessment_id,
-        attempt_number=previous_attempts + 1,
-        status='in_progress',
-        started_at=datetime.utcnow()
-    )
+        status='in_progress'
+    ).first()
 
-    db.session.add(attempt)
+    if existing_attempt:
+        attempt = existing_attempt
+    else:
+        previous_attempts = AssessmentAttempt.query.filter_by(
+            state_id=current_user.state_id,
+            assessment_id=assessment.assessment_id
+        ).count()
+
+    # Create new attempt
+        attempt = AssessmentAttempt(
+            state_id=current_user.state_id,
+            assessment_id=assessment.assessment_id,
+            attempt_number=previous_attempts + 1,
+            status='in_progress',
+            started_at=datetime.utcnow()
+        )
+
+        db.session.add(attempt)
+
     db.session.commit()
 
     # Store attempt_id in session so response can link to it
@@ -207,23 +217,37 @@ def show_question(question_id):
 
     if request.method == 'POST':
         try:
-            # Save the response
+            # Check if a response already exists for this attempt/question combo
+            response = Response.query.filter_by(
+                attempt_id = session['current_attempt_id'],
+                question_id=question_id
+            ).first()
+
             if question.question_type == 'multiple_choice':
                 selected_option_id = validate_integer_id(request.form.get('selected_option'))
-                response = Response(
-                    attempt_id=session['current_attempt_id'],
-                    question_id=question_id,
-                    selected_option_id=selected_option_id
-                )
-            else:
-                response_text = validate_text_response(request.form.get('response_text'), "Response")
-                response = Response(
-                    attempt_id=session['current_attempt_id'],
-                    question_id=question_id,
-                    response_text=response_text
-                )
 
-            db.session.add(response)
+                if response:
+                    response.selected_option_id = selected_option_id
+                else:
+                    response = Response(
+                        attempt_id=session['current_attempt_id'],
+                        question_id=question_id,
+                        selected_option_id=selected_option_id
+                    )
+                    db.session.add(response)
+            else:
+                response_text = validate_text_response(request.form.get('response_text'),"Response")
+
+                if response:
+                    response.response_text = response_text
+                else:
+                    response = Response(
+                        attempt_id=session['current_attempt_id'],
+                        question_id=question_id,
+                        response_text=response_text
+                    )
+                    db.session.add(response)
+
             db.session.commit()
 
             # Move to next question or finish
@@ -239,6 +263,12 @@ def show_question(question_id):
         except ValidationError as e:
             flash(str(e))
 
+    # Fetch existing response to pre-fill the form
+    saved_response = Response.query.filter_by(
+        attempt_id=session['current_attempt_id'],
+        question_id=question_id
+    ).first()
+
     # Calculate progress
     total_questions = len(question_order)
     progress = f"Question {current_index + 1} of {total_questions}"
@@ -247,7 +277,8 @@ def show_question(question_id):
                            question=question,
                            progress=progress,
                            current_index=current_index,
-                           total_questions=total_questions
+                           total_questions=total_questions,
+                           saved_response=saved_response
                            )
 
 

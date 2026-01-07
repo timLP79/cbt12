@@ -1,52 +1,65 @@
 {% extends "base.html" %}
 
-{% block title %}Assessment Question - CBT 12-Step{% endblock %}
+{% block title %}Question - CBT 12-Step Assessment{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 1rem; color: #666;">
-    <strong>{{ progress }}</strong>
+<div style="margin-bottom: 1rem; color: #666; font-weight: bold;">
+    {{ progress }}
 </div>
 
 <div class="step-info">
-    <p><strong>Question {{ current_index + 1 }}:</strong></p>
-    <h3>{{ question.question_text }}</h3>
+    <h3>Question:</h3>
+    <p style="font-size: 1.2rem; margin-top: 0.5rem;">{{ question.question_text }}</p>
 </div>
 
 <form method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     {% if question.question_type == 'multiple_choice' %}
-    <!-- Multiple Choice Question -->
-    {% for option in question.options %}
-    <div style="margin-bottom: 1rem;">
-        <label style="display: flex; align-items: center; cursor: pointer;">
-            <input type="radio" name="selected_option" value="{{ option.option_id }}" required
-                   style="margin-right: 0.5rem;">
-            <span>{{ option.option_text }}</span>
-        </label>
+    <div style="margin: 1.5rem 0;">
+        {% for option in question.options %}
+        <div style="margin-bottom: 0.75rem;">
+            <label style="font-weight: normal; cursor: pointer; display: flex; align-items: center;">
+                <input type="radio"
+                       name="selected_option"
+                       value="{{ option.option_id }}"
+                       {% if saved_response and saved_response.selected_option_id== option.option_id %}checked{% endif
+                       %}
+                       required
+                       style="margin-right: 0.5rem; width: auto;">
+                {{ option.option_text }}
+            </label>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     {% else %}
-    <!-- Written Response Question -->
-    <label for="response_text">Your response:</label>
-    <textarea id="response_text" name="response_text" rows="6" required
-              style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px; font-size: 1rem; font-family: Arial, sans-serif;"></textarea>
+    <div style="margin: 1.5rem 0;">
+        <label for="response_text">Your Answer:</label>
+        <textarea id="response_text"
+                  name="response_text"
+                  rows="10"
+                  required
+                  style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px; font-family: inherit; font-size: 1rem;">{{ saved_response.response_text if saved_response else '' }}</textarea>
+    </div>
     {% endif %}
 
     <div style="margin-top: 2rem;">
-        <button type="submit">
-            {% if current_index + 1 < total_questions %}
-            Next Question →
+        <button type="submit" style="background: #28a745;">
+            {% if current_index + 1 == total_questions %}
+            Finish Assessment
             {% else %}
-            Complete Assessment
+            Next Question
             {% endif %}
         </button>
+
+        <a href="{{ url_for('main.dashboard') }}" style="margin-left: 1rem; color: #666;">Save and Exit</a>
     </div>
 </form>
 
-<div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd;">
-    <p style="color: #666; font-size: 0.9rem;">
-        Progress: {{ current_index + 1 }} / {{ total_questions }} questions completed
+<div style="margin-top: 2rem; background: #f8f9fa; padding: 1rem; border-radius: 5px;">
+    <p style="font-size: 0.9rem; color: #666;">
+        <strong>Note:</strong> Your progress is saved automatically when you click "Next".
+        You can leave and return at any time.
     </p>
 </div>
 {% endblock %}

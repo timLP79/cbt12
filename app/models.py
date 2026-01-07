@@ -159,3 +159,8 @@ class Response(db.Model):
 
     # Relationships
     selected_option = db.relationship('MultipleChoiceOption', backref='responses', lazy=True)
+
+    # Unique Constraint
+    __table_args__ = (
+        db.UniqueConstraint('attempt_id', 'question_id', name='uq_attempt_question'),
+    )
