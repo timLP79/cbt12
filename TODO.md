@@ -2,7 +2,35 @@
 
 **Last Updated:** 2026-01-04
 
+## 🚀 Post-Deployment Tasks (January 6, 2026)
+
+**Critical: Production Database Update Required**
+The latest update adds a `UniqueConstraint` to the `responses` table. Since Alembic is not yet implemented, this must be applied manually to the AWS RDS instance after the code is deployed.
+
+1. **Check for existing duplicates (Postgres):**
+   ```sql
+   SELECT attempt_id, question_id, COUNT(*)
+   FROM responses
+   GROUP BY attempt_id, question_id
+   HAVING COUNT(*) > 1;
+   ```
+
+2. **Apply the constraint (Postgres):**
+   ```sql
+   ALTER TABLE responses
+   ADD CONSTRAINT uq_attempt_question UNIQUE (attempt_id, question_id);
+   ```
+
+---
+
 ## ✅ Recently Completed
+
+### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
+- ✅ **Participant Profile & History** - Added detailed admin view for user history and progress (Issue #22)
+- ✅ **Resume Assessment** - Added logic to resume in-progress attempts and update saved answers (Issue #11)
+- ✅ **Duplicate Response Prevention** - Added database-level UniqueConstraint to Response model (Issue #11)
+- ✅ **UI/UX Polish** - Added "Save and Exit" and pre-filled responses in assessment flow
+- ✅ **Code Cleanup** - Fixed Limiter initialization syntax and typos
 
 ### Phase 6: Admin Dashboard Expansion & Polish - COMPLETE (2026-01-04)
 

@@ -23,7 +23,10 @@ This is a web-based Cognitive Behavioral Therapy (CBT) assessment tool designed 
 *   `app/`: Core application package.
     *   `__init__.py`: Flask app factory and configuration.
     *   `models.py`: Database models (User, Admin, AssessmentAttempt, etc.).
-    *   `routes.py`: Application controllers and view logic.
+    *   `routes/`: Application blueprints.
+        *   `main.py`: Participant routes (assessment flow).
+        *   `admin.py`: Review dashboard routes.
+        *   `manage.py`: User/Admin management routes.
     *   `validators.py`: Input validation logic.
     *   `templates/`: HTML templates for the UI.
 *   `config.py`: Configuration classes (Development, Production).
@@ -72,14 +75,14 @@ Key models in `app/models.py`:
 *   `User`: Participants (State ID).
 *   `Admin`: Clinicians/Supervisors.
 *   `AssessmentAttempt`: Tracks a user's attempt at a step.
-*   `Response`: User answers linked to an attempt.
+*   `Response`: User answers linked to an attempt. Includes `UniqueConstraint(attempt_id, question_id)`.
 *   `Step`, `Assessment`, `Question`: Content structure.
 
 ### Conventions
-*   **Flask Blueprints:** Not currently used; routes are in a central `routes.py`.
+*   **Flask Blueprints:** Routes are organized into `main`, `admin`, and `manage` blueprints.
 *   **Templates:** Jinja2 templates inherit from `base.html`.
 *   **Styles:** Currently using inline styles (TODO: move to static CSS).
-*   **Security:** Uses Flask-WTF for CSRF, Flask-Limiter for rate limiting, and `@admin_required` decorators.
+*   **Security:** Uses Flask-WTF for CSRF, Flask-Limiter for rate limiting, and `@admin_required` / `@supervisor_required` decorators.
 
 ## Deployment
 
