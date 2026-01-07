@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 
 from app import db
-from app.models import User, Admin
+from app.models import User, Admin, AssessmentAttempt
 from app.validators import (
     ValidationError,
     validate_state_id,
@@ -330,3 +330,15 @@ def deactivate_admin(admin_id):
 
     flash(f'Admin {admin_id} deactivated successfully.', 'success')
     return redirect(url_for('manage.list_admins'))
+
+
+@manage.route('/users/<state_id>')
+@login_required
+@supervisor_required
+def user_profile(state_id):
+    """View detailed user profile and history"""
+    user = User.query.get_or_404(state_id)
+
+    attempts = AssessmentAttempt.query.filter_by(state_id=state_id).order_by(AssessmentAttempt.submitted_at.desc()).all()
+
+    return render_template('user_profile.html', user=user, attempts=attempts)

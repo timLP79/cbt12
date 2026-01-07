@@ -30,7 +30,8 @@
             </div>
 
             <div>
-                <label for="admin" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Assigned Admin:</label>
+                <label for="admin" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Assigned
+                    Admin:</label>
                 <select id="admin" name="admin" style="padding: 0.5rem;">
                     <option value="">All Admins</option>
                     {% for admin in all_admins %}
@@ -44,7 +45,8 @@
 
             <div style="display: flex; flex-direction: column;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; visibility: hidden;">Filter:</label>
-                <button type="submit" style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 3px; cursor: pointer; line-height: 1.5; box-sizing: border-box;">
+                <button type="submit"
+                        style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 3px; cursor: pointer; line-height: 1.5; box-sizing: border-box;">
                     Filter
                 </button>
             </div>
@@ -87,7 +89,12 @@
     {% for user in users %}
     <tr style="border-bottom: 1px solid #dee2e6;">
         <td style="padding: 0.75rem;">{{ user.state_id }}</td>
-        <td style="padding: 0.75rem;">{{ user.first_name }} {{ user.last_name }}</td>
+        <td style="padding: 0.75rem;">
+            <a href="{{ url_for('manage.user_profile', state_id=user.state_id) }}"
+               style="color: #007bff; text-decoration: none; font-weight: bold;">
+                {{ user.first_name }} {{ user.last_name }}
+            </a>
+        </td>
         <td style="padding: 0.75rem;">{{ user.current_step }}</td>
         <td style="padding: 0.75rem;">
             {% if user.assigned_admin %}
