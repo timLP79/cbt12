@@ -14,7 +14,8 @@ This application combines evidence-based Cognitive Behavioral Therapy principles
 
 ## Technology Stack
 
-- **Backend**: Python 3.14, Flask
+- **Backend**: Python 3.12, Flask
+- **Frontend**: Jinja2, Mobile Responsive CSS (Flexbox/Grid)
 - **Database**: SQLite (development), PostgreSQL (production)
 - **ORM**: SQLAlchemy
 - **Authentication**: Flask-Login
@@ -23,7 +24,6 @@ This application combines evidence-based Cognitive Behavioral Therapy principles
 - **Cloud Platform**: AWS Elastic Beanstalk
 - **Database (Production)**: AWS RDS PostgreSQL
 - **CI/CD**: GitHub Actions
-- **Development Environment**: Distrobox (Fedora 43) + PyCharm Professional
 
 ## Project Structure
 ```
@@ -31,246 +31,131 @@ cbt-assessment/
 ├── app/
 │   ├── __init__.py              # Flask app factory
 │   ├── models.py                # Database models
-│   ├── routes.py                # URL endpoints and authentication
 │   ├── validators.py            # Input validation functions
+│   ├── routes/                  # Route Blueprints
+│   │   ├── main.py              # Participant flow
+│   │   ├── admin.py             # Admin/Clinician flow
+│   │   └── manage.py            # User management (CRUD)
+│   ├── static/
+│   │   └── css/
+│   │       └── style.css        # Mobile responsive stylesheet
 │   └── templates/               # HTML templates
 │       ├── base.html            # Base template with common layout
-│       ├── login.html           # User login page
-│       ├── admin_login.html     # Admin login page
-│       ├── dashboard.html       # User progress dashboard
-│       ├── admin_dashboard.html # Admin review dashboard
-│       ├── question.html        # Assessment question display
-│       ├── review_attempt.html  # Admin review interface
-│       └── assessment_complete.html  # Completion confirmation
+│       ├── dashboard.html       # Participant dashboard
+│       ├── user_profile.html    # Detailed participant profile
+│       ├── question.html        # Assessment interface
+│       └── ...                  # Other templates
 ├── .ebextensions/
-│   └── python.config            # AWS Elastic Beanstalk Python configuration
+│   └── python.config            # AWS Elastic Beanstalk configuration
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml           # GitHub Actions deployment workflow
-├── instance/
-│   └── cbt_assessment.db        # SQLite database (not in git)
-├── venv/                        # Virtual environment (not in git)
-├── config.py                    # Configuration settings
-├── init_db.py                   # Database initialization script
-├── create_test_data.py          # Create test users and admins
-├── add_sample_assessment.py     # Sample Step 1 assessment script
+├── instance/                    # Local SQLite database
+├── config.py                    # Configuration classes
+├── init_db.py                   # Database initialization
+├── create_test_data.py          # Seeding script (Users/Admins)
+├── add_full_assessments.py      # Seeding script (Steps 2-12 Content)
 ├── run.py                       # Application entry point
 ├── requirements.txt             # Python dependencies
-├── Procfile                     # AWS Elastic Beanstalk process configuration
-├── .ebignore                    # Files to exclude from AWS deployment
-├── DEPLOYMENT.md                # Comprehensive deployment guide
-├── TODO.md                      # Technical debt and improvements
-└── .gitignore
+├── DEPLOYMENT.md                # AWS Deployment guide
+└── TODO.md                      # Feature backlog
 ```
-
-## Database Schema
-
-### Core Tables
-
-- **Users**: Participant information (state_id, name, current_step, assigned admin)
-- **Admins**: Administrative staff who review assessments (with roles: clinician/supervisor)
-- **AssessmentAttempts**: Tracks each attempt at an assessment with review status
-- **Steps**: The 12 recovery steps with descriptions
-- **Assessments**: One assessment per step
-- **Questions**: Individual questions (multiple choice or written)
-- **MultipleChoiceOptions**: Answer choices for MC questions
-- **Responses**: User answers linked to attempts, with clinician feedback support
-
-### Workflow
-The application implements a **clinician review workflow** where participants complete assessments, administrative staff (clinicians/supervisors) review submissions, and participants advance only after approval. This supports a flexible review approach with approval, revision, or supervisor referral options.
 
 ## Features
 
 ### ✅ Implemented
 
-- **Database Foundation (Phase 1: Complete)**
-  - 8 SQLAlchemy models with relationships:
-    - Core: User, Admin, AssessmentAttempt, Step, Assessment
-    - Supporting: Question, MultipleChoiceOption, Response
-  - Admin review workflow support (attempt tracking, status management)
-  - 12-step data seeding with titles and descriptions
-  - Test data creation (2 participants, 2 admins)
-  - Development and production configurations
+- **Authentication & User Management**
+  - Dual login system (Participant vs. Admin)
+  - Role-based access (Clinician vs. Supervisor)
+  - Full CRUD for User and Admin management
+  - Secure session handling with auto-logout cleanup
 
-- **Authentication & User Management (Dual Login System)**
-  - Flask-Login based authentication with role-based access
-  - Participant login (State ID and password)
-  - Admin login (Admin ID and password)
-  - Session management with user type tracking
-  - Protected routes with login requirement
+- **Assessment Workflow**
+  - **Full Content**: Assessments for all 12 Steps (5 questions each)
+  - **Resume Capability**: Users can save progress and resume later
+  - **Review System**: Admins review submissions with "Approve" or "Request Revision" workflow
+  - **History**: Detailed history of all past attempts and clinician feedback
 
-- **Assessment System**
-  - Question-by-question interface
-  - Multiple choice questions with radio button selection
-  - Written response questions with text area
-  - Sequential question flow with progress tracking
-  - Session-based question order persistence
-  - Support for randomized or ordered questions
-  - Automatic response recording to database
+- **Participant Experience**
+  - Mobile-responsive dashboard showing progress and status
+  - Visual feedback for "Pending Review", "Approved", or "Needs Revision"
+  - Sequential step enforcement (must complete Step 1 to unlock Step 2)
 
-- **Participant Experience (Phase 2: Complete)**
-  - Dashboard showing current step and progress
-  - Dynamic status display (Pending Review, Approved, Needs Revision)
-  - Clear visual progress indicators during assessments
-  - Assessment completion page with pending review messaging
-  - Sequential step enforcement (must complete in order)
-  - No auto-advancement - requires admin approval
+- **Admin Portal**
+  - Dashboard with queue of pending assessments
+  - Detailed Participant Profiles showing enrollment stats and full history
+  - Management tools for creating/deactivating users
 
-- **Admin Portal (Phase 3: Complete)**
-  - Admin dashboard showing pending assessments
-  - Review interface displaying all participant responses
-  - Approval/revision workflow with feedback notes
-  - Participant advancement upon approval
-  - Separate admin login portal
+- **Technical Excellence**
+  - **Mobile Responsive**: Fully optimized for phones and tablets
+  - **Security**: CSRF protection, Rate Limiting, Input Validation, Secure Headers
+  - **Code Quality**: Blueprints architecture, Defensive Null Checks, Centralized CSS
 
-- **Development Tools**
-  - Database initialization script (`init_db.py`)
-  - Test user creation script (`create_test_data.py`)
-  - Sample assessment generator for Step 1 (`add_sample_assessment.py`)
-
-### 📋 To Be Implemented
-- Static CSS styling (currently using inline styles)
-- Assessments for Steps 2-12 (only Step 1 has sample assessment)
-- Progress visualization and analytics
-- Data export functionality for treatment records
-- Custom error pages (404, 403, 500)
-- Logging and audit trail
-- Offline capability for institutional tablets
+### 📋 Future Improvements
+- Transaction Management (Rollbacks)
+- Advanced Analytics Dashboard
+- Data Export (CSV/PDF)
+- Offline Capability
 
 ## Setup Instructions
 
 ### Prerequisites
-
-- Python 3.10 or higher
+- Python 3.10+
 - pip
 - Git
 
 ### Installation
 
 1. **Clone the repository**
-```bash
-   git clone https://github.com/YOUR-USERNAME/cbt-assessment.git
-   cd cbt-assessment
-```
+   ```bash
+   git clone https://github.com/timLP79/cbt12.git
+   cd cbt12
+   ```
 
 2. **Create virtual environment**
-```bash
+   ```bash
    python3 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+   ```
 
 3. **Install dependencies**
-```bash
+   ```bash
    pip install -r requirements.txt
-```
+   ```
 
-4. **Initialize the database**
-```bash
-python init_db.py
-```
+4. **Initialize Database & Seed Data**
+   ```bash
+   # Initialize tables
+   python init_db.py
+   
+   # Create test users (TEST001, ADMIN001)
+   python create_test_data.py
+   
+   # Seed assessment content (Steps 2-12)
+   python add_full_assessments.py
+   ```
 
-5. **Create test data** (users and admins for development)
-```bash
-python create_test_data.py
-```
-   This creates:
-   - **Participants**: TEST001 (password123), TEST002 (password456)
-   - **Admins**: ADMIN001 (admin123), ADMIN002 (admin456)
+5. **Run the application**
+   ```bash
+   python run.py
+   ```
+   Access at `http://localhost:5000`
 
-6. **Add sample assessment** (optional, for Step 1)
-```bash
-python add_sample_assessment.py
-```
-   This creates a 5-question sample assessment for Step 1.
+   **Test Credentials:**
+   - **Participant:** `TEST001` / `password123`
+   - **Admin:** `ADMIN001` / `admin123`
 
-7. **Run the application**
-```bash
-python run.py
-```
-   Navigate to `http://localhost:5000` and log in with the test credentials.
+## Deployment
 
-## Development Environment
-
-This project is developed using:
-- **Distrobox container** (Fedora 43) for isolated development
-- **PyCharm Professional** with remote interpreter configuration
-- **Git** for version control
-
-## Privacy & Security Considerations
-
-⚠️ **Important**: This application handles sensitive information:
-- Personal identifiable information (names, prison IDs)
-- Mental health and treatment data
-- Vulnerable population data
-
-**Security measures to implement:**
-- Data encryption for sensitive fields
-- Access control and authentication
-- Institutional review board (IRB) approval before deployment
-- Compliance with relevant privacy regulations
-
-## Contributing
-
-This is currently a personal learning project. Feedback and suggestions are welcome via issues.
-
-## License
-
-[To be determined]
-
-## Contact
-
-[Your contact information]
-
-## Acknowledgments
-
-- Designed in collaboration with correctional treatment professionals
-- Built as an academic learning project
-- Integrates evidence-based CBT with traditional 12-step methodology
+The application is configured for **AWS Elastic Beanstalk**.
+See `DEPLOYMENT.md` for detailed instructions on deploying to production with RDS PostgreSQL.
 
 ---
 
-**Project Status**: 🎉 **FULLY DEPLOYED AND OPERATIONAL ON AWS!** 🚀
-
-**Current Milestone**: **Phase 5 (AWS Deployment with CI/CD) - COMPLETE!** ✅
-
-**Completed Phases:**
-- ✅ Phase 1: Database schema with admin review workflow
-- ✅ Phase 2: Participant flow with attempt tracking and status display
-- ✅ Phase 3: Admin portal with review and approval workflow
-- ✅ Major Refactoring (Dec 2025): Clinician → Admin, prison_id → state_id
-- ✅ Phase 4: Security Hardening & Performance Optimization (Dec 2025)
-- ✅ Phase 5: AWS Deployment with CI/CD (Dec 2025-Jan 2026)
-
-**Deployment Status:**
-- ✅ **AWS Elastic Beanstalk** - Application deployed and running
-- ✅ **RDS PostgreSQL** - Production database configured and initialized
-- ✅ **GitHub Actions CI/CD** - Automatic deployment on code changes (excludes .md files)
-- ✅ **Environment Variables** - DATABASE_URL, SECRET_KEY configured
-- ✅ **Database Initialization** - Tables created, test data loaded
-- ✅ **Production Testing** - Complete end-to-end workflow verified
-- ✅ **SSH Access** - Configured via EB CLI for administration
-
-**Production URL:** http://cbt12-env.eba-hfvqnv3s.us-east-1.elasticbeanstalk.com/
-
-**Security Implementations:**
-  - **CSRF Protection** - Flask-WTF tokens in all forms
-  - **Authorization** - @admin_required decorator on admin routes
-  - **Session Security** - Session regeneration on login
-  - **Input Validation** - Custom validators for all user inputs
-  - **Rate Limiting** - Flask-Limiter on login routes
-  - **Secret Key** - Production validation in config
-  - **IDOR Protection** - Verified secure with get_or_404()
-
-**Performance Optimizations:**
-  - **Database Indexes** - Added to all frequently queried columns
-  - **N+1 Query Fix** - Eager loading with joinedload()
-  - **Transaction Rollback** - Error handling with db.session.rollback()
-
-**Next Steps**:
-- Fix minor UI issue (text field cursor indentation)
-- Add assessments for Steps 2-12 (currently only Step 1 has questions)
-- Custom error pages and UI polish
-- Logging and audit trail
-- Consider custom domain + HTTPS
-
-**Progress**: ~98% complete (core functionality, security, performance, and deployment complete; minor UI fixes and feature expansion remaining)
+**Project Status**: **Phase 7 Complete (Jan 2026)**
+- ✅ Core Functionality (Steps 1-12)
+- ✅ Security Hardening
+- ✅ Admin Dashboard & User Management
+- ✅ Mobile Responsiveness
+- ✅ AWS Deployment Infrastructure (Currently Paused to save costs)
