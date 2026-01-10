@@ -7,17 +7,15 @@
 <p>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</p>
 
 {% if current_user.role == 'supervisor' %}
-<div style="margin-bottom: 1.5rem; padding: 1rem; background: #e7f3ff; border-left: 4px solid #007bff; border-radius: 3px;">
-    <h3 style="margin: 0 0 0.5rem 0;">Management</h3>
-    <p style="margin: 0 0 1rem 0; color: #495057;">Manage users, admins, and assessments</p>
+<div class="alert alert-primary">
+    <h3 style="margin-bottom: 0.5rem;">Management</h3>
+    <p class="mb-1 text-muted">Manage users, admins, and assessments</p>
 
-    <a href="{{ url_for('manage.list_users') }}"
-       style="background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block; margin-right: 0.5rem;">
+    <a href="{{ url_for('manage.list_users') }}" class="btn" style="background: #007bff; margin-right: 0.5rem;">
         Manage Users
     </a>
 
-    <a href="{{ url_for('manage.list_admins') }}"
-       style="background: #6c757d; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block;">
+    <a href="{{ url_for('manage.list_admins') }}" class="btn" style="background: #6c757d;">
         Manage Admins
     </a>
 </div>
@@ -25,48 +23,48 @@
 
 <hr>
 
-<h3>Pending Assessments ({{ pending_attempts|length }})</h3>
+<h3 class="mt-1">Pending Assessments ({{ pending_attempts|length }})</h3>
 
 {% if pending_attempts %}
-<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+<table>
     <thead>
-    <tr style="background: #f4f4f4; text-align: left;">
-        <th style="padding: 0.75rem; border: 1px solid #ddd;">Participant</th>
-        <th style="padding: 0.75rem; border: 1px solid #ddd;">State ID</th>
-        <th style="padding: 0.75rem; border: 1px solid #ddd;">Step</th>
-        <th style="padding: 0.75rem; border: 1px solid #ddd;">Submitted</th>
-        <th style="padding: 0.75rem; border: 1px solid #ddd;">Action</th>
+    <tr>
+        <th>Participant</th>
+        <th>State ID</th>
+        <th>Step</th>
+        <th>Submitted</th>
+        <th>Action</th>
     </tr>
     </thead>
     <tbody>
     {% for attempt in pending_attempts %}
     <tr>
-        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+        <td>
             {{ attempt.user.first_name }} {{ attempt.user.last_name }}
         </td>
-        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+        <td>
             {{ attempt.state_id }}
         </td>
-        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+        <td>
             Step {{ attempt.assessment.step.step_number }}
         </td>
-        <td style="padding: 0.75rem; border: 1px solid #ddd;">
+        <td>
             {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}
         </td>
-        <td style="padding: 0.75rem; border: 1px solid #ddd;">
-            <button onclick="location.href='{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}'">
+        <td>
+            <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}" class="btn" style="padding: 0.5rem 1rem;">
                 Review
-            </button>
+            </a>
         </td>
     </tr>
     {% endfor %}
     </tbody>
 </table>
 {% else %}
-<p style="color: #666; font-style: italic;">No pending assessments at this time.</p>
+<p class="text-muted" style="font-style: italic;">No pending assessments at this time.</p>
 {% endif %}
 
-<hr style="margin-top: 2rem;">
+<hr class="mt-1">
 
-<button onclick="location.href='{{ url_for('main.logout') }}'">Logout</button>
+<a href="{{ url_for('main.logout') }}" class="btn">Logout</a>
 {% endblock %}

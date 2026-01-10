@@ -33,6 +33,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ## ✅ Recently Completed
 
 ### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
+- ✅ **CSS Consolidation** - Moved inline and internal styles to external style.css (Issue #20)
 - ✅ **Null Checks** - Added defensive checks in templates for missing data (Issue #10)
 - ✅ **Session Cleanup** - Implemented session.clear() on logout (Issue #8)
 - ✅ **Content Expansion** - Added full assessments for Steps 2-12 (5 questions each) (Issue #21)
@@ -104,10 +105,6 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ### 19. Add __repr__ Methods to Models
 **Issue:** Models lack string representations
 **Fix:** Add __repr__ to all models for better debugging
-
-### 20. Consolidate CSS into External File
-**Issue:** Mix of base.html styles and inline styles
-**Fix:** Create app/static/css/style.css
 
 ---
 

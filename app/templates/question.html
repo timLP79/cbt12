@@ -3,7 +3,7 @@
 {% block title %}Question - CBT 12-Step Assessment{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 1rem; color: #666; font-weight: bold;">
+<div class="mb-1 text-muted" style="font-weight: bold;">
     {{ progress }}
 </div>
 
@@ -38,8 +38,7 @@
         <textarea id="response_text"
                   name="response_text"
                   rows="10"
-                  required
-                  style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px; font-family: inherit; font-size: 1rem;">{{ saved_response.response_text if saved_response else '' }}</textarea>
+                  required>{{ saved_response.response_text if saved_response else '' }}</textarea>
     </div>
     {% endif %}
 
@@ -52,12 +51,12 @@
             {% endif %}
         </button>
 
-        <a href="{{ url_for('main.dashboard') }}" style="margin-left: 1rem; color: #666;">Save and Exit</a>
+        <a href="{{ url_for('main.dashboard') }}" class="text-muted" style="margin-left: 1rem;">Save and Exit</a>
     </div>
 </form>
 
-<div style="margin-top: 2rem; background: #f8f9fa; padding: 1rem; border-radius: 5px;">
-    <p style="font-size: 0.9rem; color: #666;">
+<div class="history-item mt-1">
+    <p style="font-size: 0.9rem;" class="text-muted">
         <strong>Note:</strong> Your progress is saved automatically when you click "Next".
         You can leave and return at any time.
     </p>

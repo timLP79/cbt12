@@ -5,20 +5,19 @@
 {% block content %}
 <h2>Manage Admins</h2>
 
-<div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
+<div class="alert alert-primary">
     <form method="GET" action="{{ url_for('manage.list_admins') }}">
-        <div style="display: flex; gap: 1rem; align-items: flex-start;">
-            <div style="flex: 1;">
-                <label for="search" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Search:</label>
+        <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label for="search">Search:</label>
                 <input type="text" id="search" name="search"
                        placeholder="Admin ID, name, email..."
-                       value="{{ search }}"
-                       style="width: 100%; padding: 0.5rem; box-sizing: border-box;">
+                       value="{{ search }}">
             </div>
 
-            <div>
-                <label for="role" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Role:</label>
-                <select id="role" name="role" style="padding: 0.5rem;">
+            <div style="min-width: 150px;">
+                <label for="role">Role:</label>
+                <select id="role" name="role">
                     <option value="">All Roles</option>
                     <option value="clinician" {% if role_filter==
                     'clinician' %}selected{% endif %}>Clinician</option>
@@ -28,9 +27,8 @@
             </div>
 
             <div style="display: flex; flex-direction: column;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; visibility: hidden;">Filter:</label>
-                <button type="submit"
-                        style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 3px; cursor: pointer;">
+                <label style="visibility: hidden;">Filter:</label>
+                <button type="submit" style="background: #28a745; line-height: 1;">
                     Filter
                 </button>
             </div>
@@ -38,40 +36,39 @@
     </form>
 </div>
 
-<div style="margin-bottom: 1rem;">
-    <a href="{{ url_for('manage.create_admin') }}"
-       style="background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px;">
+<div class="mb-1">
+    <a href="{{ url_for('manage.create_admin') }}" class="btn" style="background: #007bff;">
         + Create Admin
     </a>
 </div>
 
 {% if admins %}
-<table style="width: 100%; border-collapse: collapse; background: #fff;">
+<table>
     <thead>
-    <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-        <th style="padding: 0.75rem; text-align: left;">Admin ID</th>
-        <th style="padding: 0.75rem; text-align: left;">Name</th>
-        <th style="padding: 0.75rem; text-align: left;">Email</th>
-        <th style="padding: 0.75rem; text-align: left;">Role</th>
-        <th style="padding: 0.75rem; text-align: left;">Status</th>
-        <th style="padding: 0.75rem; text-align: left;">Actions</th>
+    <tr>
+        <th>Admin ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     {% for admin in admins %}
-    <tr style="border-bottom: 1px solid #dee2e6;">
-        <td style="padding: 0.75rem;">{{ admin.admin_id }}</td>
-        <td style="padding: 0.75rem;">{{ admin.first_name }} {{ admin.last_name }}</td>
-        <td style="padding: 0.75rem;">{{ admin.email }}</td>
-        <td style="padding: 0.75rem; text-transform: capitalize;">{{ admin.role }}</td>
-        <td style="padding: 0.75rem;">
+    <tr>
+        <td>{{ admin.admin_id }}</td>
+        <td>{{ admin.first_name }} {{ admin.last_name }}</td>
+        <td>{{ admin.email }}</td>
+        <td style="text-transform: capitalize;">{{ admin.role }}</td>
+        <td>
             {% if admin.is_active %}
             <span style="color: #28a745;">● Active</span>
             {% else %}
             <span style="color: #dc3545;">● Inactive</span>
             {% endif %}
         </td>
-        <td style="padding: 0.75rem;">
+        <td style="white-space: nowrap;">
             <a href="{{ url_for('manage.edit_admin', admin_id=admin.admin_id) }}"
                style="color: #007bff; text-decoration: none; margin-right: 1rem;">Edit</a>
 
@@ -93,10 +90,10 @@
     </tbody>
 </table>
 {% else %}
-<p>No admins found.</p>
+<p class="text-muted">No admins found.</p>
 {% endif %}
 
-<div style="margin-top: 2rem;">
+<div class="mt-1">
     <a href="{{ url_for('admin.admin_dashboard') }}">← Back to Admin Dashboard</a>
 </div>
 {% endblock %}

@@ -4,14 +4,14 @@
 
 {% block content %}
 
-<div style="text-align: right; margin-bottom: 2rem;">
+<div class="mb-1" style="text-align: right;">
     <a href="{{ url_for('admin.admin_login') }}" style="color: #007bff; text-decoration: none; font-weight: bold;">
         Admin Login
     </a>
 </div>
 
 <h2>Participant Login</h2>
-<p>Please enter your state ID and password to access your assessments.</p>
+<p class="mb-1">Please enter your state ID and password to access your assessments.</p>
 
 <form method="POST" action="{{ url_for('main.login') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

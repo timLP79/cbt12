@@ -13,9 +13,9 @@
            id="state_id"
            name="state_id"
            value="{{ user.state_id if user else '' }}"
-           {% if user %}readonly style="background: #e9ecef;" {% else %}required{% endif %}>
+           {% if user %}readonly style="background: #e9ecef;"{% else %}required{% endif %}>
     {% if user %}
-    <p style="font-size: 0.9em; color: #6c757d; margin-top: 0.25rem;">
+    <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         State ID cannot be changed
     </p>
     {% endif %}
@@ -44,13 +44,13 @@
            placeholder="{% if user %}Leave blank to keep current password{% else %}Min 4 chars, uppercase + special char{% endif %}"
            {% if not user %}required{% endif %}>
     {% if user %}
-    <p style="font-size: 0.9em; color: #6c757d; margin-top: 0.25rem;">
+    <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         Only fill in if you want to change the password
     </p>
     {% endif %}
 
     <label for="current_step">Current Step: <span style="color: red;">*</span></label>
-    <select id="current_step" name="current_step" required style="padding: 0.5rem;">
+    <select id="current_step" name="current_step" required>
         {% for step in range(1, 13) %}
         <option value="{{ step }}"
                 {% if user and user.current_step== step %}selected
@@ -61,7 +61,7 @@
     </select>
 
     <label for="assigned_admin_id">Assigned Admin:</label>
-    <select id="assigned_admin_id" name="assigned_admin_id" style="padding: 0.5rem;">
+    <select id="assigned_admin_id" name="assigned_admin_id">
         <option value="">Unassigned</option>
         {% for admin in admins %}
         <option value="{{ admin.admin_id }}"
@@ -70,23 +70,21 @@
         </option>
         {% endfor %}
     </select>
-    <p style="font-size: 0.9em; color: #6c757d; margin-top: 0.25rem;">
+    <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         Optional - assign a clinician to this participant
     </p>
 
-    <div style="margin-top: 1.5rem;">
-        <button type="submit"
-                style="background: #28a745; color: white; padding: 0.75rem 1.5rem;">
+    <div class="mt-1">
+        <button type="submit" style="background: #28a745;">
             {{ action }} User
         </button>
-        <a href="{{ url_for('manage.list_users') }}"
-           style="margin-left: 1rem; color: #6c757d;">
+        <a href="{{ url_for('manage.list_users') }}" class="text-muted" style="margin-left: 1rem;">
             Cancel
         </a>
     </div>
 </form>
 
-<div style="margin-top: 2rem;">
+<div class="mt-1">
     <a href="{{ url_for('manage.list_users') }}">← Back to User List</a>
 </div>
 

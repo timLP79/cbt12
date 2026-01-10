@@ -13,9 +13,9 @@
            id="admin_id"
            name="admin_id"
            value="{{ admin.admin_id if admin else '' }}"
-           {% if admin %}readonly style="background: #e9ecef;" {% else %}required{% endif %}>
+           {% if admin %}readonly style="background: #e9ecef;"{% else %}required{% endif %}>
     {% if admin %}
-    <p style="font-size: 0.9em; color: #6c757d; margin-top: 0.25rem;">
+    <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         Admin ID cannot be changed
     </p>
     {% endif %}
@@ -51,32 +51,30 @@
            placeholder="{% if admin %}Leave blank to keep current password{% else %}Min chars, uppercase + special char{% endif %}"
            {% if not admin %}required{% endif %}>
     {% if admin %}
-    <p style="font-size: 0.9em; color: #6c757d; margin-top: 0.25rem;">
+    <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         Only fill in if you want to change the password
     </p>
     {% endif %}
 
     <label for="role">Role: <span style="color: red;">*</span></label>
-    <select id="role" name="role" required style="padding: 0.5rem;">
+    <select id="role" name="role" required>
         <option value="clinician" {% if admin and admin.role==
         'clinician' %}selected{% endif %}>Clinician</option>
         <option value="supervisor" {% if admin and admin.role==
         'supervisor' %}selected{% endif %}>Supervisor</option>
     </select>
 
-    <div style="margin-top: 1.5rem;">
-        <button type="submit"
-                style="background: #28a745; color: white; padding: 0.75rem 1.5rem;">
+    <div class="mt-1">
+        <button type="submit" style="background: #28a745;">
             {{ action }} Admin
         </button>
-        <a href="{{ url_for('manage.list_admins') }}"
-           style="margin-left: 1rem; color: #6c757d;">
+        <a href="{{ url_for('manage.list_admins') }}" class="text-muted" style="margin-left: 1rem;">
             Cancel
         </a>
     </div>
 </form>
 
-<div style="margin-top: 2rem;">
+<div class="mt-1">
     <a href="{{ url_for('manage.list_admins') }}">← Back to Admin List</a>
 </div>
 

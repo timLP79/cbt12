@@ -6,20 +6,19 @@
 <h2>Manage Users</h2>
 
 <!-- Search and Filter Form -->
-<div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
+<div class="alert alert-primary">
     <form method="GET" action="{{ url_for('manage.list_users') }}">
-        <div style="display: flex; gap: 1rem; align-items: flex-start;">
-            <div style="flex: 1;">
-                <label for="search" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Search:</label>
+        <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label for="search">Search:</label>
                 <input type="text" id="search" name="search"
                        placeholder="State ID, name..."
-                       value="{{ search }}"
-                       style="width: 100%; padding: 0.5rem; box-sizing: border-box;">
+                       value="{{ search }}">
             </div>
 
-            <div>
-                <label for="step" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Step:</label>
-                <select id="step" name="step" style="padding: 0.5rem;">
+            <div style="min-width: 120px;">
+                <label for="step">Step:</label>
+                <select id="step" name="step">
                     <option value="">All Steps</option>
                     {% for step in range(1, 13) %}
                     <option value="{{ step }}" {% if step_filter== step|string %}selected{% endif %}>
@@ -29,10 +28,9 @@
                 </select>
             </div>
 
-            <div>
-                <label for="admin" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Assigned
-                    Admin:</label>
-                <select id="admin" name="admin" style="padding: 0.5rem;">
+            <div style="min-width: 150px;">
+                <label for="admin">Assigned Admin:</label>
+                <select id="admin" name="admin">
                     <option value="">All Admins</option>
                     {% for admin in all_admins %}
                     <option value="{{ admin.admin_id }}"
@@ -44,18 +42,16 @@
             </div>
 
             <div style="display: flex; flex-direction: column;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; visibility: hidden;">Filter:</label>
-                <button type="submit"
-                        style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 3px; cursor: pointer; line-height: 1.5; box-sizing: border-box;">
+                <label style="visibility: hidden;">Filter:</label>
+                <button type="submit" style="background: #28a745; line-height: 1;">
                     Filter
                 </button>
             </div>
 
             {% if search or step_filter or admin_filter %}
             <div style="display: flex; flex-direction: column;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; visibility: hidden;">Clear:</label>
-                <a href="{{ url_for('manage.list_users') }}"
-                   style="background: #6c757d; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px; display: inline-block; text-align: center; line-height: 1.5; box-sizing: border-box;">
+                <label style="visibility: hidden;">Clear:</label>
+                <a href="{{ url_for('manage.list_users') }}" class="btn" style="background: #6c757d; line-height: 1;">
                     Clear
                 </a>
             </div>
@@ -65,52 +61,51 @@
 </div>
 
 <!-- Create User Button -->
-<div style="margin-bottom: 1rem;">
-    <a href="{{ url_for('manage.create_user') }}"
-       style="background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 3px;">
+<div class="mb-1">
+    <a href="{{ url_for('manage.create_user') }}" class="btn" style="background: #007bff;">
         + Create User
     </a>
 </div>
 
 <!-- Users Table -->
 {% if users %}
-<table style="width: 100%; border-collapse: collapse; background: #fff;">
+<table>
     <thead>
-    <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-        <th style="padding: 0.75rem; text-align: left;">State ID</th>
-        <th style="padding: 0.75rem; text-align: left;">Name</th>
-        <th style="padding: 0.75rem; text-align: left;">Current Step</th>
-        <th style="padding: 0.75rem; text-align: left;">Assigned Admin</th>
-        <th style="padding: 0.75rem; text-align: left;">Status</th>
-        <th style="padding: 0.75rem; text-align: left;">Actions</th>
+    <tr>
+        <th>State ID</th>
+        <th>Name</th>
+        <th>Current Step</th>
+        <th>Assigned Admin</th>
+        <th>Status</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     {% for user in users %}
-    <tr style="border-bottom: 1px solid #dee2e6;">
-        <td style="padding: 0.75rem;">{{ user.state_id }}</td>
-        <td style="padding: 0.75rem;">
+    <tr>
+        <td>{{ user.state_id }}</td>
+        <td>
             <a href="{{ url_for('manage.user_profile', state_id=user.state_id) }}"
                style="color: #007bff; text-decoration: none; font-weight: bold;">
                 {{ user.first_name }} {{ user.last_name }}
             </a>
         </td>
-        <td style="padding: 0.75rem;">{{ user.current_step }}</td>
-        <td style="padding: 0.75rem;">
+        <td>{{ user.current_step }}</td>
+        <td>
             {% if user.assigned_admin %}
             {{ user.assigned_admin.first_name }} {{ user.assigned_admin.last_name }}
             {% else %}
-            <em style="color: #6c757d;">Unassigned</em>
+            <em class="text-muted">Unassigned</em>
             {% endif %}
         </td>
-        <td style="padding: 0.75rem; vertical-align: middle;">
+        <td>
             {% if user.is_active %}
             <span style="color: #28a745; white-space: nowrap;">● Active</span>
             {% else %}
             <span style="color: #dc3545; white-space: nowrap;">● Inactive</span>
             {% endif %}
         </td>
-        <td style="padding: 0.75rem; vertical-align: middle; white-space: nowrap;">
+        <td style="white-space: nowrap;">
             <a href="{{ url_for('manage.edit_user', state_id=user.state_id) }}"
                style="color: #007bff; text-decoration: none; margin-right: 1rem;">Edit</a>
 
@@ -132,22 +127,22 @@
     </tbody>
 </table>
 
-<p style="margin-top: 1rem; color: #6c757d;">
+<p class="mt-1 text-muted">
     Showing {{ users|length }} user(s)
 </p>
 
 {% else %}
-<div style="background: #f8f9fa; padding: 2rem; text-align: center; border-radius: 5px;">
-    <p style="color: #6c757d; margin: 0;">No users found.</p>
+<div class="history-item mt-1" style="text-align: center;">
+    <p class="text-muted">No users found.</p>
     {% if search or step_filter or admin_filter %}
-    <p style="margin-top: 0.5rem;">
+    <p class="mt-1">
         <a href="{{ url_for('manage.list_users') }}">Clear filters</a>
     </p>
     {% endif %}
 </div>
 {% endif %}
 
-<div style="margin-top: 2rem;">
+<div class="mt-1">
     <a href="{{ url_for('admin.admin_dashboard') }}">← Back to Admin Dashboard</a>
 </div>
 

@@ -7,7 +7,7 @@
 
 {# Unviewed Approval Banner #}
 {% if unviewed_approval %}
-<div style="background: #d4edda; padding: 1rem; border-radius: 5px; border-left: 4px solid #28a745; margin-bottom: 1.5rem; position: relative;">
+<div class="alert alert-success">
     <button onclick="this.parentElement.style.display='none'"
             style="position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #28a745;">
         &times;
@@ -29,7 +29,7 @@
     </p>
     {% if unviewed_approval.attempt.clinician_notes %}
     <p><strong>Clinician Notes:</strong></p>
-    <blockquote style="background: #fff; padding: 0.5rem; border-left: 3px solid #28a745; margin: 0.5rem 0;">{{
+    <blockquote style="border-left-color: #28a745;">{{
         unviewed_approval.attempt.clinician_notes }}
     </blockquote>
     {% endif %}
@@ -53,7 +53,7 @@
 {# Assessment Status Section #}
 {% if current_attempt %}
 {% if current_attempt.status == 'submitted' %}
-<div style="background: #fff3cd; padding: 1rem; border-radius: 5px; border-left: 4px solid #ffc107;">
+<div class="alert alert-warning">
     <h3>📋 Status: Pending Clinician Review</h3>
     <p>Your assessment was submitted on
         {% if current_attempt.submitted_at %}
@@ -67,7 +67,7 @@
 </div>
 
 {% elif current_attempt.status == 'in_progress' %}
-<div style="background: #d1ecf1; padding: 1rem; border-radius: 5px; border-left: 4px solid #17a2b8;">
+<div class="alert alert-info">
     <h3>⏸ Assessment In Progress</h3>
     <p>You started this assessment but haven't finished yet.</p>
     <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
@@ -76,7 +76,7 @@
 </div>
 
 {% elif current_attempt.status == 'approved' %}
-<div style="background: #d4edda; padding: 1rem; border-radius: 5px; border-left: 4px solid #28a745;">
+<div class="alert alert-success">
     <h3>Assessment Approved!</h3>
     <p>Your work has been reviewed and approved by
         {% if current_attempt.reviewer %}
@@ -92,7 +92,7 @@
 </div>
 
 {% elif current_attempt.status == 'needs_revision' %}
-<div style="background: #f8d7da; padding: 1rem; border-radius: 5px; border-left: 4px solid #dc3545;">
+<div class="alert alert-danger">
     <h3>Revision Requested</h3>
     <p><strong>Feedback  from
         {% if current_attempt.reviewer %}
@@ -101,7 +101,7 @@
         Clinician
         {% endif %}
     </strong></p>
-    <blockquote>{{ current_attempt.clinician_notes }}</blockquote>
+    <blockquote style="background: #fff;">{{ current_attempt.clinician_notes }}</blockquote>
     <p>Please revise your work based on the feedback above.</p>
     <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
         <button type="submit">Revise Your Work</button>
@@ -111,7 +111,7 @@
 
 {% else %}
 {# No attempt yet - show start button #}
-<div style="background: #e7f3ff; padding: 1rem; border-radius: 5px; border-left: 4px solid #007bff;">
+<div class="alert alert-primary">
     <h3>Ready to Begin</h3>
     <p>You haven't started this assessment yet. Click below to begin.</p>
     <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
@@ -131,7 +131,7 @@
 <h3>Assessment History</h3>
 <div style="margin-top: 1rem;">
     {% for prev in previous_attempts %}
-    <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1rem; border-left: 4px solid {% if prev.attempt.status == 'approved' %}#28a745{% else %}#ffc107{% endif %};">
+    <div class="history-item {% if prev.attempt.status == 'approved' %}approved{% else %}pending{% endif %}">
         <h4 style="margin: 0 0 0.5rem 0;">Step {{ prev.step.step_number }}: {{ prev.step.step_title }}</h4>
         <p style="margin: 0.25rem 0;"><strong>Status:</strong>
             {% if prev.attempt.status == 'approved' %}
@@ -156,7 +156,7 @@
         </p>
         {% if prev.attempt.clinician_notes %}
         <p style="margin: 0.5rem 0 0 0;"><strong>Notes:</strong></p>
-        <blockquote style="background: #fff; padding: 0.5rem; border-left: 3px solid #6c757d; margin: 0.5rem 0 0 0;">{{
+        <blockquote>{{
             prev.attempt.clinician_notes }}
         </blockquote>
         {% endif %}
