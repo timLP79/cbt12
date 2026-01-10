@@ -4,7 +4,14 @@
 
 ## 🚀 Post-Deployment Tasks (January 6, 2026)
 
-**Critical: Production Database Update Required**
+**1. Database Content Update (Issue #21)**
+Assessments for Steps 2-12 have been added. Run the seed script on production:
+```bash
+# Connect via SSH first, load environment variables
+python add_full_assessments.py
+```
+
+**2. Critical: Production Database Schema Update (Issue #9)**
 The latest update adds a `UniqueConstraint` to the `responses` table. Since Alembic is not yet implemented, this must be applied manually to the AWS RDS instance after the code is deployed.
 
 1. **Check for existing duplicates (Postgres):**
@@ -26,6 +33,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ## ✅ Recently Completed
 
 ### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
+- ✅ **Content Expansion** - Added full assessments for Steps 2-12 (5 questions each) (Issue #21)
 - ✅ **Participant Profile & History** - Added detailed admin view for user history and progress (Issue #22)
 - ✅ **Resume Assessment** - Added logic to resume in-progress attempts and update saved answers (Issue #23)
 - ✅ **Duplicate Response Prevention** - Added database-level UniqueConstraint to Response model (Issue #9)
@@ -112,7 +120,6 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ## 🎯 Next Phase - Feature Expansion
 
 **Immediate Tasks:**
-- 📝 **Add assessments for Steps 2-12** - Currently only Step 1 has questions (Issue #21)
 - 👤 **Participant Profile & History** - COMPLETE (Issue #22)
 
 
