@@ -33,6 +33,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ## ✅ Recently Completed
 
 ### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
+- ✅ **Null Checks** - Added defensive checks in templates for missing data (Issue #10)
 - ✅ **Session Cleanup** - Implemented session.clear() on logout (Issue #8)
 - ✅ **Content Expansion** - Added full assessments for Steps 2-12 (5 questions each) (Issue #21)
 - ✅ **Participant Profile & History** - Added detailed admin view for user history and progress (Issue #22)
@@ -63,10 +64,6 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ---
 
 ## 🟡 MEDIUM PRIORITY - Improve Code Quality
-
-### 10. Missing Null Checks in Templates
-**Issue:** Accessing `attempt.reviewer` without checking if exists
-**Fix:** Add `{% if attempt.reviewer %}` checks
 
 ### 11. Missing Transaction Management
 **Issue:** Multiple DB operations without rollback handling

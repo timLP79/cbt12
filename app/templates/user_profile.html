@@ -12,7 +12,13 @@
         <h2 style="margin-top: 0;">{{ user.first_name }} {{ user.last_name }}</h2>
         <p><strong>State ID:</strong> {{ user.state_id }}</p>
         <p><strong>Current Step:</strong> {{ user.current_step }}</p>
-        <p><strong>Enrolled:</strong> {{ user.date_enrolled.strftime('%B %d, %Y') }}</p>
+        <p><strong>Enrolled:</strong>
+            {% if user.date_enrolled %}
+            {{ user.date_enrolled.strftime('%B %d, %Y') }}
+            {% else %}
+            ---
+            {% endif %}
+        </p>
         <p>
             <strong>Assigned Admin:</strong>
             {% if user.assigned_admin %}
@@ -55,7 +61,13 @@
     <tbody>
     {% for attempt in attempts %}
     <tr style="border-bottom: 1px solid #eee;">
-        <td style="padding: 0.75rem;">Step {{ attempt.assessment.step.step_number }}</td>
+        <td style="padding: 0.75rem;">
+            {% if attempt.assessment %}
+            Step {{ attempt.assessment.step.step_number }}
+            {% else %}
+            Unknown step
+            {% endif %}
+        </td>
         <td style="padding: 0.75rem;">
             {% if attempt.status == 'approved' %}
             <span style="background: #d4edda; color: #155724; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Approved</span>

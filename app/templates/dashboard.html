@@ -12,10 +12,21 @@
             style="position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #28a745;">
         &times;
     </button>
-    <h3>Step {{ unviewed_approval.step.step_number }} Approved!</h3>
+    <h3>Step
+        {% if unviewed_approval.step %}
+        {{ unviewed_approval.step.step_number }} Approved!
+        {% else %}
+        System
+        {% endif %}
+    </h3>
     <p><strong>Great work!</strong> Your Step {{ unviewed_approval.step.step_number }} assessment was reviewed and
-        approved by {{ unviewed_approval.attempt.reviewer.first_name }} {{ unviewed_approval.attempt.reviewer.last_name
-        }}.</p>
+        approved by
+        {% if unviewed_approval.attempt.reviewer %}
+        {{ unviewed_approval.attempt.reviewer.first_name }} {{ unviewed_approval.attempt.reviewer.last_name }}.
+        {% else %}
+        Clinician
+        {% endif %}
+    </p>
     {% if unviewed_approval.attempt.clinician_notes %}
     <p><strong>Clinician Notes:</strong></p>
     <blockquote style="background: #fff; padding: 0.5rem; border-left: 3px solid #28a745; margin: 0.5rem 0;">{{
@@ -44,7 +55,13 @@
 {% if current_attempt.status == 'submitted' %}
 <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; border-left: 4px solid #ffc107;">
     <h3>📋 Status: Pending Clinician Review</h3>
-    <p>Your assessment was submitted on {{ current_attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}.</p>
+    <p>Your assessment was submitted on
+        {% if current_attempt.submitted_at %}
+        {{ current_attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}.
+        {% else %}
+        ---
+        {% endif %}
+    </p>
     <p><strong>You cannot proceed to the next step until a clinician reviews and approves your work.</strong></p>
     <p>Please check back later or contact your counselor for updates.</p>
 </div>
@@ -61,8 +78,13 @@
 {% elif current_attempt.status == 'approved' %}
 <div style="background: #d4edda; padding: 1rem; border-radius: 5px; border-left: 4px solid #28a745;">
     <h3>Assessment Approved!</h3>
-    <p>Your work has been reviewed and approved by {{ current_attempt.reviewer.first_name }} {{
-        current_attempt.reviewer.last_name }}.</p>
+    <p>Your work has been reviewed and approved by
+        {% if current_attempt.reviewer %}
+        {{ current_attempt.reviewer.first_name }} {{ current_attempt.reviewer.last_name }}.
+        {% else %}
+        Clinician
+        {% endif %}
+    </p>
     <p>You may now proceed to Step {{ current_step.step_number + 1 }}.</p>
     <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number + 1) }}" method="GET">
         <button type="submit">Start Step {{ current_step.step_number + 1 }}</button>
@@ -72,8 +94,13 @@
 {% elif current_attempt.status == 'needs_revision' %}
 <div style="background: #f8d7da; padding: 1rem; border-radius: 5px; border-left: 4px solid #dc3545;">
     <h3>Revision Requested</h3>
-    <p><strong>Feedback from {{ current_attempt.reviewer.first_name }} {{ current_attempt.reviewer.last_name
-        }}:</strong></p>
+    <p><strong>Feedback  from
+        {% if current_attempt.reviewer %}
+        {{ current_attempt.reviewer.first_name }} {{ current_attempt.reviewer.last_name }}:
+        {% else %}
+        Clinician
+        {% endif %}
+    </strong></p>
     <blockquote>{{ current_attempt.clinician_notes }}</blockquote>
     <p>Please revise your work based on the feedback above.</p>
     <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
@@ -113,9 +140,19 @@
             <span style="color: #ffc107;">⚠ Needs Revision</span>
             {% endif %}
         </p>
-        <p style="margin: 0.25rem 0;"><strong>Reviewed by:</strong> {{ prev.attempt.reviewer.first_name }} {{
-            prev.attempt.reviewer.last_name }}</p>
-        <p style="margin: 0.25rem 0;"><strong>Reviewed on:</strong> {{ prev.attempt.reviewed_at.strftime('%B %d, %Y') }}
+        <p style="margin: 0.25rem 0;"><strong>Reviewed by:</strong>
+            {% if prev.attempt.reviewer %}
+            {{ prev.attempt.reviewer.first_name }} {{ prev.attempt.reviewer.last_name }}
+            {% else %}
+            System
+            {% endif %}
+        </p>
+        <p style="margin: 0.25rem 0;"><strong>Reviewed on:</strong>
+            {% if prev.attempt.reviewed_at %}
+            {{ prev.attempt.reviewed_at.strftime('%B %d, %Y') }}
+            {% else %}
+            ---
+            {% endif %}
         </p>
         {% if prev.attempt.clinician_notes %}
         <p style="margin: 0.5rem 0 0 0;"><strong>Notes:</strong></p>
