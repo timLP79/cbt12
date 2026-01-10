@@ -27,12 +27,15 @@ This is a web-based Cognitive Behavioral Therapy (CBT) assessment tool designed 
         *   `main.py`: Participant routes (assessment flow).
         *   `admin.py`: Review dashboard routes.
         *   `manage.py`: User/Admin management routes.
+    *   `static/`: Static assets.
+        *   `css/style.css`: Main stylesheet (mobile responsive).
     *   `validators.py`: Input validation logic.
     *   `templates/`: HTML templates for the UI.
 *   `config.py`: Configuration classes (Development, Production).
 *   `init_db.py`: Script to initialize the database schema.
 *   `create_test_data.py`: Script to seed the database with test users and admins.
-*   `add_sample_assessment.py`: Script to seed Step 1 assessment questions.
+*   `add_sample_assessment.py`: Script to seed Step 1.
+*   `add_full_assessments.py`: Script to seed Steps 2-12.
 *   `run.py`: Entry point for running the development server.
 *   `DEPLOYMENT.md`: Detailed deployment instructions for AWS and Render.
 *   `WORKFLOW_DESIGN.md`: Architecture and design decisions for the review workflow.
@@ -59,7 +62,7 @@ This is a web-based Cognitive Behavioral Therapy (CBT) assessment tool designed 
 3.  **Seed Test Data:**
     ```bash
     python create_test_data.py
-    python add_sample_assessment.py
+    python add_full_assessments.py
     ```
     *   **Test Participant:** `TEST001` / `password123`
     *   **Test Admin:** `ADMIN001` / `admin123`
@@ -81,7 +84,7 @@ Key models in `app/models.py`:
 ### Conventions
 *   **Flask Blueprints:** Routes are organized into `main`, `admin`, and `manage` blueprints.
 *   **Templates:** Jinja2 templates inherit from `base.html`.
-*   **Styles:** Currently using inline styles (TODO: move to static CSS).
+*   **Styles:** Consolidated in `app/static/css/style.css`. Uses utility classes and media queries for mobile responsiveness.
 *   **Security:** Uses Flask-WTF for CSRF, Flask-Limiter for rate limiting, and `@admin_required` / `@supervisor_required` decorators.
 
 ## Deployment
