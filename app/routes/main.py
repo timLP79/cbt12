@@ -54,6 +54,7 @@ def login():
 @login_required
 def logout():
     """Logout user"""
+    session.clear()
     logout_user()
     return redirect(url_for('main.login'))
 

@@ -33,6 +33,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ## ✅ Recently Completed
 
 ### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
+- ✅ **Session Cleanup** - Implemented session.clear() on logout (Issue #8)
 - ✅ **Content Expansion** - Added full assessments for Steps 2-12 (5 questions each) (Issue #21)
 - ✅ **Participant Profile & History** - Added detailed admin view for user history and progress (Issue #22)
 - ✅ **Resume Assessment** - Added logic to resume in-progress attempts and update saved answers (Issue #23)
@@ -62,10 +63,6 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ---
 
 ## 🟡 MEDIUM PRIORITY - Improve Code Quality
-
-### 8. Incomplete Session Cleanup
-**Issue:** Logout doesn't clear all session data
-**Fix:** Use `session.clear()` in logout route
 
 ### 10. Missing Null Checks in Templates
 **Issue:** Accessing `attempt.reviewer` without checking if exists
