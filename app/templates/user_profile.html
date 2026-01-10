@@ -7,7 +7,7 @@
     <a href="{{ url_for('manage.list_users') }}">← Back to User List</a>
 </div>
 
-<div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2rem;">
+<div class="profile-grid">
     <div style="flex: 1; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
         <h2 style="margin-top: 0;">{{ user.first_name }} {{ user.last_name }}</h2>
         <p><strong>State ID:</strong> {{ user.state_id }}</p>

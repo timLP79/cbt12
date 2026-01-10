@@ -177,6 +177,21 @@ blockquote {
     margin: 0.5rem 0;
 }
 
+/* Layout Utilities (New) */
+.profile-grid {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.filter-form {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
 /* Utilities */
 .text-muted {
     color: #666;
@@ -223,4 +238,64 @@ table th, table td {
 table th {
     background: #f8f9fa;
     border-bottom: 2px solid #dee2e6;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    /* Stack the profile grid vertically */
+    .profile-grid {
+        flex-direction: column;
+    }
+
+    .profile-grid > div {
+        width: 100%; /* Force full width for columns */
+    }
+
+    /* Stack filter forms */
+    .filter-form {
+        flex-direction: column;
+    }
+
+    .filter-form > div {
+        width: 100%;
+    }
+
+    /* Make tables scrollable */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* Larger touch targets */
+    button, .btn, input, select {
+        padding: 0.85rem; /* Slightly larger for fingers */
+    }
+
+    /* Header adjustments */
+    header {
+        text-align: center;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    nav a {
+        margin-right: 0;
+        padding: 0.5rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 3px;
+    }
 }
