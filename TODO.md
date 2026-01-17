@@ -42,6 +42,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - ✅ **Resume Assessment** - Added logic to resume in-progress attempts and update saved answers (Issue #23)
 - ✅ **Duplicate Response Prevention** - Added database-level UniqueConstraint to Response model (Issue #9)
 - ✅ **UI/UX Polish** - Added "Save and Exit" and pre-filled responses in assessment flow
+- ✅ **State ID Validation** - Enforced strict `[A-Z]{2}[0-9]{4,10}` format for State IDs (Issue #25)
 - ✅ **Code Cleanup** - Fixed Limiter initialization syntax and typos
 
 ### Phase 6: Admin Dashboard Expansion & Polish - COMPLETE (2026-01-04)
