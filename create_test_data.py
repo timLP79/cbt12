@@ -9,7 +9,7 @@ def create_test_data():
 
     with app.app_context():
         user1 = User(
-            state_id='TEST001',
+            state_id='ID100001',
             first_name='David',
             last_name='Fisher',
             password_hash=generate_password_hash('Test123!'),
@@ -17,7 +17,7 @@ def create_test_data():
         )
 
         user2 = User(
-            state_id='TEST002',
+            state_id='ID200002',
             first_name='John',
             last_name='Doe',
             password_hash=generate_password_hash('Test456!'),

@@ -53,13 +53,20 @@ The CBT 12-Step Assessment System is accessed through a web browser at the URL p
 
 ### Login Credentials
 
-**For Participants:**
-- **Username**: Your State ID (format: 2-letter state code + 8 digits, e.g., "CA12345678")
-- **Password**: Provided by your counselor during enrollment
 
-**For Clinicians and Supervisors:**
-- **Username**: Your assigned Admin ID
-- **Password**: Set during account creation
+
+**For Participants (Test Account):**
+
+-   **State ID:** `ID100001`
+
+-   **Password:** `Test123!`
+
+**For Clinicians and Supervisors (Test Accounts):**
+- **Supervisor Admin ID:** `ADMIN001`
+- **Supervisor Password:** `Admin123!`
+- **Clinician Admin ID:** `ADMIN002`
+- **Clinician Password:** `Admin456!`
+
 
 ### First Time Login
 
@@ -69,6 +76,40 @@ The CBT 12-Step Assessment System is accessed through a web browser at the URL p
 4. You'll be directed to your dashboard
 
 **Note**: If you forget your password, contact your program supervisor or system administrator.
+
+---
+
+## Walkthrough: Core Clinical Workflow
+
+This section provides a live example of the primary workflow using the test accounts.
+
+### Step 1: Participant Submits Assessment
+
+1.  **Log in as Participant:**
+    *   Go to the main login page (`/login`).
+    *   **State ID:** `ID100001`
+    *   **Password:** `Test123!`
+2.  From the dashboard, click **"Start Assessment"** for Step 1.
+3.  Answer all the questions and click **"Finish Assessment"**.
+4.  Your dashboard will now show the status for Step 1 as **"Pending Review"**.
+5.  Log out.
+
+### Step 2: Supervisor Reviews and Approves
+
+1.  **Log in as Supervisor:**
+    *   Go to the admin login page (`/admin/login`).
+    *   **Admin ID:** `ADMIN001`
+    *   **Password:** `Admin123!`
+2.  On the Admin Dashboard, find the pending submission from **David Fisher (ID100001)**.
+3.  Click **"Review"**.
+4.  Scroll to the bottom, select **"Approve"**, and click **"Submit Review"**.
+5.  Log out.
+
+### Step 3: Participant Verifies Approval
+
+1.  **Log back in as Participant** (`ID100001` / `Test123!`).
+2.  Observe the green approval notification on your dashboard.
+3.  Note that your "Current Step" is now **Step 2**. You are unblocked and can proceed.
 
 ---
 
@@ -249,15 +290,16 @@ At the bottom of the review page:
 Supervisors have all clinician capabilities plus additional administrative functions:
 
 - User management (create, edit, deactivate participant accounts)
+- Admin management (create, edit, deactivate clinician and supervisor accounts)
 - System oversight
 - User assignment to clinicians
 
-### Accessing User Management
+### Accessing Management Functions
 
-From the admin dashboard:
-1. Locate the "System Management" section
-2. Click **"Manage Users"**
-3. You'll see the User Management page
+From the admin dashboard, as a supervisor, you will see a "Management" section with two buttons:
+1.  Click **"Manage Users"** to go to the User Management page.
+2.  Click **"Manage Admins"** to go to the Admin Management page.
+
 
 ### User Management Overview
 
@@ -441,13 +483,19 @@ Use this when a participant:
 
 ### Quick Reference: State ID Requirements
 
-- Format: 2 uppercase letters + 8 digits
-- Letters represent state code (e.g., CA, TX, NY)
-- Must be unique (no two participants can have the same State ID)
+- Format: **2 uppercase letters followed by 4 to 10 digits.**
+- The two letters represent a state code (e.g., CA, TX, NY).
+- The digits provide a unique identifier for the participant.
+- Must be unique (no two participants can have the same State ID).
 
 **Examples:**
-- Valid: `CA12345678`, `TX87654321`, `NY11223344`
-- Invalid: `ca12345678` (lowercase), `CAB1234567` (3 letters), `CA1234567` (7 digits)
+- Valid: `ID1234`, `TX87654321`, `NY11223344`
+- Invalid:
+  - `id1234` (lowercase letters)
+  - `CAB12345` (more than 2 letters at the start)
+  - `ID123` (fewer than 4 digits)
+  - `ID12345678901` (more than 10 digits)
+  - `ID12-34` (contains hyphen)
 
 ### Quick Reference: Assessment Statuses
 

@@ -81,22 +81,26 @@ def validate_text_response(text, field_name="Response", max_length=5000):
 
 def validate_state_id(state_id):
     """
-    Validate State ID format
+    Validate State ID format.
+    Must start with 2 uppercase letters, followed by 4 to 10 digits.
     """
     if not state_id:
         raise ValidationError("State ID is required.")
 
-    state_id = state_id.strip()
+    state_id = state_id.strip().upper()  # Convert to uppercase for consistent validation
 
-    if len(state_id) < 4:
-        raise ValidationError("State ID must be at least 4 characters.")
-    elif len(state_id) > 20:
-        raise ValidationError("State ID is too long (max 20 characters.)")
-
-    pattern = r'^[A-Za-z0-9-]+$'
+    # The pattern now explicitly enforces:
+    # ^     - start of the string
+    # [A-Z]{2} - exactly two uppercase letters (the state code)
+    # \d{4,10} - exactly 4 to 10 digits (the unique ID part)
+    # $     - end of the string
+    pattern = r'^[A-Z]{2}\d{4,10}$'
 
     if re.match(pattern, state_id) is None:
-        raise ValidationError("State ID can only contain letters, numbers and hyphens.")
+        # Provide a clear, actionable error message
+        raise ValidationError(
+            "Invalid State ID format. Must start with 2 uppercase letters followed by 4 to 10 digits (e.g., TX123456)."
+        )
 
     return state_id
 
