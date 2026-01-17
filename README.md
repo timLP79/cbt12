@@ -39,12 +39,16 @@ cbt-assessment/
 │   ├── static/
 │   │   └── css/
 │   │       └── style.css        # Mobile responsive stylesheet
-│   └── templates/               # HTML templates
+├── templates/               # HTML templates
 │       ├── base.html            # Base template with common layout
 │       ├── dashboard.html       # Participant dashboard
 │       ├── user_profile.html    # Detailed participant profile
+│       ├── manage_users_list.html # List of participant accounts
+│       ├── manage_users_form.html # Form to create/edit participant accounts
+│       ├── manage_admins_list.html # List of admin accounts
+│       ├── manage_admins_form.html # Form to create/edit admin accounts
 │       ├── question.html        # Assessment interface
-│       └── ...                  # Other templates
+│       └── ...                  # Other templates (login, admin_login, etc.)
 ├── .ebextensions/
 │   └── python.config            # AWS Elastic Beanstalk configuration
 ├── .github/
@@ -68,14 +72,14 @@ cbt-assessment/
 - **Authentication & User Management**
   - Dual login system (Participant vs. Admin)
   - Role-based access (Clinician vs. Supervisor)
-  - Full CRUD for User and Admin management
-  - Secure session handling with auto-logout cleanup
+  - Full CRUD for User and Admin management (Create, Read, Update, Deactivate)
+  - Secure session handling (CSRF protection, session clearing on login)
 
 - **Assessment Workflow**
   - **Full Content**: Assessments for all 12 Steps (5 questions each)
-  - **Resume Capability**: Users can save progress and resume later
+  - **Resume Capability**: Users can save progress and resume later (pre-fills previous answers)
   - **Review System**: Admins review submissions with "Approve" or "Request Revision" workflow
-  - **History**: Detailed history of all past attempts and clinician feedback
+  - **History**: Detailed history of all past attempts and clinician feedback (accessible via Participant Profile)
 
 - **Participant Experience**
   - Mobile-responsive dashboard showing progress and status
@@ -84,13 +88,13 @@ cbt-assessment/
 
 - **Admin Portal**
   - Dashboard with queue of pending assessments
-  - Detailed Participant Profiles showing enrollment stats and full history
-  - Management tools for creating/deactivating users
+  - Detailed Participant Profiles showing enrollment stats and full history (view-only links pending)
+  - Management tools for creating/deactivating users and admins
 
 - **Technical Excellence**
   - **Mobile Responsive**: Fully optimized for phones and tablets
-  - **Security**: CSRF protection, Rate Limiting, Input Validation, Secure Headers
-  - **Code Quality**: Blueprints architecture, Defensive Null Checks, Centralized CSS
+  - **Security**: CSRF protection, Rate Limiting (login routes only), **Strict State ID Validation**, Input Validation, Secure Headers
+  - **Code Quality**: Blueprints architecture, Defensive Null Checks, Centralized CSS, Fix for Rate Limiter in development
 
 ### 📋 Future Improvements
 - Transaction Management (Rollbacks)
@@ -143,8 +147,8 @@ cbt-assessment/
    Access at `http://localhost:5000`
 
    **Test Credentials:**
-   - **Participant:** `TEST001` / `password123`
-   - **Admin:** `ADMIN001` / `admin123`
+   - **Participant:** `ID100001` / `Test123!`
+   - **Admin (Supervisor):** `ADMIN001` / `Admin123!`
 
 ## Deployment
 
