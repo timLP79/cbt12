@@ -41,8 +41,8 @@ const darkModeToggle = document.getElementById('dark-mode-toggle');
 const htmlElement = document.documentElement;
 const icon = darkModeToggle?.querySelector('.icon');
 
-// Check for saved user preference, otherwise use light mode
-const currentTheme = localStorage.getItem('theme') || 'light';
+// Check for saved user preference, otherwise use dark mode as default
+const currentTheme = localStorage.getItem('theme') || 'dark';
 htmlElement.setAttribute('data-theme', currentTheme);
 if (icon) {
     icon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
