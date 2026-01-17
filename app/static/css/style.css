@@ -48,6 +48,77 @@
     --transition-fast: all 0.15s ease;
 }
 
+/* Dark Mode Theme */
+[data-theme="dark"] {
+    /* Primary Colors - Brighter for dark mode */
+    --primary: #06b6d4;
+    --primary-dark: #0891b2;
+    --primary-light: #22d3ee;
+    --secondary: #38bdf8;
+    --accent: #2dd4bf;
+
+    /* Status Colors */
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #fb7185;
+    --info: #22d3ee;
+
+    /* Text Colors - Inverted */
+    --text-primary: #f1f5f9;        /* Slate 100 */
+    --text-secondary: #cbd5e1;      /* Slate 300 */
+    --text-muted: #64748b;          /* Slate 500 */
+
+    /* Background Colors - Dark */
+    --bg-primary: #1e293b;          /* Slate 800 */
+    --bg-secondary: #0f172a;        /* Slate 900 */
+    --bg-tertiary: #334155;         /* Slate 700 */
+    --bg-dark: #0c1220;
+
+    /* Border */
+    --border-color: #334155;        /* Slate 700 */
+
+    /* Shadows - Softer in dark mode */
+    --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.4), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    --shadow-colored: 0 10px 25px -5px rgba(6, 182, 212, 0.3);
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: var(--border-radius-sm);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: var(--transition-fast);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode-toggle:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.dark-mode-toggle .icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.dark-mode-toggle:hover .icon {
+    transform: rotate(20deg);
+}
+
 /* Core Reset & Layout */
 * {
     margin: 0;
@@ -67,6 +138,12 @@ body {
     max-width: 900px;
     margin: 0 auto;
     min-height: 100vh;
+    transition: var(--transition);
+}
+
+/* Dark mode body gradient */
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #0c1220 0%, #1e293b 50%, #334155 100%);
 }
 
 /* Header - Bold style from Option B, teal colors from Option A */
