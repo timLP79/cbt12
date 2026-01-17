@@ -13,9 +13,11 @@
     <nav>
         <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
         <a href="{{ url_for('main.logout') }}">Logout</a>
+        {% if current_user.role is defined %}
         <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
             <span class="icon">🌙</span>
         </button>
+        {% endif %}
         <span style="float: right;">Welcome, {{ current_user.first_name }}</span>
     </nav>
     {% endif %}
