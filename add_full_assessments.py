@@ -7,8 +7,39 @@ def add_full_assessments():
     app = create_app()
 
     with app.app_context():
-        # Define content for Steps 2-12
+        # Define content for Steps 1-12
         assessments_data = [
+            # Step 1: Powerlessness (Added from tmp.py)
+            {
+                "step_id": 1,
+                "title": "Step 1: Powerless and Unmanageability Assessment",
+                "instructions": "Please answer the following questions honestly. This assessment will help evaluate your understanding of Step 1.",
+                "questions": [
+                    {
+                        "text": "How often do you feel that your addiction controls your life rather than you controlling it?",
+                        "type": "multiple_choice",
+                        "options": [("Never", 1), ("Rarely", 2), ("Sometimes", 3), ("Often", 4), ("Always", 5)]
+                    },
+                    {
+                        "text": "To what extent has your addiction made your life unmanageable?",
+                        "type": "multiple_choice",
+                        "options": [("Not at all", 1), ("Slightly", 2), ("Moderately", 3), ("Significantly", 4), ("Completely", 5)]
+                    },
+                    {
+                        "text": "Describe a specific situation where you felt powerless over your addiction.",
+                        "type": "written"
+                    },
+                    {
+                        "text": "Do you believe that admitting powerlessness is a sign of strength or weakness?",
+                        "type": "multiple_choice",
+                        "options": [("Definitely a weakness", 1), ("More of a weakness", 2), ("Neither strength nor weakness", 3), ("More of a strength", 4), ("Definitely a strength", 5)]
+                    },
+                    {
+                        "text": "What does 'unmanageable life' mean to you personally?",
+                        "type": "written"
+                    }
+                ]
+            },
             # Step 2: Hope
             {
                 "step_id": 2,
@@ -348,7 +379,7 @@ def add_full_assessments():
             }
         ]
 
-        print("Starting to seed assessments for Steps 2-12...")
+        print("Starting to seed assessments for Steps 1-12...")
         
         for data in assessments_data:
             # Check if exists
