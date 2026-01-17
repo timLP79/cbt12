@@ -155,6 +155,26 @@ cbt-assessment/
 The application is configured for **AWS Elastic Beanstalk**.
 See `DEPLOYMENT.md` for detailed instructions on deploying to production with RDS PostgreSQL.
 
+## Project Management
+
+**GitHub Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
+
+All development tasks, bugs, and enhancements are tracked in GitHub Issues and organized on our Kanban board.
+
+### Current Status
+- **Total Open Issues:** 36
+  - 🔴 Critical: 4 issues (Security & Bug Fixes)
+  - 🟡 Medium: 7 issues (Code Quality & Performance)
+  - 📋 Backlog: 25 enhancement requests
+
+### Key Documentation
+- **TODO.md** - Technical debt and improvement backlog
+- **WORKFLOW_DESIGN.md** - System architecture and design decisions
+- **CBT_12Step_User_Guide.md** - End-user documentation
+
+### Contributing
+Issues are tracked with labels for priority (`critical`, `bug`, `enhancement`) and are assigned as work progresses. See `TODO.md` for detailed technical context on all open issues.
+
 ---
 
 **Project Status**: **Phase 7 Complete (Jan 2026)**

@@ -1,6 +1,9 @@
 # CBT Assessment - Technical Debt & Improvements
 
-**Last Updated:** 2026-01-04
+**Last Updated:** 2026-01-17
+
+**GitHub Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
+**All issues below have been created in GitHub and added to the project board.**
 
 ## 🚀 Post-Deployment Tasks (January 6, 2026)
 
@@ -66,47 +69,132 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 
 ---
 
+## 🔴 CRITICAL PRIORITY - Security & Bug Fixes
+**Status:** Issues created and tracked in GitHub (Issues #26-29)
+
+### 1. Missing Active User Check (Security Vulnerability) - [Issue #26](https://github.com/timLP79/cbt12/issues/26)
+**Issue:** Deactivated users can still log in - `is_active` flag not checked
+**Location:**
+- `app/routes/main.py:40` - Participant login
+- `app/routes/admin.py:46` - Admin login
+**Fix:** Add `user.is_active` check in authentication logic
+**Impact:** HIGH - Security vulnerability allowing unauthorized access
+**Labels:** `bug`, `critical`, `security`
+
+### 2. Role Validation Bug (Prevents Supervisor Creation) - [Issue #27](https://github.com/timLP79/cbt12/issues/27)
+**Issue:** Typo in role validation prevents creating supervisors
+**Location:** `app/routes/manage.py:244`
+**Current:** `if role not in ['role', 'clinician']:`
+**Fix:** Should be `if role not in ['supervisor', 'clinician']:`
+**Impact:** HIGH - Blocks critical admin functionality
+**Labels:** `bug`, `critical`
+
+### 3. Indentation Error in Assessment Logic - [Issue #28](https://github.com/timLP79/cbt12/issues/28)
+**Issue:** Attempt creation code incorrectly indented outside else block
+**Location:** `app/routes/main.py:175-191`
+**Fix:** Move attempt creation inside the else block
+**Impact:** HIGH - Causes runtime errors when resuming assessments
+**Labels:** `bug`, `critical`
+
+### 4. Deprecated datetime.utcnow() Usage - [Issue #29](https://github.com/timLP79/cbt12/issues/29)
+**Issue:** Using deprecated `datetime.utcnow()` in Python 3.12
+**Locations:**
+- `app/models.py:18, 159`
+- `app/routes/main.py:186, 301`
+- `app/routes/admin.py:128`
+**Fix:** Replace with `datetime.now(timezone.utc)`
+**Impact:** MEDIUM - Will break in future Python versions
+**Labels:** `bug`, `critical`
+**Note:** Closed duplicate Issue #17
+
+---
+
 ## 🟡 MEDIUM PRIORITY - Improve Code Quality
+**Status:** Issues created and tracked in GitHub (Issues #30-36)
 
-### 11. Missing Transaction Management
-**Issue:** Multiple DB operations without rollback handling
-**Fix:** Add try/except blocks with db.session.rollback()
+### 5. Missing Transaction Management in main.py - [Issue #30](https://github.com/timLP79/cbt12/issues/30)
+**Issue:** No rollback handling in main.py routes (admin.py and manage.py have proper error handling)
+**Location:** `app/routes/main.py` - All database operations
+**Fix:** Add try/except blocks with `db.session.rollback()` for all database operations
+**Impact:** Data corruption risk on errors
+**Labels:** `bug`, `enhancement`
 
-### 12. No Maximum Step Validation
+### 6. No Logging System - [Issue #31](https://github.com/timLP79/cbt12/issues/31)
+**Issue:** Relies only on flash messages; no persistent logging
+**Fix:** Implement Python's logging module for:
+- Failed login attempts
+- Database errors
+- Validation failures
+- Security events
+**Impact:** Unable to debug production issues
+**Labels:** `enhancement`
+
+### 7. Session-Based Assessment State is Fragile - [Issue #32](https://github.com/timLP79/cbt12/issues/32)
+**Issue:** Assessment progress stored in session (question_order, current_question_index)
+**Location:** `app/routes/main.py:162-163, 194`
+**Fix:** Consider storing state in database or make session more resilient
+**Impact:** Users lose progress if session expires mid-assessment
+**Labels:** `bug`, `enhancement`
+
+### 8. N+1 Query Problem in Dashboard - [Issue #33](https://github.com/timLP79/cbt12/issues/33)
+**Issue:** Dashboard loops through steps executing queries
+**Location:** `app/routes/main.py:86-100`
+**Fix:** Use eager loading or restructure query
+**Impact:** Performance degradation with many steps
+**Labels:** `bug`, `enhancement`
+
+### 9. No Pagination in User/Admin Lists - [Issue #34](https://github.com/timLP79/cbt12/issues/34)
+**Issue:** `list_users()` and `list_admins()` load ALL records
+**Location:** `app/routes/manage.py:44, 195`
+**Fix:** Implement pagination for large datasets
+**Impact:** Performance issues with many users
+**Labels:** `enhancement`
+
+### 10. No Maximum Step Validation - [Issue #35](https://github.com/timLP79/cbt12/issues/35)
 **Issue:** current_step could exceed 12
-**Fix:** Add validation when advancing steps
+**Fix:** Add validation when advancing steps in approval logic
+**Labels:** `bug`
 
-### 13. Implement Logging/Audit Trail
-**Issue:** No logging of security events
-**Fix:** Add logging for logins, failed attempts, data changes
+### 11. Email Validation Using Regex - [Issue #36](https://github.com/timLP79/cbt12/issues/36)
+**Issue:** Email regex is fragile and incomplete
+**Location:** `app/models.py:104`
+**Fix:** Use `email-validator` library instead
+**Impact:** Invalid emails may pass validation
+**Labels:** `enhancement`
 
 ---
 
 ## 🔵 LOW PRIORITY - Polish & Best Practices
 
-### 14. Optimize Question Ordering
+### 12. XSS Protection Using Regex Blacklist
+**Issue:** `validate_text_response()` uses regex blacklist (easy to bypass)
+**Location:** `app/validators.py:67-77`
+**Fix:** Rely on Jinja2 auto-escaping (already enabled by default)
+**Note:** Current approach is redundant and gives false security
+
+### 13. Optimize Question Ordering
 **Issue:** Using Python sorted() instead of DB ORDER BY
 **Fix:** Use database-level ordering
 
-### 15. Configure Database Connection Pooling
+### 14. Configure Database Connection Pooling
 **Issue:** No SQLAlchemy pool configuration for production
 **Fix:** Add SQLALCHEMY_ENGINE_OPTIONS in ProductionConfig
 
-### 16. Standardize Flash Message Categories
+### 15. Standardize Flash Message Categories
 **Issue:** Some flash messages have categories, others don't
 **Fix:** Standardize all flash() calls with categories
 
-### 17. Fix Timezone Deprecation Warnings
-**Issue:** Using datetime.utcnow() - deprecated
-**Fix:** Use datetime.now(timezone.utc)
-
-### 18. Replace Magic Strings with Constants
+### 16. Replace Magic Strings with Constants (Duplicate of #4)
 **Issue:** Status values hardcoded throughout
-**Fix:** Create constants class
+**Fix:** Create constants class with STATUS_IN_PROGRESS, STATUS_SUBMITTED, etc.
 
-### 19. Add __repr__ Methods to Models
+### 17. Add __repr__ Methods to Models
 **Issue:** Models lack string representations
 **Fix:** Add __repr__ to all models for better debugging
+
+### 18. Missing Features for Production
+**Issue:** No audit trail, password reset, email verification, rate limiting on sensitive ops
+**Fix:** Consider implementing as Phase 8 features
 
 ---
 
@@ -141,10 +229,34 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 
 ---
 
+## 📊 Project Management
+
+### GitHub Integration
+- **Repository:** [timLP79/cbt12](https://github.com/timLP79/cbt12)
+- **Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
+- **Total Open Issues:** 36
+  - 🔴 Critical: 4 issues (#26-29)
+  - 🟡 Medium: 7 issues (#30-36)
+  - Other: 25 existing issues
+
+### Labels Created (2026-01-17)
+- `critical` - Critical priority issues requiring immediate attention
+- `security` - Security vulnerabilities
+
+### Recent Actions (2026-01-17)
+- ✅ Created 11 new issues from comprehensive code review
+- ✅ Added all issues to project board
+- ✅ Assigned all issues to @timLP79
+- ✅ Closed duplicate Issue #17 (consolidated into #29)
+- ✅ Installed `jq` for enhanced JSON parsing
+
+---
+
 ## 📝 Notes
 
 - This is a learning project focused on security best practices
-- All critical security issues identified via comprehensive code review
+- All critical security issues identified via comprehensive code review (2026-01-17)
+- All issues tracked in GitHub with detailed implementation guidance
 - Will implement fixes one-by-one in teaching style
 - Each fix will be explained with understanding checks
 - Testing after each major change
