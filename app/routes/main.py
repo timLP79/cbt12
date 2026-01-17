@@ -162,15 +162,19 @@ def start_assessment(step_number):
     session['question_order'] = [q.question_id for q in questions]
     session['current_question_index'] = 0
 
-    # Check for existing in progress
+    # Check for existing in-progress or needs-revision attempt
     existing_attempt = AssessmentAttempt.query.filter_by(
         state_id=current_user.state_id,
-        assessment_id=assessment.assessment_id,
-        status='in_progress'
+        assessment_id=assessment.assessment_id
+    ).filter(
+        AssessmentAttempt.status.in_(['in_progress', 'needs_revision'])
     ).first()
 
     if existing_attempt:
         attempt = existing_attempt
+        # If returning to revise, set status back to in_progress
+        if attempt.status == 'needs_revision':
+            attempt.status = 'in_progress'
     else:
         previous_attempts = AssessmentAttempt.query.filter_by(
             state_id=current_user.state_id,
