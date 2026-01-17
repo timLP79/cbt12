@@ -63,10 +63,10 @@
     --danger: #fb7185;
     --info: #22d3ee;
 
-    /* Text Colors - Inverted */
-    --text-primary: #f1f5f9;        /* Slate 100 */
-    --text-secondary: #cbd5e1;      /* Slate 300 */
-    --text-muted: #64748b;          /* Slate 500 */
+    /* Text Colors - High contrast for readability */
+    --text-primary: #f8fafc;        /* Slate 50 - Brightest */
+    --text-secondary: #e2e8f0;      /* Slate 200 - Clearly visible */
+    --text-muted: #94a3b8;          /* Slate 400 - Still readable */
 
     /* Background Colors - Dark */
     --bg-primary: #1e293b;          /* Slate 800 */
@@ -75,13 +75,81 @@
     --bg-dark: #0c1220;
 
     /* Border */
-    --border-color: #334155;        /* Slate 700 */
+    --border-color: #475569;        /* Slate 600 - More visible */
 
     /* Shadows - Softer in dark mode */
     --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
     --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.4), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
     --shadow-colored: 0 10px 25px -5px rgba(6, 182, 212, 0.3);
+}
+
+/* Dark Mode Component Overrides */
+[data-theme="dark"] .alert-success {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    color: #a7f3d0;
+    border-color: var(--success);
+}
+
+[data-theme="dark"] .alert-warning {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    color: #fde68a;
+    border-color: var(--warning);
+}
+
+[data-theme="dark"] .alert-info {
+    background: linear-gradient(135deg, #164e63 0%, #155e75 100%);
+    color: #a5f3fc;
+    border-color: var(--info);
+}
+
+[data-theme="dark"] .alert-danger {
+    background: linear-gradient(135deg, #881337 0%, #9f1239 100%);
+    color: #fecdd3;
+    border-color: var(--danger);
+}
+
+[data-theme="dark"] .alert-primary {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    color: #cffafe;
+    border-color: var(--primary);
+}
+
+[data-theme="dark"] .step-info {
+    background: linear-gradient(135deg, #0c4a6e 0%, #075985 100%);
+    border-color: var(--secondary);
+}
+
+[data-theme="dark"] .step-info h3 {
+    color: #7dd3fc;
+}
+
+[data-theme="dark"] .step-info h4,
+[data-theme="dark"] .step-info p {
+    color: #e0f2fe;
+}
+
+[data-theme="dark"] .flash-messages li {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    color: #fecaca;
+}
+
+[data-theme="dark"] table th {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] table td {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .history-item {
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .history-item h4,
+[data-theme="dark"] .history-item p {
+    color: var(--text-primary);
 }
 
 /* Dark Mode Toggle Button */
