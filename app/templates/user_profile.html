@@ -8,7 +8,7 @@
 </div>
 
 <div class="profile-grid">
-    <div style="flex: 1; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
+    <div style="flex: 1; padding: 1.5rem; border-radius: 8px;">
         <h2 style="margin-top: 0;">{{ user.first_name }} {{ user.last_name }}</h2>
         <p><strong>State ID:</strong> {{ user.state_id }}</p>
         <p><strong>Current Step:</strong> {{ user.current_step }}</p>
@@ -35,8 +35,8 @@
         </div>
     </div>
 
-    <div style="width: 200px; background: #e7f3ff; padding: 1.5rem; border-radius: 8px; text-align: center;">
-        <h4 style="margin: 0; color: #0056b3;">Progress</h4>
+    <div style="width: 200px; padding: 1.5rem; border-radius: 8px; text-align: center;">
+        <h4 style="margin: 0;">Progress</h4>
         <div style="font-size: 2.5rem; font-weight: bold; margin: 0.5rem 0;">{{ ((user.current_step / 12) *
             100)|round|int }}%
         </div>
@@ -69,13 +69,13 @@
         </td>
         <td>
             {% if attempt.status == 'approved' %}
-            <span style="background: #d4edda; color: #155724; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Approved</span>
+            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Approved</span>
             {% elif attempt.status == 'submitted' %}
-            <span style="background: #fff3cd; color: #856404; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Pending</span>
+            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Pending</span>
             {% elif attempt.status == 'needs_revision' %}
-            <span style="background: #f8d7da; color: #721c24; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Revision Needed</span>
+            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Revision Needed</span>
             {% else %}
-            <span style="background: #e2e3e5; color: #383d41; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">In Progress</span>
+            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">In Progress</span>
             {% endif %}
         </td>
         <td class="text-muted">{{ attempt.started_at.strftime('%m/%d/%Y') if attempt.started_at else
@@ -88,12 +88,12 @@
             {% if attempt.reviewer %}
             {{ attempt.reviewer.first_name[0] }}. {{ attempt.reviewer.last_name }}
             {% else %}
-            <span style="color: #ccc;">---</span>
+            <span class="text-muted">---</span>
             {% endif %}
         </td>
         <td>
             {% if attempt.status == 'submitted' %}
-            <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}" style="color: #007bff;">Review</a>
+            <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}">Review</a>
             {% elif attempt.status != 'in_progress' %}
             <span class="text-muted" style="font-size: 0.9rem;">View</span>
             {% endif %}
@@ -103,7 +103,7 @@
     </tbody>
 </table>
 {% else %}
-<p class="text-muted" style="padding: 2rem; background: #f8f9fa; text-align: center; border-radius: 8px;">
+<p class="text-muted" style="padding: 2rem; text-align: center; border-radius: 8px;">
     No assessment history found for this participant.
 </p>
 {% endif %}

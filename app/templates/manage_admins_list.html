@@ -63,14 +63,14 @@
         <td style="text-transform: capitalize;">{{ admin.role }}</td>
         <td>
             {% if admin.is_active %}
-            <span style="color: #28a745;">● Active</span>
+            <span>● Active</span>
             {% else %}
-            <span style="color: #dc3545;">● Inactive</span>
+            <span>● Inactive</span>
             {% endif %}
         </td>
         <td style="white-space: nowrap;">
             <a href="{{ url_for('manage.edit_admin', admin_id=admin.admin_id) }}"
-               style="color: #007bff; text-decoration: none; margin-right: 1rem;">Edit</a>
+               style="text-decoration: none; margin-right: 1rem;">Edit</a>
 
             {% if admin.is_active and admin.admin_id != current_user.admin_id %}
             <form method="POST"
@@ -79,7 +79,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit"
                         onclick="return confirm('Deactivate admin {{ admin.admin_id }}?')"
-                        style="background: none; border: none; color: #dc3545; cursor: pointer; text-decoration: underline; padding: 0;">
+                        style="background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0;">
                     Deactivate
                 </button>
             </form>
@@ -90,7 +90,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit"
                         onclick="return confirm('Reactivate admin {{ admin.admin_id }}?')"
-                        style="background: none; border: none; color: #28a745; cursor: pointer; text-decoration: underline; padding: 0;">
+                        style="background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0;">
                     Reactivate
                 </button>
             </form>

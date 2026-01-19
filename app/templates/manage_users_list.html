@@ -86,7 +86,7 @@
         <td>{{ user.state_id }}</td>
         <td>
             <a href="{{ url_for('manage.user_profile', state_id=user.state_id) }}"
-               style="color: #007bff; text-decoration: none; font-weight: bold;">
+               style="text-decoration: none; font-weight: bold;">
                 {{ user.first_name }} {{ user.last_name }}
             </a>
         </td>
@@ -100,14 +100,14 @@
         </td>
         <td>
             {% if user.is_active %}
-            <span style="color: #28a745; white-space: nowrap;">● Active</span>
+            <span style="white-space: nowrap;">● Active</span>
             {% else %}
-            <span style="color: #dc3545; white-space: nowrap;">● Inactive</span>
+            <span style="white-space: nowrap;">● Inactive</span>
             {% endif %}
         </td>
         <td style="white-space: nowrap;">
             <a href="{{ url_for('manage.edit_user', state_id=user.state_id) }}"
-               style="color: #007bff; text-decoration: none; margin-right: 1rem;">Edit</a>
+               style="text-decoration: none; margin-right: 1rem;">Edit</a>
 
             {% if user.is_active %}
             <form method="POST"
@@ -116,7 +116,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit"
                         onclick="return confirm('Deactivate user {{ user.state_id }}?')"
-                        style="background: none; border: none; color: #dc3545; cursor: pointer; text-decoration: underline; padding: 0; font: inherit;">
+                        style="background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; font: inherit;">
                     Deactivate
                 </button>
             </form>
@@ -127,7 +127,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit"
                         onclick="return confirm('Reactivate user {{ user.state_id }}?')"
-                        style="background: none; border: none; color: #28a745; cursor: pointer; text-decoration: underline; padding: 0; font: inherit;">
+                        style="background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; font: inherit;">
                     Reactivate
                 </button>
             </form>

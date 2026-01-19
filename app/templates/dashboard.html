@@ -9,7 +9,7 @@
 {% if unviewed_approval %}
 <div class="alert alert-success">
     <button onclick="this.parentElement.style.display='none'"
-            style="position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #28a745;">
+            style="position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">
         &times;
     </button>
     <h3>Step
@@ -29,7 +29,7 @@
     </p>
     {% if unviewed_approval.attempt.clinician_notes %}
     <p><strong>Clinician Notes:</strong></p>
-    <blockquote style="border-left-color: #28a745;">{{
+    <blockquote>{{
         unviewed_approval.attempt.clinician_notes }}
     </blockquote>
     {% endif %}
@@ -101,7 +101,7 @@
         Clinician
         {% endif %}
     </strong></p>
-    <blockquote style="background: #fff;">{{ current_attempt.clinician_notes }}</blockquote>
+    <blockquote>{{ current_attempt.clinician_notes }}</blockquote>
     <p>Please revise your work based on the feedback above.</p>
     <form action="{{ url_for('main.start_assessment', step_number=current_step.step_number) }}" method="GET">
         <button type="submit">Revise Your Work</button>
@@ -135,9 +135,9 @@
         <h4 style="margin: 0 0 0.5rem 0;">Step {{ prev.step.step_number }}: {{ prev.step.step_title }}</h4>
         <p style="margin: 0.25rem 0;"><strong>Status:</strong>
             {% if prev.attempt.status == 'approved' %}
-            <span style="color: #28a745;">✓ Approved</span>
+            <span>✓ Approved</span>
             {% elif prev.attempt.status == 'needs_revision' %}
-            <span style="color: #ffc107;">⚠ Needs Revision</span>
+            <span>⚠ Needs Revision</span>
             {% endif %}
         </p>
         <p style="margin: 0.25rem 0;"><strong>Reviewed by:</strong>

@@ -13,7 +13,7 @@
            id="state_id"
            name="state_id"
            value="{{ user.state_id if user else '' }}"
-           {% if user %}readonly style="background: #e9ecef;"{% else %}required{% endif %}>
+           {% if user %}readonly{% else %}required{% endif %}>
     {% if user %}
     <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         State ID cannot be changed

@@ -13,7 +13,7 @@
            id="admin_id"
            name="admin_id"
            value="{{ admin.admin_id if admin else '' }}"
-           {% if admin %}readonly style="background: #e9ecef;"{% else %}required{% endif %}>
+           {% if admin %}readonly{% else %}required{% endif %}>
     {% if admin %}
     <p class="text-muted" style="font-size: 0.9em; margin-top: 0.25rem;">
         Admin ID cannot be changed
