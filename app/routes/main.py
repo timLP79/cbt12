@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
+from sqlalchemy.exc import SQLAlchemyError
 from app import db, limiter
 from app.models import User, Step, Assessment, Question, Response, AssessmentAttempt, Admin
 from app.validators import (
@@ -125,8 +126,12 @@ def dismiss_approval(attempt_id):
     if attempt.state_id != current_user.state_id:
         abort(403)
 
-    attempt.approval_viewed = True
-    db.session.commit()
+    try:
+        attempt.approval_viewed = True
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        flash('An error occurred while dismissing the notification. Please try again.')
 
     return redirect(url_for('main.dashboard'))
 
@@ -170,36 +175,41 @@ def start_assessment(step_number):
         AssessmentAttempt.status.in_(['in_progress', 'needs_revision'])
     ).first()
 
-    if existing_attempt:
-        attempt = existing_attempt
-        # If returning to revise, set status back to in_progress
-        if attempt.status == 'needs_revision':
-            attempt.status = 'in_progress'
-    else:
-        previous_attempts = AssessmentAttempt.query.filter_by(
-            state_id=current_user.state_id,
-            assessment_id=assessment.assessment_id
-        ).count()
+    try:
+        if existing_attempt:
+            attempt = existing_attempt
+            # If returning to revise, set status back to in_progress
+            if attempt.status == 'needs_revision':
+                attempt.status = 'in_progress'
+        else:
+            previous_attempts = AssessmentAttempt.query.filter_by(
+                state_id=current_user.state_id,
+                assessment_id=assessment.assessment_id
+            ).count()
 
-        # Create new attempt
-        attempt = AssessmentAttempt(
-            state_id=current_user.state_id,
-            assessment_id=assessment.assessment_id,
-            attempt_number=previous_attempts + 1,
-            status='in_progress',
-            started_at=datetime.now(timezone.utc)
-        )
+            # Create new attempt
+            attempt = AssessmentAttempt(
+                state_id=current_user.state_id,
+                assessment_id=assessment.assessment_id,
+                attempt_number=previous_attempts + 1,
+                status='in_progress',
+                started_at=datetime.now(timezone.utc)
+            )
 
-        db.session.add(attempt)
+            db.session.add(attempt)
 
-    db.session.commit()
+        db.session.commit()
 
-    # Store attempt_id in session so response can link to it
-    session['current_attempt_id'] = attempt.attempt_id
+        # Store attempt_id in session so response can link to it
+        session['current_attempt_id'] = attempt.attempt_id
 
-    # Redirect to first question
-    first_question_id = questions[0].question_id
-    return redirect(url_for('main.show_question', question_id=first_question_id))
+        # Redirect to first question
+        first_question_id = questions[0].question_id
+        return redirect(url_for('main.show_question', question_id=first_question_id))
+    except SQLAlchemyError:
+        db.session.rollback()
+        flash('An error occurred while starting the assessment. Please try again.')
+        return redirect(url_for('main.dashboard'))
 
 
 @main.route('/question/<int:question_id>', methods=['GET', 'POST'])
@@ -267,6 +277,9 @@ def show_question(question_id):
 
         except ValidationError as e:
             flash(str(e))
+        except SQLAlchemyError:
+            db.session.rollback()
+            flash('An error occurred while saving your response. Please try again.')
 
     # Fetch existing response to pre-fill the form
     saved_response = Response.query.filter_by(
@@ -300,10 +313,14 @@ def assessment_complete():
         attempt = AssessmentAttempt.query.get(attempt_id)
 
         if attempt:
-            # Mark as submitted (no longer in_progress)
-            attempt.status = 'submitted'
-            attempt.submitted_at = datetime.now(timezone.utc)
-            db.session.commit()
+            try:
+                # Mark as submitted (no longer in_progress)
+                attempt.status = 'submitted'
+                attempt.submitted_at = datetime.now(timezone.utc)
+                db.session.commit()
+            except SQLAlchemyError:
+                db.session.rollback()
+                flash('An error occurred while submitting the assessment. Please contact support.')
 
     # Clear session data
     session.pop('question_order', None)

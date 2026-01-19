@@ -1,6 +1,6 @@
 # CBT Assessment - Technical Debt & Improvements
 
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-19
 
 **GitHub Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
 **All issues below have been created in GitHub and added to the project board.**
@@ -52,6 +52,10 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - ✅ **Indentation Fix** - Corrected else block indentation (Issue #28)
 - ✅ **Datetime Deprecation** - Replaced datetime.utcnow() with timezone-aware version (Issue #29)
 - ✅ **Revision Loading** - Previous responses now load when revising assessments (Issue #40)
+
+**Code Quality Improvements:**
+- ✅ **Email Validation** - Replaced regex with email-validator library (Issue #36)
+- ✅ **User Reactivation** - Added UI to reactivate deactivated users and admins (Issue #39)
 
 ### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
 - ✅ **Mobile Responsiveness** - Optimized layout for mobile devices (Issue #24)
@@ -111,11 +115,15 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ## 🟡 MEDIUM PRIORITY - Improve Code Quality
 **Status:** Issues created and tracked in GitHub (Issues #30-36)
 
-### 5. Missing Transaction Management in main.py - [Issue #30](https://github.com/timLP79/cbt12/issues/30)
+### 5. ✅ Missing Transaction Management in main.py - [Issue #30](https://github.com/timLP79/cbt12/issues/30) - FIXED
 **Issue:** No rollback handling in main.py routes (admin.py and manage.py have proper error handling)
 **Location:** `app/routes/main.py` - All database operations
-**Fix:** Add try/except blocks with `db.session.rollback()` for all database operations
-**Impact:** Data corruption risk on errors
+**Fix:** Added try/except blocks with `db.session.rollback()` for all 4 database operations:
+- `dismiss_approval()` - rollback on approval update errors
+- `start_assessment()` - rollback on attempt creation errors
+- `show_question()` - rollback on response save errors
+- `assessment_complete()` - rollback on submission errors
+**Impact:** Data corruption risk eliminated
 **Labels:** `bug`, `enhancement`
 
 ### 6. No Logging System - [Issue #31](https://github.com/timLP79/cbt12/issues/31)
@@ -154,12 +162,9 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 **Fix:** Add validation when advancing steps in approval logic
 **Labels:** `bug`
 
-### 11. Email Validation Using Regex - [Issue #36](https://github.com/timLP79/cbt12/issues/36)
-**Issue:** Email regex is fragile and incomplete
-**Location:** `app/models.py:104`
-**Fix:** Use `email-validator` library instead
-**Impact:** Invalid emails may pass validation
-**Labels:** `enhancement`
+### 11. ✅ Email Validation Using Regex - [Issue #36](https://github.com/timLP79/cbt12/issues/36) - FIXED
+**Fix:** Replaced with `email-validator` library
+**Commit:** 61153d8
 
 ---
 
@@ -237,8 +242,8 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
   - ✅ Critical: 4 issues (#26-29) - ALL FIXED
   - ✅ UI: 2 issues (#37, #38) - COMPLETE
   - ✅ Bug: 1 issue (#40) - FIXED
-  - 🟡 Medium: 7 issues (#30-36)
-  - 🟠 Enhancement: 1 issue (#39 - User Reactivation)
+  - ✅ Enhancements: 2 issues (#36, #39) - COMPLETE
+  - 🟡 Medium: 5 issues (#31-35) remaining (1 of 6 complete)
   - Other: 25 existing issues
 
 ### Labels Created
@@ -246,14 +251,19 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - `security` - Security vulnerabilities
 - `ui` - User interface and design changes
 
-### Recent Actions (2026-01-18)
+### Recent Actions (2026-01-19)
+- ✅ Fixed Issue #30 - Added transaction management with rollback to all database operations in main.py
+
+### Previous Actions (2026-01-18)
 - ✅ Fixed Issue #26 - Added is_active check to login routes
 - ✅ Fixed Issue #27 - Corrected role validation typo
 - ✅ Fixed Issue #28 - Fixed indentation in start_assessment
 - ✅ Fixed Issue #29 - Replaced deprecated datetime.utcnow()
 - ✅ Fixed Issue #40 - Previous responses now load when revising
-- ✅ Created Issue #39 - User/Admin reactivation feature request
+- ✅ Fixed Issue #36 - Replaced email regex with email-validator library
+- ✅ Fixed Issue #39 - Added user/admin reactivation functionality
 - ✅ All critical security issues resolved
+- ✅ 9 issues closed in total
 
 ### Previous Actions (2026-01-17)
 - ✅ Created 11 new issues from comprehensive code review
