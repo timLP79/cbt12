@@ -241,7 +241,7 @@ def create_admin():
             password = validate_password(request.form.get('password'))
             role = request.form.get('role', 'clinician')
 
-            if role not in ['role', 'clinician']:
+            if role not in ['supervisor', 'clinician']:
                 raise ValidationError("Invalid role selected.")
 
             new_admin = Admin(
