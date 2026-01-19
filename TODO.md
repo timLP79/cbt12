@@ -139,11 +139,18 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 **Impact:** Production debugging now possible with persistent audit trail
 **Labels:** `enhancement`
 
-### 7. Session-Based Assessment State is Fragile - [Issue #32](https://github.com/timLP79/cbt12/issues/32)
+### 7. ✅ Session-Based Assessment State is Fragile - [Issue #32](https://github.com/timLP79/cbt12/issues/32) - FIXED
 **Issue:** Assessment progress stored in session (question_order, current_question_index)
 **Location:** `app/routes/main.py:162-163, 194`
-**Fix:** Consider storing state in database or make session more resilient
-**Impact:** Users lose progress if session expires mid-assessment
+**Fix:** Implemented database-backed assessment state tracking:
+- Added `question_order` (JSON) column to AssessmentAttempt model
+- Added `current_question_index` (INTEGER) column to AssessmentAttempt model
+- Updated `start_assessment()` to store question order in database
+- Updated `show_question()` to use database as source of truth with session as cache
+- Session expiration now recoverable - users can resume assessments
+- Question order preserved across sessions (important for randomized assessments)
+- Created migration script: `migrate_add_assessment_state.py`
+**Impact:** Assessment state now persists across session expiration - users never lose progress
 **Labels:** `bug`, `enhancement`
 
 ### 8. N+1 Query Problem in Dashboard - [Issue #33](https://github.com/timLP79/cbt12/issues/33)
@@ -246,7 +253,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
   - ✅ UI: 2 issues (#37, #38) - COMPLETE
   - ✅ Bug: 1 issue (#40) - FIXED
   - ✅ Enhancements: 2 issues (#36, #39) - COMPLETE
-  - 🟡 Medium: 4 issues (#32-35) remaining (2 of 6 complete)
+  - 🟡 Medium: 3 issues (#33-35) remaining (3 of 6 complete)
   - Other: 25 existing issues
 
 ### Labels Created
@@ -257,6 +264,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ### Recent Actions (2026-01-19)
 - ✅ Fixed Issue #30 - Added transaction management with rollback to all database operations in main.py
 - ✅ Fixed Issue #31 - Implemented comprehensive logging system with rotating file handler
+- ✅ Fixed Issue #32 - Implemented database-backed assessment state tracking (survives session expiration)
 
 ### Previous Actions (2026-01-18)
 - ✅ Fixed Issue #26 - Added is_active check to login routes

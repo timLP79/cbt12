@@ -162,17 +162,6 @@ def start_assessment(step_number):
         flash('No assessment available for this step yet.')
         return redirect(url_for('main.dashboard'))
 
-    # Get questions (randomized or ordered)
-    if assessment.randomize_questions:
-        questions = list(assessment.questions)
-        random.shuffle(questions)
-    else:
-        questions = sorted(assessment.questions, key=lambda q: q.question_order)
-
-    # Store question order in session for consistency
-    session['question_order'] = [q.question_id for q in questions]
-    session['current_question_index'] = 0
-
     # Check for existing in-progress or needs-revision attempt
     existing_attempt = AssessmentAttempt.query.filter_by(
         state_id=current_user.state_id,
@@ -187,30 +176,55 @@ def start_assessment(step_number):
             # If returning to revise, set status back to in_progress
             if attempt.status == 'needs_revision':
                 attempt.status = 'in_progress'
+
+            # If question_order already exists in database, use it; otherwise generate new
+            if attempt.question_order:
+                question_order = attempt.question_order
+            else:
+                # Generate question order for existing attempts that don't have it
+                if assessment.randomize_questions:
+                    questions = list(assessment.questions)
+                    random.shuffle(questions)
+                else:
+                    questions = sorted(assessment.questions, key=lambda q: q.question_order)
+                question_order = [q.question_id for q in questions]
+                attempt.question_order = question_order
         else:
+            # Generate question order for new attempts
+            if assessment.randomize_questions:
+                questions = list(assessment.questions)
+                random.shuffle(questions)
+            else:
+                questions = sorted(assessment.questions, key=lambda q: q.question_order)
+            question_order = [q.question_id for q in questions]
+
             previous_attempts = AssessmentAttempt.query.filter_by(
                 state_id=current_user.state_id,
                 assessment_id=assessment.assessment_id
             ).count()
 
-            # Create new attempt
+            # Create new attempt with question order stored in database
             attempt = AssessmentAttempt(
                 state_id=current_user.state_id,
                 assessment_id=assessment.assessment_id,
                 attempt_number=previous_attempts + 1,
                 status='in_progress',
-                started_at=datetime.now(timezone.utc)
+                started_at=datetime.now(timezone.utc),
+                question_order=question_order,
+                current_question_index=0
             )
 
             db.session.add(attempt)
 
         db.session.commit()
 
-        # Store attempt_id in session so response can link to it
+        # Store in session for performance (acts as cache)
         session['current_attempt_id'] = attempt.attempt_id
+        session['question_order'] = question_order
+        session['current_question_index'] = attempt.current_question_index
 
         # Redirect to first question
-        first_question_id = questions[0].question_id
+        first_question_id = question_order[attempt.current_question_index]
         return redirect(url_for('main.show_question', question_id=first_question_id))
     except SQLAlchemyError as e:
         db.session.rollback()
@@ -223,19 +237,42 @@ def start_assessment(step_number):
 @login_required
 def show_question(question_id):
     """Display single question"""
-    # Safety check to ensure user started assessment properly
-    if 'current_attempt_id' not in session:
-        flash('Please start the assessment from the beginning.')
-        return redirect(url_for('main.dashboard'))
+    # Get attempt_id from session or find in-progress attempt
+    attempt_id = session.get('current_attempt_id')
+
+    if not attempt_id:
+        # Session expired - try to recover from database
+        attempt = AssessmentAttempt.query.filter_by(
+            state_id=current_user.state_id,
+            status='in_progress'
+        ).first()
+
+        if not attempt:
+            flash('Please start the assessment from the beginning.')
+            return redirect(url_for('main.dashboard'))
+
+        attempt_id = attempt.attempt_id
+        session['current_attempt_id'] = attempt_id
+    else:
+        attempt = AssessmentAttempt.query.get(attempt_id)
+
+        if not attempt:
+            flash('Assessment session not found. Please start again.')
+            return redirect(url_for('main.dashboard'))
 
     question = Question.query.get(question_id)
     if not question:
         flash('Question not found.')
         return redirect(url_for('main.dashboard'))
 
-    # Get question order from session
-    question_order = session.get('question_order', [])
-    current_index = session.get('current_question_index', 0)
+    # Get question order and index from database (source of truth)
+    # Session acts as cache, but database is authoritative
+    question_order = attempt.question_order or session.get('question_order', [])
+    current_index = attempt.current_question_index
+
+    # Update session cache
+    session['question_order'] = question_order
+    session['current_question_index'] = current_index
 
     if request.method == 'POST':
         try:
@@ -270,16 +307,18 @@ def show_question(question_id):
                     )
                     db.session.add(response)
 
-            db.session.commit()
-
             # Move to next question or finish
             next_index = current_index + 1
             if next_index < len(question_order):
+                # Update database (source of truth) and session (cache)
+                attempt.current_question_index = next_index
+                db.session.commit()
                 session['current_question_index'] = next_index
                 next_question_id = question_order[next_index]
                 return redirect(url_for('main.show_question', question_id=next_question_id))
             else:
-                # Assessment complete
+                # Assessment complete - commit the response
+                db.session.commit()
                 return redirect(url_for('main.assessment_complete'))
 
         except ValidationError as e:

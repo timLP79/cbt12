@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from datetime import datetime, timezone
 from email_validator import validate_email, EmailNotValidError
 from sqlalchemy.orm import validates
+from sqlalchemy import JSON
 import re
 
 from app.validators import ValidationError
@@ -74,6 +75,8 @@ class AssessmentAttempt(db.Model):
     clinician_notes = db.Column(db.Text, nullable=True)
     approval_viewed = db.Column(db.Boolean, default=False, nullable=False)
     score = db.Column(db.Integer, nullable=True)
+    question_order = db.Column(JSON, nullable=True)  # Stores list of question IDs in order
+    current_question_index = db.Column(db.Integer, default=0, nullable=False)  # Tracks progress through assessment
 
     # Relationships
     user = db.relationship('User', backref='attempts', lazy=True)
