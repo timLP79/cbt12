@@ -353,6 +353,9 @@ def show_question(question_id):
     total_questions = len(question_order)
     progress = f"Question {current_index + 1} of {total_questions}"
 
+    # Determine if this is a revision: if the attempt was submitted before, it's a revision
+    is_revision = (attempt.submitted_at is not None)
+
     return render_template('question.html',
                            question=question,
                            progress=progress,
@@ -360,7 +363,7 @@ def show_question(question_id):
                            total_questions=total_questions,
                            saved_response=saved_response,
                            question_order=question_order,
-                           is_revision=(attempt.attempt_number > 1)
+                           is_revision=is_revision
                            )
 
 
