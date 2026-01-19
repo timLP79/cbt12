@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}View Assessment Attempt - CBT 12-Step{% endblock %}
+
+{% block content %}
+<h2>View Assessment Attempt</h2>
+
+<!-- Read-only Banner -->
+<div class="alert alert-info" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; margin-bottom: 1.5rem;">
+    <strong>📋 Historical View:</strong> This is a read-only view of a completed assessment attempt. No changes can be made.
+</div>
+
+<!-- Participant Info -->
+<div class="history-item mt-1">
+    <h3>Participant Information</h3>
+    <p><strong>Name:</strong> {{ attempt.user.first_name }} {{ attempt.user.last_name }}</p>
+    <p><strong>State ID:</strong> {{ attempt.state_id }}</p>
+    <p><strong>Step:</strong> {{ attempt.assessment.step.step_number }} - {{ attempt.assessment.step.step_title }}</p>
+    <p><strong>Submitted:</strong> {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') if attempt.submitted_at else 'Not yet submitted' }}</p>
+    <p><strong>Attempt:</strong> #{{ attempt.attempt_number }}{% if all_attempts|length > 1 %} of {{ all_attempts|length }}{% endif %}</p>
+</div>
+
+<!-- Review Metadata -->
+<div class="history-item mt-1">
+    <h3>Review Information</h3>
+    <p>
+        <strong>Status:</strong>
+        {% if attempt.status == 'approved' %}
+        <span class="status-badge status-approved">Approved</span>
+        {% elif attempt.status == 'needs_revision' %}
+        <span class="status-badge status-revision">Needs Revision</span>
+        {% elif attempt.status == 'submitted' %}
+        <span class="status-badge status-pending">Pending Review</span>
+        {% else %}
+        <span class="status-badge status-progress">{{ attempt.status|title }}</span>
+        {% endif %}
+    </p>
+    {% if attempt.reviewed_by %}
+    <p><strong>Reviewed By:</strong> {{ attempt.reviewer.first_name }} {{ attempt.reviewer.last_name }} ({{ attempt.reviewed_by }})</p>
+    <p><strong>Reviewed At:</strong> {{ attempt.reviewed_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+    {% else %}
+    <p><strong>Reviewed By:</strong> <span class="text-muted">---</span></p>
+    {% endif %}
+</div>
+
+<!-- Attempt Timeline (if multiple attempts) -->
+{% if all_attempts|length > 1 %}
+<div class="history-item mt-1">
+    <h3>Attempt Timeline</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+        {% for other_attempt in all_attempts %}
+        {% if other_attempt.attempt_id == attempt.attempt_id %}
+        <!-- Current attempt (highlighted) -->
+        <span class="status-badge" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 0.5rem 1rem;">
+            #{{ other_attempt.attempt_number }} (Current)
+        </span>
+        {% else %}
+        <!-- Other attempts (clickable) -->
+        <a href="{{ url_for('admin.view_attempt', attempt_id=other_attempt.attempt_id) }}"
+           class="status-badge"
+           style="background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); color: white; text-decoration: none; padding: 0.5rem 1rem; transition: all 0.2s;"
+           onmouseover="this.style.transform='scale(1.05)'"
+           onmouseout="this.style.transform='scale(1)'">
+            #{{ other_attempt.attempt_number }}
+            {% if other_attempt.status == 'approved' %}✓
+            {% elif other_attempt.status == 'needs_revision' %}↻
+            {% endif %}
+        </a>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #6b7280;">
+        Click on other attempt numbers to view their details
+    </p>
+</div>
+{% endif %}
+
+<hr>
+
+<!-- Questions and Responses -->
+<h3 class="mt-1">Assessment Responses</h3>
+
+{% for question in questions %}
+<div style="padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 5px;">
+    <!-- Question -->
+    <h4 style="margin-bottom: 1rem;">
+        Question {{ loop.index }}: {{ question.question_text }}
+    </h4>
+
+    <!-- Participant's Response -->
+    {% set response = responses_by_question.get(question.question_id) %}
+
+    {% if response %}
+    <div class="step-info">
+        <strong>Participant's Answer:</strong><br>
+
+        {% if question.question_type == 'multiple_choice' %}
+        <!-- Show selected option -->
+        <p style="margin-top: 0.5rem;">{{ response.selected_option.option_text }}</p>
+        {% else %}
+        <!-- Show text response -->
+        <p style="margin-top: 0.5rem; white-space: pre-wrap;">{{ response.response_text }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Clinician feedback for this response (if exists) -->
+    {% if response.clinician_comment %}
+    <div class="alert alert-warning">
+        <strong>Clinician Feedback:</strong><br>
+        <p style="margin-top: 0.5rem;">{{ response.clinician_comment }}</p>
+    </div>
+    {% endif %}
+    {% else %}
+    <p class="text-muted" style="font-style: italic;">No response provided</p>
+    {% endif %}
+</div>
+{% endfor %}
+
+<hr style="margin: 2rem 0;">
+
+<!-- Overall Clinician Notes -->
+{% if attempt.clinician_notes %}
+<div class="history-item">
+    <h3>Overall Clinician Notes</h3>
+    <div style="padding: 1rem; background: var(--bg-tertiary); border-left: 4px solid var(--primary); border-radius: 4px;">
+        <p style="white-space: pre-wrap; margin: 0;">{{ attempt.clinician_notes }}</p>
+    </div>
+</div>
+<hr style="margin: 2rem 0;">
+{% endif %}
+
+<!-- Action Buttons -->
+<div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+    <a href="{{ url_for('manage.user_profile', state_id=attempt.state_id) }}" class="btn" style="background: #6c757d;">
+        ← Back to Profile
+    </a>
+
+    {% if attempt.status == 'submitted' %}
+    <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}" class="btn" style="background: #28a745;">
+        Review This Attempt
+    </a>
+    {% endif %}
+</div>
+
+{% endblock %}

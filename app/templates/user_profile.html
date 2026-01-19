@@ -50,6 +50,7 @@
     <thead>
     <tr>
         <th>Step</th>
+        <th>Attempt</th>
         <th>Status</th>
         <th>Started</th>
         <th>Submitted</th>
@@ -67,15 +68,16 @@
             Unknown step
             {% endif %}
         </td>
+        <td><span style="font-weight: 600;">#{{ attempt.attempt_number }}</span></td>
         <td>
             {% if attempt.status == 'approved' %}
-            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Approved</span>
+            <span class="status-badge status-approved">Approved</span>
             {% elif attempt.status == 'submitted' %}
-            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Pending</span>
+            <span class="status-badge status-pending">Pending</span>
             {% elif attempt.status == 'needs_revision' %}
-            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">Revision Needed</span>
+            <span class="status-badge status-revision">Revision Needed</span>
             {% else %}
-            <span style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.85rem;">In Progress</span>
+            <span class="status-badge status-progress">In Progress</span>
             {% endif %}
         </td>
         <td class="text-muted">{{ attempt.started_at.strftime('%m/%d/%Y') if attempt.started_at else
@@ -93,9 +95,13 @@
         </td>
         <td>
             {% if attempt.status == 'submitted' %}
-            <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}">Review</a>
+            <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.attempt_id) }}"
+               class="btn btn-sm" style="background: #28a745; padding: 0.4rem 0.8rem;">Review</a>
             {% elif attempt.status != 'in_progress' %}
-            <span class="text-muted" style="font-size: 0.9rem;">View</span>
+            <a href="{{ url_for('admin.view_attempt', attempt_id=attempt.attempt_id) }}"
+               class="btn btn-sm" style="background: #6c757d; padding: 0.4rem 0.8rem;">View</a>
+            {% else %}
+            <span class="text-muted" style="font-size: 0.9rem;">---</span>
             {% endif %}
         </td>
     </tr>

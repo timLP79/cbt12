@@ -101,6 +101,40 @@ def review_attempt(attempt_id):
                            responses_by_question=responses_by_question)
 
 
+@admin.route('/view/<int:attempt_id>')
+@login_required
+@admin_required
+def view_attempt(attempt_id):
+    """View any assessment attempt in read-only mode"""
+    # Get attempt with eager loading to avoid N+1 queries
+    attempt = AssessmentAttempt.query.options(
+        joinedload(AssessmentAttempt.user),
+        joinedload(AssessmentAttempt.assessment).joinedload(Assessment.step),
+        joinedload(AssessmentAttempt.reviewer)
+    ).get_or_404(attempt_id)
+
+    # Get all responses for this attempt
+    responses = Response.query.filter_by(attempt_id=attempt_id).all()
+    responses_by_question = {response.question_id: response for response in responses}
+
+    # Get questions in order
+    questions = Question.query.filter_by(
+        assessment_id=attempt.assessment_id
+    ).order_by(Question.question_order).all()
+
+    # Get all attempts for this user/assessment for context
+    all_attempts = AssessmentAttempt.query.filter_by(
+        state_id=attempt.state_id,
+        assessment_id=attempt.assessment_id
+    ).order_by(AssessmentAttempt.attempt_number).all()
+
+    return render_template('view_attempt.html',
+                           attempt=attempt,
+                           questions=questions,
+                           responses_by_question=responses_by_question,
+                           all_attempts=all_attempts)
+
+
 @admin.route('/review/<int:attempt_id>/submit', methods=['POST'])
 @login_required
 @admin_required
