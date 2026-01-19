@@ -1,6 +1,6 @@
 from app import db
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import validates
 import re
 
@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    date_enrolled = db.Column(db.DateTime, default=datetime.utcnow)
+    date_enrolled = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Program tracking
     current_step = db.Column(db.Integer, default=1)
@@ -96,7 +96,7 @@ class Admin(db.Model, UserMixin):
     password_hash = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), default='clinician', nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     @validates('email')
     def validate_email(self, key, email):
@@ -155,7 +155,7 @@ class Response(db.Model):
     selected_option_id = db.Column(db.Integer, db.ForeignKey('multiple_choice_options.option_id'))  # For MC
     clinician_comment = db.Column(db.Text, nullable=True)
     needs_revision = db.Column(db.Boolean, default=False, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     selected_option = db.relationship('MultipleChoiceOption', backref='responses', lazy=True)

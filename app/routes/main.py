@@ -11,7 +11,7 @@ from app.validators import (
     validate_text_response
 )
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Create blueprint
 main = Blueprint('main', __name__)
@@ -187,7 +187,7 @@ def start_assessment(step_number):
             assessment_id=assessment.assessment_id,
             attempt_number=previous_attempts + 1,
             status='in_progress',
-            started_at=datetime.utcnow()
+            started_at=datetime.now(timezone.utc)
         )
 
         db.session.add(attempt)
@@ -302,7 +302,7 @@ def assessment_complete():
         if attempt:
             # Mark as submitted (no longer in_progress)
             attempt.status = 'submitted'
-            attempt.submitted_at = datetime.utcnow()
+            attempt.submitted_at = datetime.now(timezone.utc)
             db.session.commit()
 
     # Clear session data

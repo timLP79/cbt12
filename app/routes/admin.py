@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app import db, limiter
 from app.models import User, Admin, Assessment, AssessmentAttempt, Response, Question
@@ -125,7 +125,7 @@ def submit_review(attempt_id):
 
         # Set review metadata
         attempt.reviewed_by = current_user.admin_id
-        attempt.reviewed_at = datetime.utcnow()
+        attempt.reviewed_at = datetime.now(timezone.utc)
         attempt.clinician_notes = clinician_notes
 
         # Save changes
