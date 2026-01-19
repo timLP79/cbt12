@@ -168,7 +168,7 @@ See `DEPLOYMENT.md` for detailed instructions on deploying to production with RD
 
 ## Project Management
 
-**GitHub Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
+**GitHub Project Board:** [CBT12 Project]([https://github.com/timLP79/projects/10)]
 
 All development tasks, bugs, and enhancements are tracked in GitHub Issues and organized on our Kanban board.
 
