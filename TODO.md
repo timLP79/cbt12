@@ -195,7 +195,22 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 **Impact:** Excellent readability in both light and dark modes
 **Labels:** `ui`, `bug`
 
-### 12. XSS Protection Using Regex Blacklist
+### 12. ✅ Button Alignment on Assessment Review Page - [Issue #42](https://github.com/timLP79/cbt12/issues/42) - FIXED
+**Issue:** Submit Review and Cancel buttons misaligned on assessment review page
+**Location:** `app/templates/review_attempt.html:86-94`
+**Problem:**
+- Both buttons use `display: inline-block` without proper vertical alignment
+- Cancel button positioned ~50% higher than Submit Review button
+- Inline-block elements default to `vertical-align: baseline` causing misalignment
+**Fix:** Changed button container to use flexbox layout
+- Added `display: flex; align-items: center; gap: 1rem;` to button container div
+- Removed `margin-left` from Cancel button in favor of `gap` property
+- Modern flexbox approach ensures cross-browser compatibility
+**Impact:** Improved UI consistency and professional appearance
+**Commit:** ee8a32b
+**Labels:** `ui`, `bug`
+
+### 13. XSS Protection Using Regex Blacklist
 **Issue:** `validate_text_response()` uses regex blacklist (easy to bypass)
 **Location:** `app/validators.py:67-77`
 **Fix:** Rely on Jinja2 auto-escaping (already enabled by default)
@@ -263,9 +278,9 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ### GitHub Integration
 - **Repository:** [timLP79/cbt12](https://github.com/timLP79/cbt12)
 - **Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
-- **Total Issues:** 41
+- **Total Issues:** 42
   - ✅ Critical: 4 issues (#26-29) - ALL FIXED
-  - ✅ UI: 3 issues (#37, #38, #41) - COMPLETE
+  - ✅ UI: 4 issues (#37, #38, #41, #42) - COMPLETE
   - ✅ Bug: 1 issue (#40) - FIXED
   - ✅ Enhancements: 2 issues (#36, #39) - COMPLETE
   - 🟡 Medium: 3 issues (#33-35) remaining (3 of 6 complete)
@@ -281,6 +296,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - ✅ Fixed Issue #31 - Implemented comprehensive logging system with rotating file handler
 - ✅ Fixed Issue #32 - Implemented database-backed assessment state tracking (survives session expiration)
 - ✅ Fixed Issue #41 - Fixed dark mode readability on assessment complete page
+- ✅ Fixed Issue #42 - Fixed button alignment on assessment review page
 
 ### Previous Actions (2026-01-18)
 - ✅ Fixed Issue #26 - Added is_active check to login routes
