@@ -72,8 +72,10 @@ cbt-assessment/
 - **Authentication & User Management**
   - Dual login system (Participant vs. Admin)
   - Role-based access (Clinician vs. Supervisor)
-  - Full CRUD for User and Admin management (Create, Read, Update, Deactivate)
+  - Full CRUD for User and Admin management (Create, Read, Update, Deactivate, Reactivate)
+  - User/Admin reactivation functionality (Issue #39)
   - Secure session handling (CSRF protection, session clearing on login)
+  - Deactivated accounts blocked from login (Issue #26)
 
 - **Assessment Workflow**
   - **Full Content**: Assessments for all 12 Steps (5 questions each)
@@ -175,8 +177,8 @@ All development tasks, bugs, and enhancements are tracked in GitHub Issues and o
   - ✅ Critical Fixed: 4 issues (#26-29 - Security & Bug Fixes)
   - ✅ UI Complete: 2 issues (#37 UI Redesign, #38 Dark Mode Contrast)
   - ✅ Bug Fixed: 1 issue (#40 Revision Response Loading)
+  - ✅ Enhancement Complete: 1 issue (#39 User/Admin Reactivation)
   - 🟡 Medium: 7 issues (#30-36 Code Quality & Performance)
-  - 🟠 Enhancement: 1 issue (#39 User Reactivation)
   - 📋 Backlog: 25 existing enhancement requests
 
 ### Key Documentation
@@ -193,6 +195,7 @@ Issues are tracked with labels for priority (`critical`, `bug`, `enhancement`) a
 - ✅ Core Functionality (Steps 1-12)
 - ✅ Security Hardening
 - ✅ Admin Dashboard & User Management
+- ✅ User/Admin Reactivation (Issue #39)
 - ✅ Mobile Responsiveness
 - ✅ Modern UI Design with Dark Mode
 - ✅ Critical Bug Fixes (Issues #26-29, #40)
