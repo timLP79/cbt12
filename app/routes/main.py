@@ -343,7 +343,8 @@ def show_question(question_id):
                            progress=progress,
                            current_index=current_index,
                            total_questions=total_questions,
-                           saved_response=saved_response
+                           saved_response=saved_response,
+                           question_order=question_order
                            )
 
 
