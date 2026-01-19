@@ -181,7 +181,7 @@ def start_assessment(step_number):
             assessment_id=assessment.assessment_id
         ).count()
 
-    # Create new attempt
+        # Create new attempt
         attempt = AssessmentAttempt(
             state_id=current_user.state_id,
             assessment_id=assessment.assessment_id,
