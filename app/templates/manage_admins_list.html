@@ -83,6 +83,17 @@
                     Deactivate
                 </button>
             </form>
+            {% elif not admin.is_active %}
+            <form method="POST"
+                  action="{{ url_for('manage.reactivate_admin', admin_id=admin.admin_id) }}"
+                  style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                        onclick="return confirm('Reactivate admin {{ admin.admin_id }}?')"
+                        style="background: none; border: none; color: #28a745; cursor: pointer; text-decoration: underline; padding: 0;">
+                    Reactivate
+                </button>
+            </form>
             {% endif %}
         </td>
     </tr>

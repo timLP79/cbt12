@@ -188,6 +188,21 @@ def deactivate_user(state_id):
     flash(f'User {state_id} deactivated successfully.', 'success')
     return redirect(url_for('manage.list_users'))
 
+
+@manage.route('/users/<state_id>/reactivate', methods=['POST'])
+@login_required
+@supervisor_required
+def reactivate_user(state_id):
+    """Reactivate a deactivated user"""
+    user = User.query.get_or_404(state_id)
+
+    user.is_active = True
+    db.session.commit()
+
+    flash(f'User {state_id} reactivated successfully.', 'success')
+    return redirect(url_for('manage.list_users'))
+
+
 # Manage admins
 @manage.route('/admins')
 @login_required
@@ -329,6 +344,20 @@ def deactivate_admin(admin_id):
     db.session.commit()
 
     flash(f'Admin {admin_id} deactivated successfully.', 'success')
+    return redirect(url_for('manage.list_admins'))
+
+
+@manage.route('/admins/<admin_id>/reactivate', methods=['POST'])
+@login_required
+@supervisor_required
+def reactivate_admin(admin_id):
+    """Reactivate a deactivated admin"""
+    admin = Admin.query.get_or_404(admin_id)
+
+    admin.is_active = True
+    db.session.commit()
+
+    flash(f'Admin {admin_id} reactivated successfully.', 'success')
     return redirect(url_for('manage.list_admins'))
 
 

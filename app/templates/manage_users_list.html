@@ -120,6 +120,17 @@
                     Deactivate
                 </button>
             </form>
+            {% else %}
+            <form method="POST"
+                  action="{{ url_for('manage.reactivate_user', state_id=user.state_id) }}"
+                  style="display: inline; margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                        onclick="return confirm('Reactivate user {{ user.state_id }}?')"
+                        style="background: none; border: none; color: #28a745; cursor: pointer; text-decoration: underline; padding: 0; font: inherit;">
+                    Reactivate
+                </button>
+            </form>
             {% endif %}
         </td>
     </tr>
