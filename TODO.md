@@ -230,7 +230,31 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 **Commit:** 2310349
 **Labels:** `ui`, `bug`
 
-### 14. XSS Protection Using Regex Blacklist
+## 🔵 ENHANCEMENTS - User Experience Improvements
+
+### 14. ✅ Previous Question Navigation During Assessment - [Issue #44](https://github.com/timLP79/cbt12/issues/44) - FIXED
+**Issue:** No way to navigate backward through assessment questions during taking or revision
+**Location:** `app/templates/question.html`, `app/routes/main.py:341-347`
+**Problem:**
+- Participants could only move forward through questions
+- No ability to review or change previous answers
+- Critical limitation during revision workflow when clinician requests changes
+- Forced linear progression with no flexibility
+**Fix:** Added bidirectional navigation with Previous Question button
+- app/routes/main.py: Pass `question_order` to template for URL generation
+- app/templates/question.html: Added "← Previous Question" button (shown when not on first question)
+- Used flexbox layout with `gap: 1rem` for proper alignment
+- Added arrow indicators (← Previous, Next →) for better UX
+- Previous button navigates back without saving (GET request)
+- Next/Finish button saves and advances (POST request)
+- Save and Exit positioned at end with `margin-left: auto`
+**Impact:** Essential for revision workflow, allows flexible navigation through questions
+**Commit:** 01d7dbb
+**Labels:** `enhancement`, `ui`
+
+## 🔵 LOW PRIORITY - Polish & Best Practices
+
+### 15. XSS Protection Using Regex Blacklist
 **Issue:** `validate_text_response()` uses regex blacklist (easy to bypass)
 **Location:** `app/validators.py:67-77`
 **Fix:** Rely on Jinja2 auto-escaping (already enabled by default)
@@ -298,11 +322,11 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ### GitHub Integration
 - **Repository:** [timLP79/cbt12](https://github.com/timLP79/cbt12)
 - **Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
-- **Total Issues:** 43
+- **Total Issues:** 44
   - ✅ Critical: 4 issues (#26-29) - ALL FIXED
   - ✅ UI: 5 issues (#37, #38, #41, #42, #43) - COMPLETE
   - ✅ Bug: 1 issue (#40) - FIXED
-  - ✅ Enhancements: 2 issues (#36, #39) - COMPLETE
+  - ✅ Enhancements: 3 issues (#36, #39, #44) - COMPLETE
   - 🟡 Medium: 3 issues (#33-35) remaining (3 of 6 complete)
   - Other: 25 existing issues
 
@@ -318,6 +342,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - ✅ Fixed Issue #41 - Fixed dark mode readability on assessment complete page
 - ✅ Fixed Issue #42 - Fixed button alignment on assessment review page
 - ✅ Fixed Issue #43 - Fixed dark mode readability across all 7 templates (comprehensive fix)
+- ✅ Fixed Issue #44 - Added Previous Question navigation button for bidirectional assessment navigation
 
 ### Previous Actions (2026-01-18)
 - ✅ Fixed Issue #26 - Added is_active check to login routes
