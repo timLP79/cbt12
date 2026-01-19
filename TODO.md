@@ -180,6 +180,21 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 
 ## 🔵 LOW PRIORITY - Polish & Best Practices
 
+### 11. ✅ Dark Mode Readability on Assessment Complete Page - [Issue #41](https://github.com/timLP79/cbt12/issues/41) - FIXED
+**Issue:** Assessment complete page has poor text readability in dark mode due to hardcoded inline styles
+**Location:** `app/templates/assessment_complete.html`
+**Problem:**
+- Hardcoded light yellow background (`#fff3cd`) and dark text colors (`#856404`, `#666`)
+- Inline styles override CSS dark mode rules
+- Very poor contrast in dark mode
+**Fix:** Removed inline color/background styles and use CSS variables and `.step-info` class
+- H2 now uses `var(--secondary)` for theme-aware color
+- Removed hardcoded background/border colors from `.step-info` div
+- Removed hardcoded text colors from h3 and p elements
+- CSS dark mode rules now properly apply
+**Impact:** Excellent readability in both light and dark modes
+**Labels:** `ui`, `bug`
+
 ### 12. XSS Protection Using Regex Blacklist
 **Issue:** `validate_text_response()` uses regex blacklist (easy to bypass)
 **Location:** `app/validators.py:67-77`
@@ -248,9 +263,9 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ### GitHub Integration
 - **Repository:** [timLP79/cbt12](https://github.com/timLP79/cbt12)
 - **Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
-- **Total Issues:** 40
+- **Total Issues:** 41
   - ✅ Critical: 4 issues (#26-29) - ALL FIXED
-  - ✅ UI: 2 issues (#37, #38) - COMPLETE
+  - ✅ UI: 3 issues (#37, #38, #41) - COMPLETE
   - ✅ Bug: 1 issue (#40) - FIXED
   - ✅ Enhancements: 2 issues (#36, #39) - COMPLETE
   - 🟡 Medium: 3 issues (#33-35) remaining (3 of 6 complete)
@@ -265,6 +280,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - ✅ Fixed Issue #30 - Added transaction management with rollback to all database operations in main.py
 - ✅ Fixed Issue #31 - Implemented comprehensive logging system with rotating file handler
 - ✅ Fixed Issue #32 - Implemented database-backed assessment state tracking (survives session expiration)
+- ✅ Fixed Issue #41 - Fixed dark mode readability on assessment complete page
 
 ### Previous Actions (2026-01-18)
 - ✅ Fixed Issue #26 - Added is_active check to login routes

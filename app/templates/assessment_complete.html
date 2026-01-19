@@ -4,10 +4,9 @@
 
 {% block content %}
 <div style="text-align: center; padding: 2rem 0;">
-    <h2 style="color: #ffc107;">📋 Assessment Submitted!</h2>
+    <h2 style="color: var(--secondary);">📋 Assessment Submitted!</h2>
 
-    <div class="step-info"
-         style="margin: 2rem 0; background: #fff3cd; padding: 2rem; border-radius: 8px; border-left: 4px solid #ffc107;">
+    <div class="step-info" style="margin: 2rem 0;">
         <p style="font-size: 1.2rem; margin-bottom: 1rem;">
             <strong>Thank you for completing Step {{ current_user.current_step }}.</strong>
         </p>
@@ -16,9 +15,9 @@
             Your assessment has been submitted and is now <strong>pending clinician review</strong>.
         </p>
 
-        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #ccc;">
+        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid rgba(0, 0, 0, 0.1);">
 
-        <h3 style="color: #856404; margin-bottom: 1rem;">What Happens Next?</h3>
+        <h3 style="margin-bottom: 1rem;">What Happens Next?</h3>
 
         <ul style="text-align: left; max-width: 500px; margin: 0 auto; line-height: 1.8;">
             <li>A clinician will review your responses</li>
@@ -27,7 +26,7 @@
             <li>If revision is needed, you'll receive feedback</li>
         </ul>
 
-        <p style="margin-top: 1.5rem; font-style: italic; color: #666;">
+        <p style="margin-top: 1.5rem; font-style: italic;">
             Please check your dashboard regularly for updates, or contact your counselor.
         </p>
     </div>
