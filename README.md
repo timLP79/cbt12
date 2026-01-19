@@ -55,6 +55,7 @@ cbt-assessment/
 │   └── workflows/
 │       └── deploy.yml           # GitHub Actions deployment workflow
 ├── instance/                    # Local SQLite database
+├── logs/                        # Application logs (rotating file handler)
 ├── config.py                    # Configuration classes
 ├── init_db.py                   # Database initialization
 ├── create_test_data.py          # Seeding script (Users/Admins)
@@ -106,12 +107,22 @@ cbt-assessment/
   - **Mobile Responsive**: Fully optimized for phones and tablets
   - **Security**: CSRF protection, Rate Limiting (login routes only), **Strict State ID Validation**, Input Validation, Secure Headers
   - **Code Quality**: Blueprints architecture, Defensive Null Checks, Centralized CSS, Fix for Rate Limiter in development
+  - **Transaction Management**: Proper rollback handling on all database operations (Issue #30)
+  - **Logging System**: Comprehensive audit trail with rotating file handler (Issue #31)
+    - Login/logout events (successful and failed attempts)
+    - Database errors with context
+    - Security events (403/404 errors, unauthorized access)
+    - User management operations (create, update, deactivate, reactivate)
+    - Assessment submissions and reviews
+    - Configurable log levels (DEBUG for dev, INFO for production)
+    - 10MB max file size with 10 backup files
 
 ### 📋 Future Improvements
-- Transaction Management (Rollbacks)
 - Advanced Analytics Dashboard
 - Data Export (CSV/PDF)
 - Offline Capability
+- Database connection pooling optimization
+- Email notifications for assessment status updates
 
 ## Setup Instructions
 
@@ -177,8 +188,8 @@ All development tasks, bugs, and enhancements are tracked in GitHub Issues and o
   - ✅ Critical Fixed: 4 issues (#26-29 - Security & Bug Fixes)
   - ✅ UI Complete: 2 issues (#37 UI Redesign, #38 Dark Mode Contrast)
   - ✅ Bug Fixed: 1 issue (#40 Revision Response Loading)
-  - ✅ Enhancement Complete: 1 issue (#39 User/Admin Reactivation)
-  - 🟡 Medium: 7 issues (#30-36 Code Quality & Performance)
+  - ✅ Enhancements Complete: 4 issues (#36 Email Validation, #39 User Reactivation, #30 Transaction Management, #31 Logging System)
+  - 🟡 Medium: 4 issues (#32-35 remaining - Code Quality & Performance)
   - 📋 Backlog: 25 existing enhancement requests
 
 ### Key Documentation
@@ -196,6 +207,9 @@ Issues are tracked with labels for priority (`critical`, `bug`, `enhancement`) a
 - ✅ Security Hardening
 - ✅ Admin Dashboard & User Management
 - ✅ User/Admin Reactivation (Issue #39)
+- ✅ Email Validation with Library (Issue #36)
+- ✅ Transaction Management with Rollbacks (Issue #30)
+- ✅ Comprehensive Logging System (Issue #31)
 - ✅ Mobile Responsiveness
 - ✅ Modern UI Design with Dark Mode
 - ✅ Critical Bug Fixes (Issues #26-29, #40)

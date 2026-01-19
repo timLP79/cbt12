@@ -1,6 +1,6 @@
 # CBT Assessment - Deployment Guide
 
-**Last Updated:** 2025-12-31
+**Last Updated:** 2026-01-19
 **Platforms:** AWS Elastic Beanstalk (Primary) | Render.com (Alternative)
 **Database:** PostgreSQL (RDS for AWS, Render Postgres for Render)
 **Production Server:** Gunicorn
@@ -185,6 +185,7 @@ After environment is created:
    - `SECRET_KEY`: Generate with `python -c "import secrets; print(secrets.token_hex(32))"`
    - `PYTHONPATH`: `/var/app/current:$PYTHONPATH`
    - `FLASK_ENV`: `production`
+   - `LOG_LEVEL`: `INFO` (optional, defaults to INFO. Use `DEBUG` for troubleshooting)
 
 3. **Save and Apply**
 
@@ -447,7 +448,7 @@ git push origin main
 
 4. **Advanced Settings → Environment Variables:**
 
-   **Add these two variables:**
+   **Add these variables:**
 
    **Variable 1:**
    - **Key:** `DATABASE_URL`
@@ -456,6 +457,10 @@ git push origin main
    **Variable 2:**
    - **Key:** `SECRET_KEY`
    - **Value:** [Generate random string - example: `k8f9h23fh92fh923fh9f23h9f2h3f`]
+
+   **Variable 3 (Optional):**
+   - **Key:** `LOG_LEVEL`
+   - **Value:** `INFO` (or `DEBUG` for troubleshooting)
 
    **To generate SECRET_KEY:**
    ```python
@@ -820,6 +825,53 @@ The `-E` flag preserves environment variables when using sudo.
 - Build history
 
 **Check logs regularly** for errors or issues.
+
+---
+
+### Step 2.5: Access Application Logs
+
+**The application now includes comprehensive logging (Issue #31):**
+
+#### AWS Elastic Beanstalk Logs:
+```bash
+# Download logs via EB CLI
+eb logs
+
+# Or via AWS Console:
+# Elastic Beanstalk → Environment → Logs → Request Logs → Last 100 Lines (or Full Logs)
+```
+
+**Application logs location on server:**
+- `/var/app/current/logs/cbt_assessment.log`
+- Rotating file handler (10MB max, 10 backups)
+
+#### Render.com Logs:
+- **View in Dashboard:** Service → Logs tab
+- **Stream in real-time:** Click "Live Logs"
+
+#### What's Logged:
+- ✅ **Authentication**: Successful/failed login attempts with user IDs
+- ✅ **Database Errors**: All SQLAlchemy errors with full context
+- ✅ **Security Events**: 403/404 errors, unauthorized access attempts
+- ✅ **User Management**: User/admin creation, updates, deactivation, reactivation
+- ✅ **Assessments**: Submissions and review decisions
+- ✅ **Session Events**: User logouts
+
+#### Log Format:
+```
+[2026-01-19 10:23:45] INFO in main: Successful login: user=ID100001
+[2026-01-19 10:24:12] WARNING in main: Failed login attempt: state_id=ID999999, reason=invalid_credentials
+[2026-01-19 10:25:30] ERROR in main: Database error in start_assessment: user=ID100001, step=2, error=...
+```
+
+#### Log Levels:
+- **INFO** (default): Normal operations, logins, user management
+- **WARNING**: Failed logins, security events, unauthorized access
+- **ERROR**: Database errors, system failures
+
+**Set LOG_LEVEL environment variable:**
+- `INFO` - Production (recommended)
+- `DEBUG` - Troubleshooting (verbose)
 
 ---
 
