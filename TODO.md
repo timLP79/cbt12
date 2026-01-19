@@ -35,12 +35,23 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 
 ## ✅ Recently Completed
 
-### Phase 8: UI Modernization - COMPLETE (2026-01-17)
+### Phase 8: UI Modernization & Critical Bug Fixes - COMPLETE (2026-01-18)
+
+**UI Modernization:**
 - ✅ **UI Redesign** - Modern teal/cyan design with bold typography and animations (Issue #37)
 - ✅ **Dark Mode** - Full dark theme with toggle button and localStorage persistence
+- ✅ **Dark Mode Contrast** - Improved text readability in dark mode (Issue #38)
 - ✅ **CSS Variables** - Implemented theming system for easy customization
 - ✅ **Design Options** - Created 4 design branches for testing (A, B, C, D)
 - ✅ **Default Dark Mode** - Set dark mode as default for reduced eye strain
+- ✅ **Admin-Only Toggle** - Dark mode toggle restricted to admin users
+
+**Critical Bug Fixes:**
+- ✅ **Security: is_active Check** - Deactivated users can no longer log in (Issue #26)
+- ✅ **Role Validation** - Fixed typo preventing supervisor creation (Issue #27)
+- ✅ **Indentation Fix** - Corrected else block indentation (Issue #28)
+- ✅ **Datetime Deprecation** - Replaced datetime.utcnow() with timezone-aware version (Issue #29)
+- ✅ **Revision Loading** - Previous responses now load when revising assessments (Issue #40)
 
 ### Phase 7: Participant Features & Data Integrity - COMPLETE (2026-01-06)
 - ✅ **Mobile Responsiveness** - Optimized layout for mobile devices (Issue #24)
@@ -76,43 +87,24 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 
 ---
 
-## 🔴 CRITICAL PRIORITY - Security & Bug Fixes
-**Status:** Issues created and tracked in GitHub (Issues #26-29)
+## ✅ CRITICAL PRIORITY - Security & Bug Fixes (COMPLETE)
+**Status:** All critical issues fixed and closed (2026-01-18)
 
-### 1. Missing Active User Check (Security Vulnerability) - [Issue #26](https://github.com/timLP79/cbt12/issues/26)
-**Issue:** Deactivated users can still log in - `is_active` flag not checked
-**Location:**
-- `app/routes/main.py:40` - Participant login
-- `app/routes/admin.py:46` - Admin login
-**Fix:** Add `user.is_active` check in authentication logic
-**Impact:** HIGH - Security vulnerability allowing unauthorized access
-**Labels:** `bug`, `critical`, `security`
+### 1. ✅ Missing Active User Check - [Issue #26](https://github.com/timLP79/cbt12/issues/26) - FIXED
+**Fix:** Added `user.is_active` check to both login routes
+**Commit:** 5477b38
 
-### 2. Role Validation Bug (Prevents Supervisor Creation) - [Issue #27](https://github.com/timLP79/cbt12/issues/27)
-**Issue:** Typo in role validation prevents creating supervisors
-**Location:** `app/routes/manage.py:244`
-**Current:** `if role not in ['role', 'clinician']:`
-**Fix:** Should be `if role not in ['supervisor', 'clinician']:`
-**Impact:** HIGH - Blocks critical admin functionality
-**Labels:** `bug`, `critical`
+### 2. ✅ Role Validation Bug - [Issue #27](https://github.com/timLP79/cbt12/issues/27) - FIXED
+**Fix:** Changed `'role'` to `'supervisor'` in validation
+**Commit:** 9ddf10b
 
-### 3. Indentation Error in Assessment Logic - [Issue #28](https://github.com/timLP79/cbt12/issues/28)
-**Issue:** Attempt creation code incorrectly indented outside else block
-**Location:** `app/routes/main.py:175-191`
-**Fix:** Move attempt creation inside the else block
-**Impact:** HIGH - Causes runtime errors when resuming assessments
-**Labels:** `bug`, `critical`
+### 3. ✅ Indentation Error - [Issue #28](https://github.com/timLP79/cbt12/issues/28) - FIXED
+**Fix:** Corrected comment indentation inside else block
+**Commit:** 9b450fd
 
-### 4. Deprecated datetime.utcnow() Usage - [Issue #29](https://github.com/timLP79/cbt12/issues/29)
-**Issue:** Using deprecated `datetime.utcnow()` in Python 3.12
-**Locations:**
-- `app/models.py:18, 159`
-- `app/routes/main.py:186, 301`
-- `app/routes/admin.py:128`
-**Fix:** Replace with `datetime.now(timezone.utc)`
-**Impact:** MEDIUM - Will break in future Python versions
-**Labels:** `bug`, `critical`
-**Note:** Closed duplicate Issue #17
+### 4. ✅ Deprecated datetime.utcnow() - [Issue #29](https://github.com/timLP79/cbt12/issues/29) - FIXED
+**Fix:** Replaced with `datetime.now(timezone.utc)` in all files
+**Commit:** e1acfb6
 
 ---
 
@@ -241,26 +233,34 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 ### GitHub Integration
 - **Repository:** [timLP79/cbt12](https://github.com/timLP79/cbt12)
 - **Project Board:** [CBT12 Project](https://github.com/timLP79/cbt12/projects/10)
-- **Total Issues:** 37
-  - 🔴 Critical: 4 issues (#26-29)
+- **Total Issues:** 40
+  - ✅ Critical: 4 issues (#26-29) - ALL FIXED
+  - ✅ UI: 2 issues (#37, #38) - COMPLETE
+  - ✅ Bug: 1 issue (#40) - FIXED
   - 🟡 Medium: 7 issues (#30-36)
-  - ✅ Completed: 1 issue (#37 - UI Redesign)
+  - 🟠 Enhancement: 1 issue (#39 - User Reactivation)
   - Other: 25 existing issues
 
-### Labels Created (2026-01-17)
+### Labels Created
 - `critical` - Critical priority issues requiring immediate attention
 - `security` - Security vulnerabilities
 - `ui` - User interface and design changes
 
-### Recent Actions (2026-01-17)
+### Recent Actions (2026-01-18)
+- ✅ Fixed Issue #26 - Added is_active check to login routes
+- ✅ Fixed Issue #27 - Corrected role validation typo
+- ✅ Fixed Issue #28 - Fixed indentation in start_assessment
+- ✅ Fixed Issue #29 - Replaced deprecated datetime.utcnow()
+- ✅ Fixed Issue #40 - Previous responses now load when revising
+- ✅ Created Issue #39 - User/Admin reactivation feature request
+- ✅ All critical security issues resolved
+
+### Previous Actions (2026-01-17)
 - ✅ Created 11 new issues from comprehensive code review
 - ✅ Added all issues to project board
-- ✅ Assigned all issues to @timLP79
-- ✅ Closed duplicate Issue #17 (consolidated into #29)
-- ✅ Installed `jq` for enhanced JSON parsing
-- ✅ Created Issue #37 for UI redesign
-- ✅ Implemented modern UI with dark mode (merged Option D)
-- ✅ Completed and closed Issue #37
+- ✅ Implemented modern UI with dark mode (Issue #37)
+- ✅ Improved dark mode contrast (Issue #38)
+- ✅ Admin-only dark mode toggle
 
 ---
 
@@ -269,7 +269,6 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 - This is a learning project focused on security best practices
 - All critical security issues identified via comprehensive code review (2026-01-17)
 - All issues tracked in GitHub with detailed implementation guidance
-- Will implement fixes one-by-one in teaching style
-- Each fix will be explained with understanding checks
-- Testing after each major change
-- Deployment only after all critical fixes complete
+- **All critical issues resolved (2026-01-18) - Ready for production deployment**
+- Medium priority issues (#30-36) can be addressed in future iterations
+- User reactivation feature (#39) planned for next phase
