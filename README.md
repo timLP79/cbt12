@@ -81,6 +81,10 @@ cbt-assessment/
 - **Assessment Workflow**
   - **Full Content**: Assessments for all 12 Steps (5 questions each)
   - **Resume Capability**: Users can save progress and resume later (pre-fills previous answers)
+  - **Persistent State**: Assessment progress stored in database - survives session expiration (Issue #32)
+    - Question order preserved across sessions (important for randomized assessments)
+    - Users can logout/timeout and resume exactly where they left off
+    - Never lose progress mid-assessment
   - **Review System**: Admins review submissions with "Approve" or "Request Revision" workflow
   - **History**: Detailed history of all past attempts and clinician feedback (accessible via Participant Profile)
 
@@ -94,9 +98,10 @@ cbt-assessment/
   - Detailed Participant Profiles showing enrollment stats and full history (view-only links pending)
   - Management tools for creating/deactivating users and admins
 
-- **Modern UI Design (Issue #37)**
+- **Modern UI Design (Issues #37, #38, #41)**
   - **Teal/Cyan Color Scheme**: Professional calming colors (#0891b2, #06b6d4)
   - **Dark Mode**: Full dark theme with toggle button (default mode)
+  - **Excellent Contrast**: All pages optimized for readability in both themes (Issue #41)
   - **Bold Typography**: Gradient effects, modern letter spacing
   - **Smooth Animations**: Floating backgrounds, button shine effects, scale transforms
   - **CSS Variables**: Consistent theming with easy customization
@@ -108,6 +113,10 @@ cbt-assessment/
   - **Security**: CSRF protection, Rate Limiting (login routes only), **Strict State ID Validation**, Input Validation, Secure Headers
   - **Code Quality**: Blueprints architecture, Defensive Null Checks, Centralized CSS, Fix for Rate Limiter in development
   - **Transaction Management**: Proper rollback handling on all database operations (Issue #30)
+  - **Database-Backed State**: Assessment progress persists across session expiration (Issue #32)
+    - Question order and current position stored in database
+    - Users never lose progress - can resume anytime
+    - Session acts as performance cache with database as source of truth
   - **Logging System**: Comprehensive audit trail with rotating file handler (Issue #31)
     - Login/logout events (successful and failed attempts)
     - Database errors with context
@@ -184,12 +193,12 @@ See `DEPLOYMENT.md` for detailed instructions on deploying to production with RD
 All development tasks, bugs, and enhancements are tracked in GitHub Issues and organized on our Kanban board.
 
 ### Current Status
-- **Total Issues:** 40
+- **Total Issues:** 41
   - ✅ Critical Fixed: 4 issues (#26-29 - Security & Bug Fixes)
-  - ✅ UI Complete: 2 issues (#37 UI Redesign, #38 Dark Mode Contrast)
+  - ✅ UI Complete: 3 issues (#37 UI Redesign, #38 Dark Mode Contrast, #41 Assessment Complete Readability)
   - ✅ Bug Fixed: 1 issue (#40 Revision Response Loading)
-  - ✅ Enhancements Complete: 4 issues (#36 Email Validation, #39 User Reactivation, #30 Transaction Management, #31 Logging System)
-  - 🟡 Medium: 4 issues (#32-35 remaining - Code Quality & Performance)
+  - ✅ Enhancements Complete: 5 issues (#36 Email Validation, #39 User Reactivation, #30 Transaction Management, #31 Logging System, #32 Database-Backed State)
+  - 🟡 Medium: 3 issues (#33-35 remaining - Code Quality & Performance)
   - 📋 Backlog: 25 existing enhancement requests
 
 ### Key Documentation
@@ -210,8 +219,9 @@ Issues are tracked with labels for priority (`critical`, `bug`, `enhancement`) a
 - ✅ Email Validation with Library (Issue #36)
 - ✅ Transaction Management with Rollbacks (Issue #30)
 - ✅ Comprehensive Logging System (Issue #31)
+- ✅ Database-Backed Assessment State (Issue #32)
 - ✅ Mobile Responsiveness
-- ✅ Modern UI Design with Dark Mode
+- ✅ Modern UI Design with Dark Mode (Issues #37, #38, #41)
 - ✅ Critical Bug Fixes (Issues #26-29, #40)
 - ✅ AWS Deployment Infrastructure (Currently Paused to save costs)
 - 🟢 **Ready for Production Deployment**

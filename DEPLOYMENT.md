@@ -602,6 +602,71 @@ render shell cbt-assessment
 
 ---
 
+## Database Migrations
+
+**When updating an existing deployment with schema changes, run migration scripts.**
+
+### Current Migrations
+
+#### Migration 1: Add Assessment State Tracking (Issue #32)
+
+**What it does:** Adds `question_order` and `current_question_index` columns to `assessment_attempts` table to persist assessment progress across session expiration.
+
+**For AWS Elastic Beanstalk:**
+
+```bash
+# SSH into instance
+eb ssh CBT12-env
+
+# Navigate to app directory
+cd /var/app/current
+source /var/app/venv/*/bin/activate
+
+# Run migration
+python migrate_add_assessment_state.py
+
+# Exit
+exit
+```
+
+**For Render.com:**
+
+```bash
+# Go to Render Dashboard → Your Service → Shell tab
+# Run migration
+python migrate_add_assessment_state.py
+```
+
+**Manual SQL (if migration script fails):**
+
+For PostgreSQL:
+```sql
+ALTER TABLE assessment_attempts ADD COLUMN question_order JSON;
+ALTER TABLE assessment_attempts ADD COLUMN current_question_index INTEGER DEFAULT 0 NOT NULL;
+```
+
+For SQLite:
+```sql
+ALTER TABLE assessment_attempts ADD COLUMN question_order TEXT;
+ALTER TABLE assessment_attempts ADD COLUMN current_question_index INTEGER DEFAULT 0 NOT NULL;
+```
+
+**Expected output:**
+```
+✅ Migration completed successfully!
+
+Columns added:
+   - question_order: Stores list of question IDs in order
+   - current_question_index: Tracks progress (default: 0)
+
+💡 Benefits:
+   - Assessment state now persists across session expiration
+   - Users can resume assessments after logout/timeout
+   - Question order preserved for randomized assessments
+```
+
+---
+
 ## Testing Deployment
 
 ### For AWS Elastic Beanstalk
