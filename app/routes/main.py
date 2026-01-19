@@ -37,7 +37,7 @@ def login():
 
             user = User.query.get(state_id)
 
-            if user and check_password_hash(user.password_hash, password):
+            if user and user.is_active and check_password_hash(user.password_hash, password):
                 session.clear()
                 login_user(user)
                 session['user_type'] = 'participant'

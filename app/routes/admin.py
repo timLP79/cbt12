@@ -43,7 +43,7 @@ def admin_login():
 
             admin = Admin.query.get(admin_id)
 
-            if admin and check_password_hash(admin.password_hash, password):
+            if admin and admin.is_active and check_password_hash(admin.password_hash, password):
                 session.clear()
                 login_user(admin)
                 session['user_type'] = 'admin'
