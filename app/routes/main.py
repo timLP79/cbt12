@@ -173,9 +173,10 @@ def start_assessment(step_number):
     try:
         if existing_attempt:
             attempt = existing_attempt
-            # If returning to revise, set status back to in_progress
+            # If returning to revise, set status back to in_progress and reset to question 1
             if attempt.status == 'needs_revision':
                 attempt.status = 'in_progress'
+                attempt.current_question_index = 0  # Start from beginning for revisions
 
             # If question_order already exists in database, use it; otherwise generate new
             if attempt.question_order:
@@ -265,12 +266,28 @@ def show_question(question_id):
         flash('Question not found.')
         return redirect(url_for('main.dashboard'))
 
-    # Get question order and index from database (source of truth)
-    # Session acts as cache, but database is authoritative
+    # Get question order from database (source of truth)
     question_order = attempt.question_order or session.get('question_order', [])
-    current_index = attempt.current_question_index
 
-    # Update session cache
+    # Determine the actual index of the current question in the order
+    # This ensures correct tracking whether user navigates forward or backward
+    try:
+        current_index = question_order.index(question_id)
+    except ValueError:
+        # Question not in order - shouldn't happen, but handle gracefully
+        flash('Invalid question for this assessment.')
+        return redirect(url_for('main.dashboard'))
+
+    # Update database and session cache with the actual index
+    if attempt.current_question_index != current_index:
+        try:
+            attempt.current_question_index = current_index
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            current_app.logger.error(f'Error updating question index: user={current_user.state_id}, question_id={question_id}, error={str(e)}')
+            # Continue anyway - this is not critical
+
     session['question_order'] = question_order
     session['current_question_index'] = current_index
 
@@ -310,10 +327,8 @@ def show_question(question_id):
             # Move to next question or finish
             next_index = current_index + 1
             if next_index < len(question_order):
-                # Update database (source of truth) and session (cache)
-                attempt.current_question_index = next_index
+                # Commit the response (index will be updated when next question loads)
                 db.session.commit()
-                session['current_question_index'] = next_index
                 next_question_id = question_order[next_index]
                 return redirect(url_for('main.show_question', question_id=next_question_id))
             else:
@@ -344,7 +359,8 @@ def show_question(question_id):
                            current_index=current_index,
                            total_questions=total_questions,
                            saved_response=saved_response,
-                           question_order=question_order
+                           question_order=question_order,
+                           is_revision=(attempt.attempt_number > 1)
                            )
 
 

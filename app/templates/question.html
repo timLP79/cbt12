@@ -3,6 +3,12 @@
 {% block title %}Question - CBT 12-Step Assessment{% endblock %}
 
 {% block content %}
+{% if is_revision %}
+<div class="alert alert-warning" style="margin-bottom: 1.5rem;">
+    <strong>📝 Revision Mode:</strong> You are reviewing and revising your assessment based on clinician feedback.
+</div>
+{% endif %}
+
 <div class="mb-1 text-muted" style="font-weight: bold;">
     {{ progress }}
 </div>
@@ -53,7 +59,11 @@
 
         <button type="submit" style="background: #28a745;">
             {% if current_index + 1 == total_questions %}
-            Finish Assessment
+                {% if is_revision %}
+                Re-submit Assessment
+                {% else %}
+                Finish Assessment
+                {% endif %}
             {% else %}
             Next Question →
             {% endif %}
