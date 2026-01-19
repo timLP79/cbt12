@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from sqlalchemy.exc import SQLAlchemyError
@@ -42,10 +42,13 @@ def login():
                 session.clear()
                 login_user(user)
                 session['user_type'] = 'participant'
+                current_app.logger.info(f'Successful login: user={state_id}')
                 return redirect(url_for('main.dashboard'))
             else:
+                current_app.logger.warning(f'Failed login attempt: state_id={state_id}, reason=invalid_credentials')
                 flash('Invalid state ID or password')
         except ValidationError as e:
+            current_app.logger.warning(f'Failed login attempt: state_id={request.form.get("state_id")}, reason=validation_error, error={str(e)}')
             flash(str(e))
 
     return render_template('login.html')
@@ -55,8 +58,10 @@ def login():
 @login_required
 def logout():
     """Logout user"""
+    user_id = current_user.get_id()
     session.clear()
     logout_user()
+    current_app.logger.info(f'User logged out: user={user_id}')
     return redirect(url_for('main.login'))
 
 
@@ -129,8 +134,9 @@ def dismiss_approval(attempt_id):
     try:
         attempt.approval_viewed = True
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         db.session.rollback()
+        current_app.logger.error(f'Database error in dismiss_approval: attempt_id={attempt_id}, error={str(e)}')
         flash('An error occurred while dismissing the notification. Please try again.')
 
     return redirect(url_for('main.dashboard'))
@@ -206,8 +212,9 @@ def start_assessment(step_number):
         # Redirect to first question
         first_question_id = questions[0].question_id
         return redirect(url_for('main.show_question', question_id=first_question_id))
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         db.session.rollback()
+        current_app.logger.error(f'Database error in start_assessment: user={current_user.state_id}, step={step_number}, error={str(e)}')
         flash('An error occurred while starting the assessment. Please try again.')
         return redirect(url_for('main.dashboard'))
 
@@ -277,8 +284,9 @@ def show_question(question_id):
 
         except ValidationError as e:
             flash(str(e))
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             db.session.rollback()
+            current_app.logger.error(f'Database error in show_question: user={current_user.state_id}, question_id={question_id}, error={str(e)}')
             flash('An error occurred while saving your response. Please try again.')
 
     # Fetch existing response to pre-fill the form
@@ -318,8 +326,10 @@ def assessment_complete():
                 attempt.status = 'submitted'
                 attempt.submitted_at = datetime.now(timezone.utc)
                 db.session.commit()
-            except SQLAlchemyError:
+                current_app.logger.info(f'Assessment submitted: user={current_user.state_id}, attempt_id={attempt_id}')
+            except SQLAlchemyError as e:
                 db.session.rollback()
+                current_app.logger.error(f'Database error in assessment_complete: user={current_user.state_id}, attempt_id={attempt_id}, error={str(e)}')
                 flash('An error occurred while submitting the assessment. Please contact support.')
 
     # Clear session data
@@ -334,10 +344,12 @@ def assessment_complete():
 @main.app_errorhandler(404)
 def page_not_found(error):
     """Handle 404 errors with a custom page"""
+    current_app.logger.warning(f'404 error: path={request.path}, user={current_user.get_id() if current_user.is_authenticated else "anonymous"}')
     return render_template('404.html'), 404
 
 
 @main.app_errorhandler(403)
 def page_forbidden(error):
     """Handle 403 errors with a custom page"""
+    current_app.logger.warning(f'403 error: path={request.path}, user={current_user.get_id() if current_user.is_authenticated else "anonymous"}')
     return render_template('403.html'), 403

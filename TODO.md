@@ -126,14 +126,17 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 **Impact:** Data corruption risk eliminated
 **Labels:** `bug`, `enhancement`
 
-### 6. No Logging System - [Issue #31](https://github.com/timLP79/cbt12/issues/31)
+### 6. ✅ No Logging System - [Issue #31](https://github.com/timLP79/cbt12/issues/31) - FIXED
 **Issue:** Relies only on flash messages; no persistent logging
-**Fix:** Implement Python's logging module for:
-- Failed login attempts
-- Database errors
-- Validation failures
-- Security events
-**Impact:** Unable to debug production issues
+**Fix:** Implemented Python's logging module with:
+- **Configuration**: Rotating file handler (10MB max, 10 backups) in `config.py`
+- **Login events**: Successful/failed login attempts for users and admins
+- **Database errors**: All SQLAlchemy errors logged with context
+- **Security events**: 403/404 errors, unauthorized access attempts
+- **User management**: User/admin creation, updates, deactivation, reactivation
+- **Assessment events**: Assessment submissions
+- **Log files**: Stored in `logs/cbt_assessment.log` (added to .gitignore)
+**Impact:** Production debugging now possible with persistent audit trail
 **Labels:** `enhancement`
 
 ### 7. Session-Based Assessment State is Fragile - [Issue #32](https://github.com/timLP79/cbt12/issues/32)
@@ -243,7 +246,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
   - ✅ UI: 2 issues (#37, #38) - COMPLETE
   - ✅ Bug: 1 issue (#40) - FIXED
   - ✅ Enhancements: 2 issues (#36, #39) - COMPLETE
-  - 🟡 Medium: 5 issues (#31-35) remaining (1 of 6 complete)
+  - 🟡 Medium: 4 issues (#32-35) remaining (2 of 6 complete)
   - Other: 25 existing issues
 
 ### Labels Created
@@ -253,6 +256,7 @@ The latest update adds a `UniqueConstraint` to the `responses` table. Since Alem
 
 ### Recent Actions (2026-01-19)
 - ✅ Fixed Issue #30 - Added transaction management with rollback to all database operations in main.py
+- ✅ Fixed Issue #31 - Implemented comprehensive logging system with rotating file handler
 
 ### Previous Actions (2026-01-18)
 - ✅ Fixed Issue #26 - Added is_active check to login routes

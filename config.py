@@ -11,10 +11,18 @@ class Config:
         'DATABASE_URI') or f'sqlite:///{os.path.join(basedir, "instance", "cbt_assessment.db")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Logging configuration
+    LOG_DIR = os.path.join(basedir, 'logs')
+    LOG_FILE = os.path.join(LOG_DIR, 'cbt_assessment.log')
+    LOG_LEVEL = os.environ.get('LOG_LEVEL') or 'INFO'
+    LOG_MAX_BYTES = 10 * 1024 * 1024  # 10MB
+    LOG_BACKUP_COUNT = 10
+
 
 class DevelopmentConfig(Config):
     """Development configuration"""
     DEBUG = True
+    LOG_LEVEL = 'DEBUG'
 
 
 class ProductionConfig(Config):

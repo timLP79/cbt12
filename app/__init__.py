@@ -4,6 +4,9 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import logging
+import os
+from logging.handlers import RotatingFileHandler
 
 
 # Initialize extensions
@@ -31,11 +34,45 @@ def load_user(user_id):
         return User.query.get(user_id)
 
 
+def configure_logging(app):
+    """Configure application logging"""
+    # Create logs directory if it doesn't exist
+    if not os.path.exists(app.config['LOG_DIR']):
+        os.makedirs(app.config['LOG_DIR'])
+
+    # Set up file handler with rotation
+    file_handler = RotatingFileHandler(
+        app.config['LOG_FILE'],
+        maxBytes=app.config['LOG_MAX_BYTES'],
+        backupCount=app.config['LOG_BACKUP_COUNT']
+    )
+
+    # Set logging format
+    formatter = logging.Formatter(
+        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    )
+    file_handler.setFormatter(formatter)
+
+    # Set logging level from config
+    log_level = getattr(logging, app.config['LOG_LEVEL'].upper())
+    file_handler.setLevel(log_level)
+
+    # Add handler to app logger
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(log_level)
+
+    # Log application startup
+    app.logger.info('CBT Assessment application startup')
+
+
 def create_app():
     app = Flask(__name__)
 
     # Configuration
     app.config.from_object('config.DevelopmentConfig')
+
+    # Configure logging
+    configure_logging(app)
 
     # Initialize extensions with app
     db.init_app(app)
@@ -43,7 +80,7 @@ def create_app():
     login_manager.login_view = 'main.login'
     csrf.init_app(app)
     limiter.init_app(app)
-    
+
     # Register blueprints
     from app.routes import register_blueprints
     register_blueprints(app)

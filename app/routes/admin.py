@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort, current_app
 from flask_login import login_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from sqlalchemy.exc import SQLAlchemyError
@@ -26,6 +26,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         # Check if the current user is an admin
         if not isinstance(current_user, Admin):
+            current_app.logger.warning(f'Unauthorized admin access attempt: user={current_user.get_id() if current_user.is_authenticated else "anonymous"}')
             abort(403)
         return f(*args, **kwargs)
 
@@ -47,10 +48,13 @@ def admin_login():
                 session.clear()
                 login_user(admin)
                 session['user_type'] = 'admin'
+                current_app.logger.info(f'Successful admin login: admin_id={admin_id}')
                 return redirect(url_for('admin.admin_dashboard'))
             else:
+                current_app.logger.warning(f'Failed admin login attempt: admin_id={admin_id}, reason=invalid_credentials')
                 flash('Invalid admin ID or password')
         except ValidationError as e:
+            current_app.logger.warning(f'Failed admin login attempt: admin_id={request.form.get("admin_id")}, reason=validation_error, error={str(e)}')
             flash(str(e))
 
     return render_template('admin_login.html')
@@ -130,11 +134,13 @@ def submit_review(attempt_id):
 
         # Save changes
         db.session.commit()
+        current_app.logger.info(f'Assessment review submitted: admin={current_user.admin_id}, attempt_id={attempt_id}, decision={decision}')
     except ValidationError as e:
         flash(str(e))
         return redirect(url_for('admin.review_attempt', attempt_id=attempt_id))
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         db.session.rollback()
+        current_app.logger.error(f'Database error in submit_review: admin={current_user.admin_id}, attempt_id={attempt_id}, error={str(e)}')
         flash('An error occurred while saving the review. Please try again.')
         return redirect(url_for('admin.review_attempt', attempt_id=attempt_id))
 

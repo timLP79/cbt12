@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
@@ -27,9 +27,11 @@ def supervisor_required(f):
     def decorated_function(*args, **kwargs):
         # Must be logged in as admin
         if not isinstance(current_user, Admin):
+            current_app.logger.warning(f'Unauthorized supervisor access attempt: user={current_user.get_id() if current_user.is_authenticated else "anonymous"}')
             abort(403)
 
         if current_user.role != 'supervisor':
+            current_app.logger.warning(f'Non-supervisor admin attempted supervisor action: admin={current_user.admin_id}, role={current_user.role}')
             flash('This action requires supervisor privileges.')
             return redirect(url_for('admin.admin_dashboard'))
 
@@ -109,6 +111,7 @@ def create_user():
             db.session.add(user)
             db.session.commit()
 
+            current_app.logger.info(f'User created: state_id={state_id}, created_by={current_user.admin_id}')
             flash(f'User {state_id} created successfully!', 'success')
             return redirect(url_for('manage.list_users'))
 
@@ -116,6 +119,7 @@ def create_user():
             flash(str(e), 'error')
         except SQLAlchemyError as e:
             db.session.rollback()
+            current_app.logger.error(f'Database error in create_user: admin={current_user.admin_id}, error={str(e)}')
             flash('An error occurred while creating the user.', 'error')
 
     # GET request - show empty form
@@ -158,6 +162,7 @@ def edit_user(state_id):
 
             db.session.commit()
 
+            current_app.logger.info(f'User updated: state_id={state_id}, updated_by={current_user.admin_id}')
             flash(f'User {state_id} updated successfully!', 'success')
             return redirect(url_for('manage.list_users'))
 
@@ -165,6 +170,7 @@ def edit_user(state_id):
             flash(str(e), 'error')
         except SQLAlchemyError as e:
             db.session.rollback()
+            current_app.logger.error(f'Database error in edit_user: admin={current_user.admin_id}, user={state_id}, error={str(e)}')
             flash('An error occurred while updating the user.', 'error')
 
     # GET request - show empty form
@@ -185,6 +191,7 @@ def deactivate_user(state_id):
     user.is_active = False
     db.session.commit()
 
+    current_app.logger.info(f'User deactivated: state_id={state_id}, deactivated_by={current_user.admin_id}')
     flash(f'User {state_id} deactivated successfully.', 'success')
     return redirect(url_for('manage.list_users'))
 
@@ -199,6 +206,7 @@ def reactivate_user(state_id):
     user.is_active = True
     db.session.commit()
 
+    current_app.logger.info(f'User reactivated: state_id={state_id}, reactivated_by={current_user.admin_id}')
     flash(f'User {state_id} reactivated successfully.', 'success')
     return redirect(url_for('manage.list_users'))
 
@@ -271,6 +279,7 @@ def create_admin():
             db.session.add(new_admin)
             db.session.commit()
 
+            current_app.logger.info(f'Admin created: admin_id={admin_id}, role={role}, created_by={current_user.admin_id}')
             flash(f'Admin {admin_id} created successfully!', 'success')
             return redirect(url_for('manage.list_admins'))
 
@@ -278,6 +287,7 @@ def create_admin():
             flash(str(e), 'error')
         except SQLAlchemyError as e:
             db.session.rollback()
+            current_app.logger.error(f'Database error in create_admin: admin={current_user.admin_id}, error={str(e)}')
             flash(f'An error occurred while creating the admin account.', 'error')
 
     return render_template('manage_admins_form.html',
@@ -315,6 +325,7 @@ def edit_admin(admin_id):
 
             db.session.commit()
 
+            current_app.logger.info(f'Admin updated: admin_id={admin_id}, updated_by={current_user.admin_id}')
             flash(f'Admin {admin_id} updated successfully!', 'success')
             return redirect(url_for('manage.list_admins'))
 
@@ -322,6 +333,7 @@ def edit_admin(admin_id):
             flash(str(e), 'error')
         except SQLAlchemyError as e:
             db.session.rollback()
+            current_app.logger.error(f'Database error in edit_admin: admin={current_user.admin_id}, target_admin={admin_id}, error={str(e)}')
             flash('An error occurred while updating the admin.', 'error')
 
     return render_template('manage_admins_form.html',
@@ -343,6 +355,7 @@ def deactivate_admin(admin_id):
     admin.is_active = False
     db.session.commit()
 
+    current_app.logger.info(f'Admin deactivated: admin_id={admin_id}, deactivated_by={current_user.admin_id}')
     flash(f'Admin {admin_id} deactivated successfully.', 'success')
     return redirect(url_for('manage.list_admins'))
 
@@ -357,6 +370,7 @@ def reactivate_admin(admin_id):
     admin.is_active = True
     db.session.commit()
 
+    current_app.logger.info(f'Admin reactivated: admin_id={admin_id}, reactivated_by={current_user.admin_id}')
     flash(f'Admin {admin_id} reactivated successfully.', 'success')
     return redirect(url_for('manage.list_admins'))
 
